@@ -35,6 +35,7 @@ addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGro
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
 addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds', 'moveSpeedMultiplier']);
 addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.75', '1.3']);
+addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs', ['speed mode does not change reward', "speedMode: '1x'", "speedMode: '2x'", 'performanceFactor']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
 addCheck('server configurable Web static root', 'server/src/server.mjs', ['WEB_STATIC_ROOT', 'clientRoot']);

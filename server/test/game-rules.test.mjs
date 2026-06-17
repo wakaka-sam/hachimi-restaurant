@@ -111,6 +111,24 @@ test('performance reward is clamped between 75 and 130 percent', () => {
   assert.equal(excellent.rewardCoins, 130);
 });
 
+test('speed mode does not change reward for the same performance summary', () => {
+  const player = createDefaultPlayer('speed-reward-test', new Date('2026-06-17T00:00:00.000Z'));
+  const baseSummary = {
+    customersServed: 12,
+    customersLost: 1,
+    averageSatisfaction: 0.82,
+    maxCombo: 7,
+    durationSeconds: CONSTANTS.sessionDurationSeconds,
+    customerTypes: { normal: 13 }
+  };
+
+  const normalSpeed = calculateReward(player, { ...baseSummary, speedMode: '1x' });
+  const doubleSpeed = calculateReward(player, { ...baseSummary, speedMode: '2x' });
+
+  assert.equal(doubleSpeed.rewardCoins, normalSpeed.rewardCoins);
+  assert.equal(doubleSpeed.performanceFactor, normalSpeed.performanceFactor);
+});
+
 test('session summaries reserve normal customer type counts', () => {
   assert.deepEqual(CUSTOMER_TYPES, ['normal']);
 
