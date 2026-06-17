@@ -16,6 +16,25 @@ export interface TableState {
   customer: LocalCustomer | null;
 }
 
+export interface BusinessSimulationSnapshot {
+  sessionId: string;
+  startedAt: string;
+  expiresAt: string;
+  savedAt: string;
+  speedMode: SpeedMode;
+  timeLeft: number;
+  spawnCooldown: number;
+  waiting: LocalCustomer[];
+  tables: Array<LocalCustomer | null>;
+  customersServed: number;
+  customersLost: number;
+  satisfactionSum: number;
+  combo: number;
+  maxCombo: number;
+  nextCustomerId: number;
+  finished: boolean;
+}
+
 export interface LocalBusinessSummary {
   customersServed: number;
   customersLost: number;
@@ -43,14 +62,40 @@ export class BusinessSimulation {
   feedbackTimeLeft = 0;
   finished = false;
 
-  constructor(readonly tuning: TuningState, speedMode: SpeedMode, remainingSeconds: number = CONSTANTS.sessionDurationSeconds) {
+  constructor(
+    readonly tuning: TuningState,
+    speedMode: SpeedMode,
+    remainingSeconds: number = CONSTANTS.sessionDurationSeconds,
+    snapshot: BusinessSimulationSnapshot | null = null
+  ) {
     this.speedMode = speedMode;
-    this.timeLeft = clamp(remainingSeconds, 0, CONSTANTS.sessionDurationSeconds);
-    this.tables = Array.from({ length: tuning.tableCapacity }, () => ({ customer: null }));
-    this.spawnCooldown = tuning.spawnIntervalSeconds;
-    for (let count = 0; count < tuning.initialCustomerCount; count += 1) {
-      this.spawnCustomer();
+    if (snapshot) {
+      this.timeLeft = clamp(snapshot.timeLeft, 0, CONSTANTS.sessionDurationSeconds);
+      this.tables = Array.from({ length: tuning.tableCapacity }, (_, index) => ({
+        customer: this.cloneCustomer(snapshot.tables?.[index] || null)
+      }));
+      this.spawnCooldown = Math.max(0, snapshot.spawnCooldown);
+      const waiting = Array.isArray(snapshot.waiting) ? snapshot.waiting : [];
+      this.waiting.push(...waiting.map((customer) => this.cloneCustomer(customer)!));
+      this.customersServed = Math.max(0, Math.floor(snapshot.customersServed));
+      this.customersLost = Math.max(0, Math.floor(snapshot.customersLost));
+      this.satisfactionSum = Math.max(0, snapshot.satisfactionSum);
+      this.combo = Math.max(0, Math.floor(snapshot.combo));
+      this.maxCombo = Math.max(0, Math.floor(snapshot.maxCombo));
+      this.nextCustomerId = Math.max(1, Math.floor(snapshot.nextCustomerId));
+      this.finished = snapshot.finished || this.timeLeft <= 0;
+    } else {
+      this.timeLeft = clamp(remainingSeconds, 0, CONSTANTS.sessionDurationSeconds);
+      this.tables = Array.from({ length: tuning.tableCapacity }, () => ({ customer: null }));
+      this.spawnCooldown = tuning.spawnIntervalSeconds;
+      for (let count = 0; count < tuning.initialCustomerCount; count += 1) {
+        this.spawnCustomer();
+      }
     }
+  }
+
+  static fromSnapshot(tuning: TuningState, snapshot: BusinessSimulationSnapshot): BusinessSimulation {
+    return new BusinessSimulation(tuning, snapshot.speedMode, snapshot.timeLeft, snapshot);
   }
 
   setSpeedMode(speedMode: SpeedMode): void {
@@ -145,6 +190,27 @@ export class BusinessSimulation {
       customerTypes: {
         normal: this.customersServed + this.customersLost
       }
+    };
+  }
+
+  getSnapshot(sessionId: string, startedAt: string, expiresAt: string): BusinessSimulationSnapshot {
+    return {
+      sessionId,
+      startedAt,
+      expiresAt,
+      savedAt: new Date().toISOString(),
+      speedMode: this.speedMode,
+      timeLeft: this.timeLeft,
+      spawnCooldown: this.spawnCooldown,
+      waiting: this.waiting.map((customer) => this.cloneCustomer(customer)!),
+      tables: this.tables.map((table) => this.cloneCustomer(table.customer)),
+      customersServed: this.customersServed,
+      customersLost: this.customersLost,
+      satisfactionSum: this.satisfactionSum,
+      combo: this.combo,
+      maxCombo: this.maxCombo,
+      nextCustomerId: this.nextCustomerId,
+      finished: this.finished
     };
   }
 
@@ -258,5 +324,9 @@ export class BusinessSimulation {
 
   private getMovementAdjustedDuration(seconds: number): number {
     return seconds / Math.max(1, this.tuning.moveSpeedMultiplier);
+  }
+
+  private cloneCustomer(customer: LocalCustomer | null): LocalCustomer | null {
+    return customer ? { ...customer } : null;
   }
 }

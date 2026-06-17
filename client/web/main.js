@@ -8,6 +8,7 @@ import {
 
 const PLAYER_ID = localStorage.getItem('hachimi-player-id') || crypto.randomUUID();
 localStorage.setItem('hachimi-player-id', PLAYER_ID);
+const LOCAL_SESSION_SNAPSHOT_KEY = 'hachimi-active-session-snapshot';
 
 const textures = {
   restaurantBackgrounds: [
@@ -73,8 +74,12 @@ async function loadProfile() {
   try {
     state.loading = true;
     render();
+    await finishStoredCompletedSession();
     const payload = await api('/api/player/profile');
     state.profile = payload.profile;
+    if (!state.profile.activeSession) {
+      clearGameSnapshot();
+    }
     state.loading = false;
     render();
   } catch (error) {
@@ -259,7 +264,18 @@ async function startBusiness() {
 function startLocalGame(session) {
   clearGameLoop();
   const tuning = state.profile.tuning;
-  state.game = {
+  const snapshot = loadGameSnapshot(session.sessionId);
+  state.game = snapshot
+    ? createGameFromSnapshot(session, tuning, snapshot)
+    : createFreshGame(session, tuning);
+  saveGameSnapshot();
+  state.screen = 'business';
+  render();
+  state.loopHandle = window.setInterval(tickGame, 180);
+}
+
+function createFreshGame(session, tuning) {
+  const game = {
     session,
     tuning,
     timeLeft: Math.max(0, Math.min(CONSTANTS.sessionDurationSeconds, session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds)),
@@ -278,12 +294,33 @@ function startLocalGame(session) {
     lastTick: performance.now(),
     finished: false
   };
+  state.game = game;
   for (let count = 0; count < tuning.initialCustomerCount; count += 1) {
-    spawnCustomer();
+    spawnCustomer(game);
   }
-  state.screen = 'business';
-  render();
-  state.loopHandle = window.setInterval(tickGame, 180);
+  return game;
+}
+
+function createGameFromSnapshot(session, tuning, snapshot) {
+  return {
+    session,
+    tuning,
+    timeLeft: Math.max(0, Math.min(CONSTANTS.sessionDurationSeconds, Number(snapshot.timeLeft || 0))),
+    spawnCooldown: Math.max(0, Number(snapshot.spawnCooldown || 0)),
+    waiting: Array.isArray(snapshot.waiting) ? snapshot.waiting.map(cloneCustomer) : [],
+    tables: Array.from({ length: tuning.tableCapacity }, (_, index) => cloneCustomer(snapshot.tables?.[index] || null)),
+    served: Math.max(0, Math.floor(Number(snapshot.served || 0))),
+    lost: Math.max(0, Math.floor(Number(snapshot.lost || 0))),
+    satisfactionSum: Math.max(0, Number(snapshot.satisfactionSum || 0)),
+    combo: Math.max(0, Math.floor(Number(snapshot.combo || 0))),
+    maxCombo: Math.max(0, Math.floor(Number(snapshot.maxCombo || 0))),
+    nextCustomerId: Math.max(1, Math.floor(Number(snapshot.nextCustomerId || 1))),
+    speedMode: snapshot.speedMode === '2x' ? '2x' : '1x',
+    feedback: '已恢复营业进度',
+    feedbackTimeLeft: 2.2,
+    lastTick: performance.now(),
+    finished: false
+  };
 }
 
 function tickGame() {
@@ -368,12 +405,14 @@ function updateGame(delta) {
   });
 
   if (game.timeLeft <= 0) {
+    saveGameSnapshot();
     finishBusiness();
+  } else {
+    saveGameSnapshot();
   }
 }
 
-function spawnCustomer() {
-  const game = state.game;
+function spawnCustomer(game = state.game) {
   if (!canSpawnMoreCustomers(game)) {
     return false;
   }
@@ -496,6 +535,7 @@ function handleTableClick(index) {
   } else if (customer.phase === 'readyPay') {
     collectCustomer(index);
   }
+  saveGameSnapshot();
   render();
 }
 
@@ -521,6 +561,7 @@ function collectFirstReadyPay() {
   const index = state.game?.tables.findIndex((customer) => customer?.phase === 'readyPay') ?? -1;
   if (index >= 0) {
     collectCustomer(index);
+    saveGameSnapshot();
     render();
   }
 }
@@ -555,12 +596,109 @@ function getSatisfactionPercent(game) {
   return `${Math.round((game.satisfactionSum / game.served) * 100)}%`;
 }
 
+async function finishStoredCompletedSession() {
+  const snapshot = readGameSnapshot();
+  if (!snapshot || !isStoredSessionCompleted(snapshot)) {
+    return;
+  }
+  try {
+    await api('/api/session/finish', {
+      method: 'POST',
+      body: {
+        sessionId: snapshot.sessionId,
+        summary: getSummaryFromSnapshot(snapshot)
+      }
+    });
+    clearGameSnapshot(snapshot.sessionId);
+  } catch {
+    // The profile request remains authoritative for already-settled or invalid sessions.
+  }
+}
+
+function saveGameSnapshot(game = state.game) {
+  if (!game?.session?.sessionId) {
+    return;
+  }
+  localStorage.setItem(LOCAL_SESSION_SNAPSHOT_KEY, JSON.stringify({
+    sessionId: game.session.sessionId,
+    startedAt: game.session.startedAt,
+    expiresAt: game.session.expiresAt,
+    savedAt: new Date().toISOString(),
+    speedMode: game.speedMode,
+    timeLeft: game.timeLeft,
+    spawnCooldown: game.spawnCooldown,
+    waiting: game.waiting.map(cloneCustomer),
+    tables: game.tables.map(cloneCustomer),
+    served: game.served,
+    lost: game.lost,
+    satisfactionSum: game.satisfactionSum,
+    combo: game.combo,
+    maxCombo: game.maxCombo,
+    nextCustomerId: game.nextCustomerId,
+    finished: game.finished || game.timeLeft <= 0
+  }));
+}
+
+function loadGameSnapshot(sessionId) {
+  const snapshot = readGameSnapshot();
+  return snapshot?.sessionId === sessionId ? snapshot : null;
+}
+
+function readGameSnapshot() {
+  const raw = localStorage.getItem(LOCAL_SESSION_SNAPSHOT_KEY);
+  if (!raw) {
+    return null;
+  }
+  try {
+    const snapshot = JSON.parse(raw);
+    return snapshot && typeof snapshot.sessionId === 'string' ? snapshot : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearGameSnapshot(sessionId = '') {
+  const snapshot = readGameSnapshot();
+  if (!sessionId || !snapshot || snapshot.sessionId === sessionId) {
+    localStorage.removeItem(LOCAL_SESSION_SNAPSHOT_KEY);
+  }
+}
+
+function isStoredSessionCompleted(snapshot) {
+  return Boolean(snapshot.finished) || Number(snapshot.timeLeft || 0) <= 0;
+}
+
+function getSummaryFromSnapshot(snapshot) {
+  const customersServed = Math.max(0, Math.floor(Number(snapshot.served || 0)));
+  const customersLost = Math.max(0, Math.floor(Number(snapshot.lost || 0)));
+  const averageSatisfaction = customersServed > 0
+    ? Math.max(0, Math.min(1, Number(snapshot.satisfactionSum || 0) / customersServed))
+    : 0;
+  return {
+    customersServed,
+    customersLost,
+    averageSatisfaction,
+    maxCombo: Math.max(0, Math.floor(Number(snapshot.maxCombo || 0))),
+    durationSeconds: CONSTANTS.sessionDurationSeconds,
+    speedMode: snapshot.speedMode === '2x' ? '2x' : '1x',
+    clientVersion: 'web-prototype-0.1.0',
+    customerTypes: {
+      normal: customersServed + customersLost
+    }
+  };
+}
+
+function cloneCustomer(customer) {
+  return customer ? { ...customer } : null;
+}
+
 function toggleBusinessSpeed() {
   if (!state.game || state.game.finished) {
     return;
   }
   state.game.speedMode = state.game.speedMode === '1x' ? '2x' : '1x';
   setBusinessFeedback(`已切换 ${state.game.speedMode}`);
+  saveGameSnapshot();
   render();
 }
 
@@ -596,6 +734,7 @@ async function finishBusiness() {
     state.result = payload.settlement;
     state.screen = 'result';
     state.game = null;
+    clearGameSnapshot(game.session.sessionId);
     render();
   } catch (error) {
     state.message = error.message;

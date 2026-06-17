@@ -112,6 +112,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - 2x sessions use a shorter real-time active window while preserving the 2-minute recovery window.
   - Cocos and Web debug harness resume active sessions from remaining time instead of restarting at 90 seconds.
   - Cocos start button text now switches between `开始营业` and `继续营业` based on backend active-session state.
+  - Cocos and Web debug harness persist a local active-session snapshot so a completed 90-second local session can be submitted before profile auto-cleanup falls back to minimum expired settlement.
 - Added early-settlement protection:
   - Backend rejects valid-looking settlements before the minimum real time for a 90-second 2x session has elapsed.
   - Cocos and Web debug harness disable manual settlement while the local营业 countdown is still running.
@@ -220,7 +221,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 40 Node tests, 127 gameplay coverage checks, and static texture policy checks.
+- Current automated coverage: 40 Node tests, 131 gameplay coverage checks, and static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -247,6 +248,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos initial customer wave wiring.
   - Web and Cocos manual early-settlement blocking.
   - Web and Cocos resumed session remaining-time handling.
+  - Web and Cocos local active-session snapshot recovery before profile auto-cleanup.
   - Cocos resumable-session start button label wiring.
   - Web and Cocos in-session 1x/2x speed switching.
   - Cocos API host resolution for Web same-origin and non-browser mini-game targets.

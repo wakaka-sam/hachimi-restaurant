@@ -1,5 +1,5 @@
-import { _decorator, Button, Component, Label, Node, Sprite } from 'cc';
-import { BusinessSimulation } from './core/BusinessSimulation';
+import { _decorator, Button, Component, Label, Node, Sprite, sys } from 'cc';
+import { BusinessSimulation, BusinessSimulationSnapshot, LocalBusinessSummary } from './core/BusinessSimulation';
 import {
   CONSTANTS,
   PARTS,
@@ -23,6 +23,8 @@ import { TextureCatalog } from './components/TextureCatalog';
 const { ccclass, property } = _decorator;
 
 type ScreenKey = 'main' | 'business' | 'upgrade' | 'tasks' | 'result';
+
+const LOCAL_SESSION_SNAPSHOT_KEY = 'hachimi-active-session-snapshot';
 
 @ccclass('HachimiRestaurantGame')
 export class HachimiRestaurantGame extends Component {
@@ -191,6 +193,7 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
     this.simulation.update(deltaTime);
+    this.saveSessionSnapshot();
     this.renderBusiness();
     this.renderTexturedButtons();
     if (this.simulation.finished) {
@@ -215,7 +218,11 @@ export class HachimiRestaurantGame extends Component {
 
   private async loadProfile(): Promise<void> {
     try {
+      await this.finishStoredCompletedSession();
       this.profile = await this.api.getProfile();
+      if (!this.profile.activeSession) {
+        this.clearSessionSnapshot();
+      }
       this.setMessage('');
       this.setScreen('main');
       this.renderAll();
@@ -237,14 +244,18 @@ export class HachimiRestaurantGame extends Component {
         throw new Error('Missing session from backend.');
       }
       this.activeSessionId = response.session.sessionId;
-      this.simulation = new BusinessSimulation(
-        response.profile.tuning,
-        response.session.speedMode,
-        response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds
-      );
-      this.speedMode = response.session.speedMode;
+      const snapshot = this.loadSessionSnapshot(response.session.sessionId);
+      this.simulation = snapshot
+        ? BusinessSimulation.fromSnapshot(response.profile.tuning, snapshot)
+        : new BusinessSimulation(
+          response.profile.tuning,
+          response.session.speedMode,
+          response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds
+        );
+      this.speedMode = this.simulation.speedMode;
       this.finishing = false;
       this.setScreen('business');
+      this.saveSessionSnapshot(response.session.startedAt, response.session.expiresAt);
       this.renderAll();
     } catch (error) {
       this.setMessage(this.formatError(error));
@@ -263,6 +274,7 @@ export class HachimiRestaurantGame extends Component {
       }
       this.settlement = response.settlement || null;
       this.simulation = null;
+      this.clearSessionSnapshot(this.activeSessionId);
       this.activeSessionId = '';
       this.setScreen('result');
       this.renderAll();
@@ -308,6 +320,7 @@ export class HachimiRestaurantGame extends Component {
     if (this.simulation && this.activeScreen === 'business') {
       this.simulation.toggleSpeedMode();
       this.speedMode = this.simulation.speedMode;
+      this.saveSessionSnapshot();
     } else {
       this.speedMode = this.speedMode === '1x' ? '2x' : '1x';
     }
@@ -316,11 +329,13 @@ export class HachimiRestaurantGame extends Component {
 
   private handleTablePressed(tableIndex: number): void {
     this.simulation?.handleTablePressed(tableIndex);
+    this.saveSessionSnapshot();
     this.renderBusiness();
   }
 
   private collectFirstReadyPay(): void {
     this.simulation?.collectFirstReadyPay();
+    this.saveSessionSnapshot();
     this.renderBusiness();
   }
 
@@ -560,6 +575,80 @@ export class HachimiRestaurantGame extends Component {
     }
 
     return '';
+  }
+
+  private async finishStoredCompletedSession(): Promise<void> {
+    const snapshot = this.readStoredSessionSnapshot();
+    if (!snapshot || !this.isStoredSessionCompleted(snapshot)) {
+      return;
+    }
+    try {
+      await this.api.finishSession(snapshot.sessionId, this.getSummaryFromSnapshot(snapshot));
+      this.clearSessionSnapshot(snapshot.sessionId);
+    } catch {
+      // Profile loading below remains the source of truth for already-settled or invalid sessions.
+    }
+  }
+
+  private saveSessionSnapshot(startedAt = '', expiresAt = ''): void {
+    if (!this.simulation || !this.activeSessionId) {
+      return;
+    }
+    const existing = this.loadSessionSnapshot(this.activeSessionId);
+    const snapshot = this.simulation.getSnapshot(
+      this.activeSessionId,
+      startedAt || existing?.startedAt || '',
+      expiresAt || existing?.expiresAt || ''
+    );
+    sys.localStorage.setItem(LOCAL_SESSION_SNAPSHOT_KEY, JSON.stringify(snapshot));
+  }
+
+  private loadSessionSnapshot(sessionId: string): BusinessSimulationSnapshot | null {
+    const snapshot = this.readStoredSessionSnapshot();
+    return snapshot?.sessionId === sessionId ? snapshot : null;
+  }
+
+  private readStoredSessionSnapshot(): BusinessSimulationSnapshot | null {
+    const raw = sys.localStorage.getItem(LOCAL_SESSION_SNAPSHOT_KEY);
+    if (!raw) {
+      return null;
+    }
+    try {
+      const snapshot = JSON.parse(raw) as BusinessSimulationSnapshot;
+      return snapshot && typeof snapshot.sessionId === 'string' ? snapshot : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private clearSessionSnapshot(sessionId = ''): void {
+    const snapshot = this.readStoredSessionSnapshot();
+    if (!sessionId || !snapshot || snapshot.sessionId === sessionId) {
+      sys.localStorage.removeItem(LOCAL_SESSION_SNAPSHOT_KEY);
+    }
+  }
+
+  private isStoredSessionCompleted(snapshot: BusinessSimulationSnapshot): boolean {
+    return snapshot.finished || snapshot.timeLeft <= 0;
+  }
+
+  private getSummaryFromSnapshot(snapshot: BusinessSimulationSnapshot): LocalBusinessSummary {
+    const customersServed = Math.max(0, Math.floor(snapshot.customersServed));
+    const customersLost = Math.max(0, Math.floor(snapshot.customersLost));
+    return {
+      customersServed,
+      customersLost,
+      averageSatisfaction: customersServed > 0
+        ? Math.max(0, Math.min(1, snapshot.satisfactionSum / customersServed))
+        : 0,
+      maxCombo: Math.max(0, Math.floor(snapshot.maxCombo)),
+      durationSeconds: CONSTANTS.sessionDurationSeconds,
+      speedMode: snapshot.speedMode,
+      clientVersion: 'cocos-source-0.1.0',
+      customerTypes: {
+        normal: customersServed + customersLost
+      }
+    };
   }
 
   private formatError(error: unknown): string {
