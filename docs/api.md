@@ -247,6 +247,12 @@ Task rewards are an auxiliary progression layer and should not directly alter `i
 Task status responses include `typeLabel` so the client can visibly separate guide, daily, and growth tasks without duplicating label text per platform.
 Daily task claim keys are scoped by backend date. A daily task can be claimed at most once for one backend date, then can be completed and claimed again on the next backend date.
 
+Daily task reward budget:
+
+- Total daily task coin rewards should stay between 1 and 2 normal business revenues for the current `expectedRevenue`.
+- Total daily task stamina rewards should stay between 10 and 20 stamina.
+- Shared rule tests must fail if task definitions introduce reward fields outside the MVP coin/stamina set.
+
 ## Error Conventions
 
 MVP error codes should cover:

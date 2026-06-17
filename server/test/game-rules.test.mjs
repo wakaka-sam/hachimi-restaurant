@@ -4,17 +4,20 @@ import {
   CONSTANTS,
   CUSTOMER_TYPES,
   TASK_DEFINITIONS,
+  TASK_REWARD_FIELDS,
   TASK_TYPE_LABELS,
   createDefaultPlayer,
   getEconomy,
   getEffectivePartStars,
   getStaminaRecovery,
   getTaskClaimKey,
+  getTaskRewardSummary,
   getTaskStatuses,
   getTuning,
   calculateReward,
   normalizeSessionSummary,
   refreshStamina,
+  resolveTaskReward,
   validateSessionSummary
 } from '../../shared/game-rules.mjs';
 
@@ -188,6 +191,45 @@ test('task statuses expose guide daily and growth labels', () => {
     [...new Set(statuses.map((task) => task.typeLabel))].sort(),
     ['引导任务', '成长任务', '每日任务'].sort()
   );
+});
+
+test('task rewards are limited to coins and stamina', () => {
+  const player = createDefaultPlayer('task-reward-fields-test', new Date('2026-06-17T00:00:00.000Z'));
+  const incomePowerBefore = getEconomy(player).incomePower;
+
+  assert.deepEqual(TASK_REWARD_FIELDS, ['coins', 'stamina']);
+
+  for (const definition of TASK_DEFINITIONS) {
+    assert.deepEqual(
+      Object.keys(definition.reward).sort(),
+      Object.keys(definition.reward).filter((key) => TASK_REWARD_FIELDS.includes(key)).sort(),
+      `${definition.id} contains a non-MVP reward field`
+    );
+
+    const reward = resolveTaskReward(definition, player);
+    assert.deepEqual(Object.keys(reward), TASK_REWARD_FIELDS);
+    assert.ok(Number.isInteger(reward.coins));
+    assert.ok(Number.isInteger(reward.stamina));
+    assert.ok(reward.coins >= 0);
+    assert.ok(reward.stamina >= 0);
+  }
+
+  assert.equal(getEconomy(player).incomePower, incomePowerBefore);
+});
+
+test('daily task reward budget matches the MVP band', () => {
+  const player = createDefaultPlayer('daily-reward-budget-test', new Date('2026-06-17T00:00:00.000Z'));
+  const expectedRevenue = getEconomy(player).expectedRevenue;
+  const dailySummary = getTaskRewardSummary(player, 'daily');
+
+  assert.equal(dailySummary.type, 'daily');
+  assert.equal(dailySummary.taskCount, 4);
+  assert.equal(dailySummary.coins, expectedRevenue * 2);
+  assert.equal(dailySummary.stamina, 20);
+  assert.ok(dailySummary.coins >= expectedRevenue);
+  assert.ok(dailySummary.coins <= expectedRevenue * 2);
+  assert.ok(dailySummary.stamina >= 10);
+  assert.ok(dailySummary.stamina <= 20);
 });
 
 test('daily task claim keys are scoped by backend date', () => {

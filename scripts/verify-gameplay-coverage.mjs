@@ -46,6 +46,8 @@ addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs',
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
 addCheck('shared task type labels', 'shared/game-rules.mjs', ['TASK_TYPE_LABELS', 'typeLabel']);
+addCheck('shared task reward fields', 'shared/game-rules.mjs', ['TASK_REWARD_FIELDS', 'resolveRewardAmount', 'getTaskRewardSummary']);
+addCheck('shared task reward budget tests', 'server/test/game-rules.test.mjs', ['task rewards are limited to coins and stamina', 'daily task reward budget matches the MVP band', 'getTaskRewardSummary']);
 addCheck('shared daily task claim keys', 'server/test/game-rules.test.mjs', ['daily task claim keys are scoped by backend date', '2026-06-17:daily_sessions_3', '2026-06-18:daily_sessions_3']);
 addCheck('server configurable Web static root', 'server/src/server.mjs', ['resolveServerConfig', 'clientRoot']);
 addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "screen === 'business'", "screen === 'upgrade'", "screen === 'tasks'"]);
@@ -112,6 +114,7 @@ addCheck('product documented max session customer cap', 'docs/product.md', ['每
 addCheck('product documented backend stamina recovery display', 'docs/product.md', ['下一点体力倒计时', '后端返回的恢复状态']);
 addCheck('product documented task type separation', 'docs/product.md', ['明确区分引导任务、每日任务、成长任务']);
 addCheck('product documented daily task reset', 'docs/product.md', ['每日任务进度按后端日期刷新', '每天最多领取一次']);
+addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);
 
 for (const check of checks) {
   let source = '';

@@ -37,6 +37,8 @@ export const CUSTOMER_TYPES = ['normal'];
 
 export const TASK_TYPES = ['guide', 'daily', 'growth'];
 
+export const TASK_REWARD_FIELDS = ['coins', 'stamina'];
+
 export const TASK_TYPE_LABELS = Object.freeze({
   guide: '引导任务',
   daily: '每日任务',
@@ -512,17 +514,41 @@ export function resolveTaskTarget(task, player) {
 
 export function resolveTaskReward(task, player) {
   const expected = getEconomy(player).expectedRevenue;
-  const reward = { coins: 0, stamina: 0 };
-  for (const [key, value] of Object.entries(task.reward || {})) {
-    if (value === 'expected') {
-      reward[key] = expected;
-    } else if (value === 'halfExpected') {
-      reward[key] = Math.round(expected * 0.5);
-    } else {
-      reward[key] = value;
-    }
+  const reward = Object.fromEntries(TASK_REWARD_FIELDS.map((field) => [field, 0]));
+  for (const key of TASK_REWARD_FIELDS) {
+    reward[key] = resolveRewardAmount(task.reward?.[key], expected);
   }
   return reward;
+}
+
+export function getTaskRewardSummary(player, type = null) {
+  const tasks = TASK_DEFINITIONS.filter((task) => !type || task.type === type);
+  return tasks.reduce((summary, task) => {
+    const reward = resolveTaskReward(task, player);
+    summary.coins += reward.coins;
+    summary.stamina += reward.stamina;
+    return summary;
+  }, {
+    type: type || 'all',
+    taskCount: tasks.length,
+    coins: 0,
+    stamina: 0
+  });
+}
+
+function resolveRewardAmount(value, expected) {
+  if (value === 'expected') {
+    return expected;
+  }
+  if (value === 'halfExpected') {
+    return Math.round(expected * 0.5);
+  }
+
+  const amount = Number(value || 0);
+  if (!Number.isFinite(amount)) {
+    return 0;
+  }
+  return Math.max(0, Math.round(amount));
 }
 
 export function getTaskClaimKey(task, now = new Date()) {
