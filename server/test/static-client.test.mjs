@@ -109,7 +109,7 @@ test('runtime client sources do not use drawing or filter effects for art', asyn
     'client/web/main.js',
     'client/web/styles.css'
   ];
-  const forbidden = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:|opacity\s*:/i;
+  const forbidden = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|border-radius\s*:|filter\s*:|opacity\s*:/i;
 
   for (const file of files) {
     const source = await readFile(file, 'utf8');

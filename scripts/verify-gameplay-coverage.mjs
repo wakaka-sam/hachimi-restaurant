@@ -55,6 +55,7 @@ addCheck('cocos simulation verification command', 'package.json', ['verify:cocos
 addCheck('cocos component verifier', 'scripts/verify-cocos-components.mjs', ['TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView', 'TexturedPanelView', 'MobileSafeAreaView']);
 addCheck('cocos component verification command', 'package.json', ['verify:cocos-components', 'verify:cocos-components && npm run verify:cocos-controller']);
 addCheck('cocos controller verifier', 'scripts/verify-cocos-controller.mjs', ['HachimiRestaurantGame', 'startBusiness', 'finishBusiness', 'SESSION_NOT_READY', 'upgradePart', 'claimTask', 'stored-session']);
+addCheck('cocos controller guide focus manifest contract', 'scripts/verify-cocos-controller.mjs', ['scene-wiring.json', 'verifyGuideFocusContract', 'GUIDE_FOCUS_KEYS', 'observedGuideFocusKeys', 'assert.deepEqual(sourceKeys, GUIDE_FOCUS_KEYS)']);
 addCheck('cocos controller verification command', 'package.json', ['verify:cocos-controller', 'verify:cocos-controller && npm run verify:gameplay']);
 addCheck('architecture documents Cocos rule mirror', 'docs/architecture.md', ['verify:rules', 'client/cocos/assets/scripts/core/GameRules.ts', 'shared/game-rules.mjs']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
@@ -186,7 +187,7 @@ addCheck('api documented expired submitted summary settlement', 'docs/api.md', [
 addCheck('api documented completion target', 'docs/api.md', ['completionScore = clamp(customersServed / 12', 'normal service target']);
 addCheck('api documented normal reward center', 'docs/api.md', ['normal 10-customer', 'about one `upgradeCost`']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
-addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'UIOpacity', '.color\\s*=', 'validateCssTextureBackgrounds']);
+addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'border-radius\\s*:', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'UIOpacity', '.color\\s*=', 'validateCssTextureBackgrounds']);
 addCheck('texture policy verifies PNG dimensions', 'scripts/verify-texture-policy.mjs', ['expectedTextureDimensions', 'validatePngDimensions', 'fixed dimensions']);
 
 for (const check of checks) {

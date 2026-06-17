@@ -7,16 +7,9 @@ import ts from 'typescript';
 
 const sourceRoot = 'client/cocos/assets/scripts';
 const tempDir = await mkdtemp(join(tmpdir(), 'hachimi-cocos-controller-'));
-const GUIDE_FOCUS_KEYS = [
-  'startBusiness',
-  'upgradeNav',
-  'taskNav',
-  'seatCustomer',
-  'serveFood',
-  'collectPay',
-  'upgradePart',
-  'claimTask'
-];
+const sceneWiring = JSON.parse(await readFile('client/cocos/scene-wiring.json', 'utf8'));
+const GUIDE_FOCUS_KEYS = sceneWiring.guideFocus?.keys || [];
+const observedGuideFocusKeys = new Set();
 const scriptFiles = [
   'HachimiRestaurantGame.ts',
   'core/GameRules.ts',
@@ -33,6 +26,7 @@ const scriptFiles = [
 ];
 
 try {
+  await verifyGuideFocusContract();
   await writeFile(join(tempDir, 'package.json'), '{"type":"commonjs"}\n');
   await writeCcStub();
   for (const file of scriptFiles) {
@@ -50,7 +44,26 @@ try {
   await rm(tempDir, { recursive: true, force: true });
 }
 
-console.log('Cocos main controller verified: profile, guide focus, business flow, settlement recovery, upgrades, tasks, and snapshot resume.');
+console.log('Cocos main controller verified: profile, manifest-aligned guide focus, business flow, settlement recovery, upgrades, tasks, and snapshot resume.');
+
+async function verifyGuideFocusContract() {
+  assert.deepEqual(GUIDE_FOCUS_KEYS, [
+    'startBusiness',
+    'upgradeNav',
+    'taskNav',
+    'seatCustomer',
+    'serveFood',
+    'collectPay',
+    'upgradePart',
+    'claimTask'
+  ]);
+
+  const source = await readFile(join(sourceRoot, 'HachimiRestaurantGame.ts'), 'utf8');
+  const match = source.match(/const GUIDE_FOCUS_KEYS = \[([\s\S]*?)\] as const;/);
+  assert.ok(match, 'HachimiRestaurantGame must declare GUIDE_FOCUS_KEYS');
+  const sourceKeys = [...match[1].matchAll(/'([^']+)'/g)].map((item) => item[1]);
+  assert.deepEqual(sourceKeys, GUIDE_FOCUS_KEYS);
+}
 
 async function writeCcStub() {
   await mkdir(join(tempDir, 'node_modules/cc'), { recursive: true });
@@ -150,6 +163,7 @@ async function transpileCocosScript(sourcePath) {
 }
 
 async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc) {
+  observedGuideFocusKeys.clear();
   cc.sys.localStorage.clear();
   const api = createFakeApi(ApiRequestError);
   const game = createController(HachimiRestaurantGame, cc);
@@ -243,6 +257,7 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(api.calls.at(-1).method, 'claimTask');
   assert.equal(game.messageLabel.string, '任务奖励已领取');
   assertGuideFocus(game, 'none');
+  assert.deepEqual([...observedGuideFocusKeys].sort(), [...GUIDE_FOCUS_KEYS].sort());
 
   await game.upgradeRestaurant();
   assert.equal(api.calls.at(-1).method, 'upgradeRestaurant');
@@ -373,6 +388,7 @@ function assertGuideFocus(game, expectedKey) {
   assert.deepEqual(activeNodeKeys, expected);
   assert.deepEqual(activePanelKeys, expected);
   if (expectedKey !== 'none') {
+    observedGuideFocusKeys.add(expectedKey);
     const panel = game.guideFocusPanels[GUIDE_FOCUS_KEYS.indexOf(expectedKey)];
     assert.equal(panel.renders.length > 0, true);
   }

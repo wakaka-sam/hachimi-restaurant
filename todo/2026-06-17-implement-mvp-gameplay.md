@@ -201,6 +201,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened Web texture-background policy:
   - Removed the remaining CSS color background and opacity-based locked-table effect from the debug harness.
   - Texture verification now rejects non-transparent, non-texture CSS `background` and `background-color` declarations in runtime CSS.
+  - Removed the debug harness scene `border-radius` clipping and added `border-radius` to runtime drawing/effect bans so CSS cannot create art shapes outside PNG textures.
 - Wired floor movement tuning into client simulations:
   - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
   - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
@@ -281,6 +282,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added executable Cocos main controller verification:
   - `npm run verify:cocos-controller` runs `HachimiRestaurantGame` with a mocked Cocos runtime and backend API.
   - The verifier checks profile rendering, first-run guide focus routing, business start, 2x speed switching, successful settlement, `SESSION_NOT_READY` recovery, part/restaurant upgrades, task claims, and completed-session snapshot recovery on startup.
+  - The verifier now reads `client/cocos/scene-wiring.json` as the guide focus contract, checks that `HachimiRestaurantGame.GUIDE_FOCUS_KEYS` matches it, and proves every guide focus key is exercised in the mocked controller flow.
   - Full `npm run verify` and `npm run verify:cocos` now include the Cocos controller gate.
 
 ## Remaining Work
@@ -294,7 +296,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 47 Node tests, 166 gameplay coverage checks, executable Cocos API, simulation, UI component, and main-controller checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 167 gameplay coverage checks, executable Cocos API, simulation, UI component, and main-controller checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -356,9 +358,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos mobile safe-area component and scene wiring contract.
   - Cocos texture-backed UI components render table states, upgrade states, task states, buttons, panels, and safe areas through executable checks.
   - Cocos main controller executes profile, first-run guide focus, business, settlement recovery, upgrade, task, and snapshot recovery flows under a mocked runtime.
+  - Cocos guide focus keys stay aligned between `scene-wiring.json`, `HachimiRestaurantGame`, and the executable controller flow.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
+  - Runtime CSS shape/effect styling such as `border-radius` is rejected for art surfaces.
   - Cocos art states cannot use runtime opacity or color tinting instead of PNG texture states.
   - Runtime PNG textures keep their expected dimensions and explicit asset contract.
   - Web and Cocos floor movement/turnover tuning.
