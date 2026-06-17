@@ -119,6 +119,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Added `table-locked.png` and synced it into both Web debug and Cocos texture trees.
   - Cocos `TableSlotView` renders locked slots with a texture and disables input for slots above current capacity.
   - The Web debug harness mirrors the locked-slot display for local gameplay preview.
+- Aligned营业节奏 with the MVP density target:
+  - Shared tuning now starts each business session with 2 initial customers.
+  - Initial prep + eating flow is about 18 seconds, matching the documented 18 to 25 second single-customer flow.
+  - Cocos and Web debug simulations both seed the initial customer wave from backend tuning.
+  - Added rule tests for initial table capacity, initial customer count, spawn interval, flow length, and max session customer cap.
 
 ## Remaining Work
 
@@ -131,10 +136,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 21 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 22 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
+  - Shared营业密度 tuning.
   - Shared normal customer type reservation.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
@@ -142,6 +148,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend auto-settlement for expired active sessions.
   - Backend exposure of all guide, daily, and growth tasks.
   - Web core screens and service chain.
+  - Web and Cocos initial customer wave wiring.
   - Web and Cocos manual early-settlement blocking.
   - Web and Cocos resumed session remaining-time handling.
   - Web and Cocos in-session 1x/2x speed switching.

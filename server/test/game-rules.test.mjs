@@ -74,6 +74,20 @@ test('restaurant upgrade reset preserves long-term handfeel tuning', () => {
   assert.ok(upgradedTuning.spawnIntervalSeconds < tuningBefore.spawnIntervalSeconds);
 });
 
+test('initial handfeel tuning matches MVP business density targets', () => {
+  const player = createDefaultPlayer('density-targets', new Date('2026-06-17T00:00:00.000Z'));
+  const tuning = getTuning(player);
+
+  assert.equal(tuning.tableCapacity, 2);
+  assert.equal(tuning.initialCustomerCount, 2);
+  assert.equal(CONSTANTS.maxTableSlots, 5);
+  assert.ok(tuning.spawnIntervalSeconds >= 6);
+  assert.ok(tuning.spawnIntervalSeconds <= 8);
+  assert.ok(tuning.prepDelaySeconds + tuning.eatingSeconds >= 18);
+  assert.ok(tuning.prepDelaySeconds + tuning.eatingSeconds <= 25);
+  assert.equal(CONSTANTS.maxCustomersPerSession, 18);
+});
+
 test('performance reward is clamped between 75 and 130 percent', () => {
   const player = createDefaultPlayer('reward-test', new Date('2026-06-17T00:00:00.000Z'));
 

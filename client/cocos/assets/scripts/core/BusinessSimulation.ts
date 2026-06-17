@@ -47,6 +47,10 @@ export class BusinessSimulation {
     this.speedMode = speedMode;
     this.timeLeft = clamp(remainingSeconds, 0, CONSTANTS.sessionDurationSeconds);
     this.tables = Array.from({ length: tuning.tableCapacity }, () => ({ customer: null }));
+    this.spawnCooldown = tuning.spawnIntervalSeconds;
+    for (let count = 0; count < tuning.initialCustomerCount; count += 1) {
+      this.spawnCustomer();
+    }
   }
 
   setSpeedMode(speedMode: SpeedMode): void {

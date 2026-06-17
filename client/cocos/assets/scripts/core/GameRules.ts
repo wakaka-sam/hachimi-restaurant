@@ -56,6 +56,7 @@ export interface TaskState {
 
 export interface TuningState {
   tableCapacity: number;
+  initialCustomerCount: number;
   patienceSeconds: number;
   spawnIntervalSeconds: number;
   moveSpeedMultiplier: number;
@@ -121,6 +122,7 @@ export const CONSTANTS = {
   sessionDurationSeconds: 90,
   maxSpeedMultiplier: 2,
   maxTableSlots: 5,
+  initialCustomerCount: 2,
   maxCustomersPerSession: 18
 } as const;
 

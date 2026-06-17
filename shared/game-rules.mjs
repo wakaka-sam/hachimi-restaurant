@@ -20,6 +20,7 @@ export const CONSTANTS = {
   sessionRecoveryWindowSeconds: 120,
   maxSpeedMultiplier: 2,
   maxTableSlots: 5,
+  initialCustomerCount: 2,
   maxCustomersPerSession: 18
 };
 
@@ -308,12 +309,13 @@ export function getTuning(player) {
   const effectiveStars = getEffectivePartStars(player);
   return {
     tableCapacity: Math.min(CONSTANTS.maxTableSlots, 2 + Math.floor(effectiveStars.table / 3)),
-    patienceSeconds: 12 + effectiveStars.chair * 1.5,
+    initialCustomerCount: CONSTANTS.initialCustomerCount,
+    patienceSeconds: 16 + effectiveStars.chair * 1.5,
     spawnIntervalSeconds: Math.max(3.8, 7.2 - effectiveStars.wall * 0.35),
     moveSpeedMultiplier: 1 + effectiveStars.floor * 0.05,
     cashierWindowSeconds: 8 + effectiveStars.cashier * 0.8,
-    prepDelaySeconds: Math.max(1.1, 2.2 - effectiveStars.floor * 0.1),
-    eatingSeconds: Math.max(4.2, 6.4 - effectiveStars.floor * 0.18)
+    prepDelaySeconds: Math.max(2.4, 5.5 - effectiveStars.floor * 0.16),
+    eatingSeconds: Math.max(8, 12.5 - effectiveStars.floor * 0.18)
   };
 }
 

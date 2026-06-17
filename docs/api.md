@@ -96,6 +96,14 @@ stamina recovery status
 restaurant level
 part stars
 current upgrade cost
+tuning:
+  tableCapacity
+  initialCustomerCount
+  patienceSeconds
+  spawnIntervalSeconds
+  cashierWindowSeconds
+  prepDelaySeconds
+  eatingSeconds
 task status
 active session, if any
 ```

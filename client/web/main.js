@@ -244,7 +244,7 @@ function startLocalGame(session) {
     session,
     tuning,
     timeLeft: Math.max(0, Math.min(CONSTANTS.sessionDurationSeconds, session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds)),
-    spawnCooldown: 1,
+    spawnCooldown: tuning.spawnIntervalSeconds,
     waiting: [],
     tables: Array.from({ length: tuning.tableCapacity }, () => null),
     served: 0,
@@ -259,6 +259,9 @@ function startLocalGame(session) {
     lastTick: performance.now(),
     finished: false
   };
+  for (let count = 0; count < tuning.initialCustomerCount; count += 1) {
+    spawnCustomer();
+  }
   state.screen = 'business';
   render();
   state.loopHandle = window.setInterval(tickGame, 180);
