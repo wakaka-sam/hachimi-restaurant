@@ -114,6 +114,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `PartStatusView` renders the five part names and star states on the restaurant main screen.
   - `HachimiRestaurantGame` now binds and refreshes the main-screen part status views separately from the upgrade-card views.
   - Scene wiring and static coverage require five main-screen part status instances.
+- Added locked table slot presentation:
+  - Shared rules now expose `maxTableSlots = 5`, while `tableCapacity` remains the current unlocked capacity from restaurant/table progression.
+  - Added `table-locked.png` and synced it into both Web debug and Cocos texture trees.
+  - Cocos `TableSlotView` renders locked slots with a texture and disables input for slots above current capacity.
+  - The Web debug harness mirrors the locked-slot display for local gameplay preview.
 
 ## Remaining Work
 
@@ -144,6 +149,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos restaurant visual stage wiring.
   - Cocos main-screen five-part star status wiring.
+  - Web and Cocos locked table slot texture wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.
   - Cocos guide label wiring.

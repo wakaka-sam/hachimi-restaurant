@@ -342,7 +342,8 @@ export class HachimiRestaurantGame extends Component {
       this.feedbackLabel.node.active = simulation.lastFeedback.length > 0;
     }
     this.tableSlots.forEach((slot, index) => {
-      slot.render(simulation.tables[index]?.customer || null, simulation.waiting.length, textures);
+      const unlocked = index < simulation.tables.length;
+      slot.render(unlocked ? simulation.tables[index]?.customer || null : null, simulation.waiting.length, textures, unlocked);
     });
     this.waitingCustomerSprites.forEach((sprite, index) => {
       const customer = simulation.waiting[index];

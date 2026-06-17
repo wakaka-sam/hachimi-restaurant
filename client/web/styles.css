@@ -316,6 +316,10 @@ button {
   pointer-events: none;
 }
 
+.table-slot.is-locked {
+  opacity: 0.86;
+}
+
 .table-slot img.customer-on-table {
   position: absolute;
   width: 76px;

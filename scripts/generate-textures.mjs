@@ -305,11 +305,21 @@ function drawRestaurantBackground(stage = 1) {
 function drawTable(state) {
   const image = createImage(240, 170, colors.transparent);
   ellipse(image, 120, 140, 92, 18, colors.shadow);
-  roundedRect(image, 34, 42, 172, 76, 28, colors.tableEdge);
-  roundedRect(image, 44, 32, 152, 76, 26, colors.table);
+  const locked = state === 'locked';
+  const edge = locked ? [104, 98, 94, 255] : colors.tableEdge;
+  const surface = locked ? [166, 156, 146, 255] : colors.table;
+  roundedRect(image, 34, 42, 172, 76, 28, edge);
+  roundedRect(image, 44, 32, 152, 76, 26, surface);
   rect(image, 64, 105, 18, 42, colors.tableEdge);
   rect(image, 158, 105, 18, 42, colors.tableEdge);
   roundedRect(image, 72, 122, 96, 24, 12, colors.tableEdge);
+  if (locked) {
+    roundedRect(image, 92, 54, 56, 42, 10, [82, 78, 76, 255]);
+    roundedRect(image, 104, 34, 32, 34, 16, [82, 78, 76, 255]);
+    roundedRect(image, 112, 42, 16, 24, 8, surface);
+    circle(image, 120, 74, 5, colors.yellow);
+    rect(image, 118, 78, 4, 10, colors.yellow);
+  }
   if (state === 'ready') {
     circle(image, 120, 72, 28, colors.yellow);
     circle(image, 120, 72, 18, colors.white);
@@ -403,6 +413,7 @@ await save('card.png', drawPanel(520, 260, [255, 238, 194, 255]));
 await save('button.png', drawPanel(420, 120, [255, 195, 82, 255]));
 await save('button-disabled.png', drawPanel(420, 120, [170, 160, 148, 255]));
 await save('table-empty.png', drawTable('empty'));
+await save('table-locked.png', drawTable('locked'));
 await save('table-ready.png', drawTable('ready'));
 await save('table-food.png', drawTable('food'));
 await save('table-pay.png', drawTable('pay'));

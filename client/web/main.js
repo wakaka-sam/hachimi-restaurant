@@ -19,6 +19,7 @@ const textures = {
   star: '/textures/icon-star.png',
   table: {
     empty: '/textures/table-empty.png',
+    locked: '/textures/table-locked.png',
     seated: '/textures/table-ready.png',
     readyFood: '/textures/table-ready.png',
     eating: '/textures/table-food.png',
@@ -384,7 +385,10 @@ function renderBusinessScreen() {
     ),
     guide ? h('div', { class: 'guide-cue business-guide' }, guide.message) : null,
     game.feedback ? h('div', { class: 'business-feedback' }, game.feedback) : null,
-    h('div', { class: 'table-zone' }, game.tables.map((customer, index) => renderTable(customer, index))),
+    h('div', { class: 'table-zone' }, Array.from({ length: CONSTANTS.maxTableSlots }, (_, index) => {
+      const unlocked = index < game.tables.length;
+      return renderTable(unlocked ? game.tables[index] : null, index, unlocked);
+    })),
     h('div', { class: 'waiting-row' }, game.waiting.map((customer) => h('div', { class: 'waiting-customer' },
       h('img', { src: customer.animal, alt: '等待中的小动物' }),
       h('span', {}, `${Math.max(0, Math.ceil(customer.patience))}s`)
@@ -401,21 +405,28 @@ function renderBusinessScreen() {
   );
 }
 
-function renderTable(customer, index) {
-  const texture = customer ? textures.table[customer.phase] : textures.table.empty;
-  const label = getTableLabel(customer);
+function renderTable(customer, index, unlocked = true) {
+  const texture = unlocked ? (customer ? textures.table[customer.phase] : textures.table.empty) : textures.table.locked;
+  const label = getTableLabel(customer, unlocked);
   const guide = getGuideStep();
-  const isGuideTarget = guide?.target === 'seatCustomer' && !customer && state.game.waiting.length > 0
+  const isGuideTarget = unlocked && guide?.target === 'seatCustomer' && !customer && state.game.waiting.length > 0
     || guide?.target === 'serveFood' && customer?.phase === 'readyFood'
     || guide?.target === 'collectPay' && customer?.phase === 'readyPay';
-  return h('button', { class: `table-slot ${isGuideTarget ? 'guide-focus' : ''}`, onclick: () => handleTableClick(index) },
+  return h('button', {
+    class: `table-slot ${unlocked ? '' : 'is-locked'} ${isGuideTarget ? 'guide-focus' : ''}`,
+    disabled: !unlocked,
+    onclick: unlocked ? () => handleTableClick(index) : undefined
+  },
     customer ? h('img', { class: 'customer-on-table', src: customer.animal, alt: '用餐小动物' }) : null,
     h('img', { class: 'table-texture', src: texture, alt: label }),
     h('span', { class: 'table-label' }, label)
   );
 }
 
-function getTableLabel(customer) {
+function getTableLabel(customer, unlocked = true) {
+  if (!unlocked) {
+    return '未解锁';
+  }
   if (!customer) {
     return state.game.waiting.length ? '点我入座' : '空桌';
   }

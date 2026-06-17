@@ -27,18 +27,21 @@ export class TableSlotView extends Component {
     this.button?.node.on(Button.EventType.CLICK, this.handleClick, this);
   }
 
-  render(customer: LocalCustomer | null, waitingCount: number, textures: TextureCatalog): void {
+  render(customer: LocalCustomer | null, waitingCount: number, textures: TextureCatalog, unlocked = true): void {
     if (this.tableSprite) {
-      this.tableSprite.spriteFrame = this.getTableTexture(customer?.phase, textures);
+      this.tableSprite.spriteFrame = this.getTableTexture(customer?.phase, textures, unlocked);
     }
     if (this.customerSprite) {
-      this.customerSprite.node.active = Boolean(customer);
-      if (customer && textures.animals.length > 0) {
+      this.customerSprite.node.active = unlocked && Boolean(customer);
+      if (unlocked && customer && textures.animals.length > 0) {
         this.customerSprite.spriteFrame = textures.animals[customer.animalIndex % textures.animals.length];
       }
     }
+    if (this.button) {
+      this.button.interactable = unlocked;
+    }
     if (this.label) {
-      this.label.string = this.getLabel(customer, waitingCount);
+      this.label.string = this.getLabel(customer, waitingCount, unlocked);
     }
   }
 
@@ -46,7 +49,10 @@ export class TableSlotView extends Component {
     this.onPressed?.(this.tableIndex);
   }
 
-  private getTableTexture(phase: CustomerPhase | undefined, textures: TextureCatalog): SpriteFrame | null {
+  private getTableTexture(phase: CustomerPhase | undefined, textures: TextureCatalog, unlocked: boolean): SpriteFrame | null {
+    if (!unlocked) {
+      return textures.tableLocked;
+    }
     if (phase === 'eating') {
       return textures.tableFood;
     }
@@ -59,7 +65,10 @@ export class TableSlotView extends Component {
     return textures.tableEmpty;
   }
 
-  private getLabel(customer: LocalCustomer | null, waitingCount: number): string {
+  private getLabel(customer: LocalCustomer | null, waitingCount: number, unlocked: boolean): string {
+    if (!unlocked) {
+      return '未解锁';
+    }
     if (!customer) {
       return waitingCount > 0 ? '点我入座' : '空桌';
     }

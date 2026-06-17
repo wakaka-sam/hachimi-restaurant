@@ -26,6 +26,9 @@ export class TextureCatalog extends Component {
   tableEmpty: SpriteFrame | null = null;
 
   @property(SpriteFrame)
+  tableLocked: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
   tableReady: SpriteFrame | null = null;
 
   @property(SpriteFrame)

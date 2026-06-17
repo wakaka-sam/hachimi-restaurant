@@ -1,21 +1,14 @@
 import { access, readFile, readdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { extname, join } from 'node:path';
 
-const runtimeFiles = [
-  'client/web/index.html',
-  'client/web/main.js',
-  'client/web/styles.css',
-  'shared/game-rules.mjs',
-  'server/src/app.mjs',
-  'client/cocos/assets/scripts/HachimiRestaurantGame.ts',
-  'client/cocos/assets/scripts/core/BusinessSimulation.ts',
-  'client/cocos/assets/scripts/core/GameRules.ts',
-  'client/cocos/assets/scripts/services/ApiClient.ts',
-  'client/cocos/assets/scripts/components/PartUpgradeView.ts',
-  'client/cocos/assets/scripts/components/TableSlotView.ts',
-  'client/cocos/assets/scripts/components/TaskItemView.ts',
-  'client/cocos/assets/scripts/components/TextureCatalog.ts'
+const runtimeRoots = [
+  'client/web',
+  'client/cocos/assets/scripts',
+  'shared',
+  'server/src'
 ];
+const runtimeExtensions = new Set(['.css', '.html', '.js', '.mjs', '.ts']);
+const runtimeFiles = (await Promise.all(runtimeRoots.map((root) => listRuntimeFiles(root)))).flat().sort();
 
 const textureDir = 'client/assets/textures';
 const cocosTextureDir = 'client/cocos/assets/textures';
@@ -84,3 +77,17 @@ if (failed) {
 }
 
 console.log(`Texture policy verified: ${textureFiles.length} PNG textures, Cocos copies in sync, no runtime drawing tokens.`);
+
+async function listRuntimeFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await listRuntimeFiles(path));
+    } else if (runtimeExtensions.has(extname(entry.name))) {
+      files.push(path);
+    }
+  }
+  return files;
+}

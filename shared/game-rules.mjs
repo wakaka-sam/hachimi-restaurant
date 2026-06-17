@@ -19,6 +19,7 @@ export const CONSTANTS = {
   sessionDurationSeconds: 90,
   sessionRecoveryWindowSeconds: 120,
   maxSpeedMultiplier: 2,
+  maxTableSlots: 5,
   maxCustomersPerSession: 18
 };
 
@@ -306,7 +307,7 @@ export function getTuning(player) {
   normalizePlayer(player);
   const effectiveStars = getEffectivePartStars(player);
   return {
-    tableCapacity: Math.min(5, 2 + Math.floor(effectiveStars.table / 3)),
+    tableCapacity: Math.min(CONSTANTS.maxTableSlots, 2 + Math.floor(effectiveStars.table / 3)),
     patienceSeconds: 12 + effectiveStars.chair * 1.5,
     spawnIntervalSeconds: Math.max(3.8, 7.2 - effectiveStars.wall * 0.35),
     moveSpeedMultiplier: 1 + effectiveStars.floor * 0.05,
