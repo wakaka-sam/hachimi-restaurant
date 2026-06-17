@@ -231,6 +231,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened Cocos texture-state policy:
   - Texture verification now rejects Cocos runtime opacity/tint tokens such as `UIOpacity`, `.opacity =`, `.color =`, and `new Color(...)` in gameplay scripts.
   - Cocos docs now require separate PNG textures for disabled, locked, empty, active, or highlighted visual states.
+  - `TexturedButtonView`, table slots, upgrade buttons, task buttons, and controller-level buttons now force `Button.Transition.NONE` so editor-configured color/sprite/scale button transitions cannot create non-texture visual states.
+  - Texture verification rejects `Button.Transition.COLOR`, `Button.Transition.SPRITE`, and `Button.Transition.SCALE` in runtime Cocos scripts.
 - Tightened Cocos scene wiring contract:
   - Gameplay coverage now verifies that manifest-declared screen nodes, labels, sprites, buttons, component properties, and texture catalog fields are declared in the corresponding TypeScript source files.
   - This catches manifest/source drift before opening the project in Cocos Creator.
@@ -366,6 +368,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
   - Runtime CSS shape/effect styling such as `border-radius`, `animation`, `@keyframes`, and `scale()` is rejected for art surfaces.
   - Cocos art states cannot use runtime opacity or color tinting instead of PNG texture states.
+  - Cocos interactive buttons disable built-in color/sprite/scale transitions so button states remain PNG-driven.
   - Runtime PNG textures keep their expected dimensions and explicit asset contract.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.

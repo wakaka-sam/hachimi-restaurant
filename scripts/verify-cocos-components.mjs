@@ -113,9 +113,11 @@ class Button extends Component {
   constructor() {
     super();
     this.interactable = true;
+    this.transition = Button.Transition.COLOR;
   }
 }
 Button.EventType = { CLICK: 'click' };
+Button.Transition = { NONE: 0, COLOR: 1, SPRITE: 2, SCALE: 3 };
 
 class SafeArea extends Component {
   constructor() {
@@ -294,12 +296,15 @@ function verifyTableSlotView(TableSlotView, cc, textures) {
     clickedIndex = index;
   });
   assert.equal(view.button.node.events[0].event, cc.Button.EventType.CLICK);
+  assert.equal(view.button.transition, cc.Button.Transition.NONE);
 
+  view.button.transition = cc.Button.Transition.SCALE;
   view.render(null, 2, textures, true);
   assert.equal(view.tableSprite.spriteFrame.name, 'table-empty');
   assert.equal(view.customerSprite.node.active, false);
   assert.equal(view.label.string, '点我入座');
   assert.equal(view.button.interactable, true);
+  assert.equal(view.button.transition, cc.Button.Transition.NONE);
 
   view.render({
     id: 10,
@@ -379,12 +384,15 @@ function verifyPartUpgradeView(PartUpgradeView, cc, textures) {
   view.bind('cashier', (part) => {
     upgradedPart = part;
   });
+  assert.equal(view.upgradeButton.transition, cc.Button.Transition.NONE);
 
+  view.upgradeButton.transition = cc.Button.Transition.COLOR;
   view.render(createProfile(), textures);
   assert.equal(view.titleLabel.string, '收银机');
   assert.equal(view.costLabel.string, '成本 100，还差 20');
   assert.equal(view.effectLabel.string, '下一星：收银窗口更宽');
   assert.equal(view.upgradeButton.interactable, false);
+  assert.equal(view.upgradeButton.transition, cc.Button.Transition.NONE);
   assert.equal(view.buttonLabel.string, '升级');
   assert.deepEqual(view.starSprites.map((item) => item.spriteFrame.name), [
     'star-filled',
@@ -407,9 +415,11 @@ function verifyPartUpgradeView(PartUpgradeView, cc, textures) {
   maxed.upgradeButton = button(cc);
   maxed.buttonLabel = label(cc);
   maxed.bind('wall', () => {});
+  maxed.upgradeButton.transition = cc.Button.Transition.SCALE;
   maxed.render(createProfile({ player: { coins: 10000 } }), textures);
   assert.equal(maxed.costLabel.string, '已满星');
   assert.equal(maxed.upgradeButton.interactable, false);
+  assert.equal(maxed.upgradeButton.transition, cc.Button.Transition.NONE);
   assert.equal(maxed.buttonLabel.string, '满星');
 }
 
@@ -426,7 +436,9 @@ function verifyTaskItemView(TaskItemView, cc) {
   view.bind((taskId) => {
     claimedTaskId = taskId;
   });
+  assert.equal(view.claimButton.transition, cc.Button.Transition.NONE);
 
+  view.claimButton.transition = cc.Button.Transition.SPRITE;
   view.render({
     id: 'daily_sessions_3',
     type: 'daily',
@@ -445,6 +457,7 @@ function verifyTaskItemView(TaskItemView, cc) {
   assert.equal(view.rewardLabel.string, '金币 100 / 体力 10');
   assert.equal(view.buttonLabel.string, '领取');
   assert.equal(view.claimButton.interactable, false);
+  assert.equal(view.claimButton.transition, cc.Button.Transition.NONE);
 
   view.render({
     id: 'daily_sessions_3',
@@ -484,10 +497,13 @@ function verifyTexturedButtonView(TexturedButtonView, cc, textures) {
   view.label = label(cc);
   view.render(textures);
   assert.equal(view.backgroundSprite.spriteFrame.name, 'button');
+  assert.equal(view.button.transition, cc.Button.Transition.NONE);
 
+  view.button.transition = cc.Button.Transition.SCALE;
   view.button.interactable = false;
   view.render(textures);
   assert.equal(view.backgroundSprite.spriteFrame.name, 'button-disabled');
+  assert.equal(view.button.transition, cc.Button.Transition.NONE);
 
   view.setText('开始营业');
   assert.equal(view.label.string, '开始营业');

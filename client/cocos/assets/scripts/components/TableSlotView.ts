@@ -24,6 +24,9 @@ export class TableSlotView extends Component {
   bind(tableIndex: number, onPressed: (tableIndex: number) => void): void {
     this.tableIndex = tableIndex;
     this.onPressed = onPressed;
+    if (this.button) {
+      this.button.transition = Button.Transition.NONE;
+    }
     this.button?.node.on(Button.EventType.CLICK, this.handleClick, this);
   }
 
@@ -38,6 +41,7 @@ export class TableSlotView extends Component {
       }
     }
     if (this.button) {
+      this.button.transition = Button.Transition.NONE;
       this.button.interactable = unlocked;
     }
     if (this.label) {

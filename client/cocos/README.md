@@ -23,8 +23,9 @@ Forbidden for art:
 - custom runtime shape drawing
 - `UIOpacity` or runtime opacity changes for art states
 - runtime `Color` tinting or `.color` changes for art states
+- `Button.Transition.COLOR`, `Button.Transition.SPRITE`, or `Button.Transition.SCALE` for visual states
 
-Represent visual states with separate PNG textures instead. Current examples include `button.png` and `button-disabled.png`, `icon-star.png` and `icon-star-empty.png`, plus the locked and active table textures.
+Represent visual states with separate PNG textures instead. Current examples include `button.png` and `button-disabled.png`, `icon-star.png` and `icon-star-empty.png`, plus the locked and active table textures. Every interactive button path forces `Button.Transition.NONE` at runtime so button feedback remains texture-backed.
 
 ## Texture Assets
 

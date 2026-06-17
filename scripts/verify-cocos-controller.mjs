@@ -105,9 +105,11 @@ class Button extends Component {
   constructor() {
     super();
     this.interactable = true;
+    this.transition = Button.Transition.COLOR;
   }
 }
 Button.EventType = { CLICK: 'click' };
+Button.Transition = { NONE: 0, COLOR: 1, SPRITE: 2, SCALE: 3 };
 
 function ccclass() {
   return (target) => target;
@@ -169,12 +171,15 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   const game = createController(HachimiRestaurantGame, cc);
   game.onLoad();
   game.api = api;
+  assertControllerButtonTransitions(game, cc.Button.Transition.NONE);
 
   assert.equal(game.startButton.node.events[0].event, cc.Button.EventType.CLICK);
   assert.equal(game.tableSlots[0].boundIndex, 0);
   assert.equal(game.partViews[0].boundPart, 'cashier');
 
+  setControllerButtonTransitions(game, cc.Button.Transition.SCALE);
   await game.start();
+  assertControllerButtonTransitions(game, cc.Button.Transition.NONE);
   assert.equal(api.calls[0].method, 'getProfile');
   assert.equal(game.mainScreen.active, true);
   assert.equal(game.businessScreen.active, false);
@@ -264,6 +269,33 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(game.messageLabel.string, '餐厅已整体升级');
 
   await verifySessionNotReady(HachimiRestaurantGame, ApiRequestError, cc);
+}
+
+function setControllerButtonTransitions(game, transition) {
+  getControllerButtons(game).forEach((button) => {
+    button.transition = transition;
+  });
+}
+
+function assertControllerButtonTransitions(game, expectedTransition) {
+  getControllerButtons(game).forEach((button) => {
+    assert.equal(button.transition, expectedTransition);
+  });
+}
+
+function getControllerButtons(game) {
+  return [
+    game.startButton,
+    game.mainNavButton,
+    game.upgradeNavButton,
+    game.taskNavButton,
+    game.resultMainButton,
+    game.resultUpgradeButton,
+    game.speedButton,
+    game.cashierButton,
+    game.finishButton,
+    game.restaurantUpgradeButton
+  ].filter(Boolean);
 }
 
 async function verifySessionNotReady(HachimiRestaurantGame, ApiRequestError, cc) {

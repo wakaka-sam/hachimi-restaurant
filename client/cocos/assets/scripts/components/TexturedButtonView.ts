@@ -15,6 +15,9 @@ export class TexturedButtonView extends Component {
   label: Label | null = null;
 
   render(textures: TextureCatalog): void {
+    if (this.button) {
+      this.button.transition = Button.Transition.NONE;
+    }
     if (this.backgroundSprite) {
       const interactable = this.button?.interactable ?? true;
       this.backgroundSprite.spriteFrame = interactable ? textures.button : textures.buttonDisabled;

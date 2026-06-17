@@ -103,6 +103,7 @@ addCheck('web star state textures', 'client/web/main.js', ['starEmpty', 'icon-st
 addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'background-image: url("/textures/card.png")', 'guide-focus.png']);
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
 addCheck('cocos screen navigation buttons', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton', 'renderNavigation']);
+addCheck('cocos controller disables button transitions', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['configureButtonTransitions', 'Button.Transition.NONE', 'startButton', 'restaurantUpgradeButton']);
 addCheck('cocos resumable session start button label', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['startButtonLabel', 'activeSession', '继续营业', '开始营业']);
 addCheck('cocos textured button refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedButtonView', 'texturedButtons', 'renderTexturedButtons']);
 addCheck('cocos textured panel refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedPanelView', 'texturedPanels', 'renderTexturedPanels']);
@@ -139,7 +140,10 @@ addCheck('cocos part status component', 'client/cocos/assets/scripts/components/
 addCheck('cocos part upgrade required details', 'client/cocos/assets/scripts/components/PartUpgradeView.ts', ['@ccclass', 'PartUpgradeView', 'costLabel', 'effectLabel', 'buttonLabel', '还差', '已满星', '满星', 'profile.partEffects', 'getStarFrame']);
 addCheck('cocos task type label component', 'client/cocos/assets/scripts/components/TaskItemView.ts', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('cocos task section headers', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel', 'renderTaskSectionHeader', 'TASK_TYPES', 'TASK_TYPE_LABELS', '可领']);
-addCheck('cocos textured button component', 'client/cocos/assets/scripts/components/TexturedButtonView.ts', ['@ccclass', 'TexturedButtonView', 'buttonDisabled', 'backgroundSprite']);
+addCheck('cocos textured button component', 'client/cocos/assets/scripts/components/TexturedButtonView.ts', ['@ccclass', 'TexturedButtonView', 'buttonDisabled', 'backgroundSprite', 'Button.Transition.NONE']);
+addCheck('cocos interactive components disable button transitions', 'client/cocos/assets/scripts/components/TableSlotView.ts', ['button.transition', 'Button.Transition.NONE']);
+addCheck('cocos upgrade buttons disable transitions', 'client/cocos/assets/scripts/components/PartUpgradeView.ts', ['upgradeButton.transition', 'Button.Transition.NONE']);
+addCheck('cocos task buttons disable transitions', 'client/cocos/assets/scripts/components/TaskItemView.ts', ['claimButton.transition', 'Button.Transition.NONE']);
 addCheck('cocos textured panel component', 'client/cocos/assets/scripts/components/TexturedPanelView.ts', ['@ccclass', 'TexturedPanelView', 'backgroundSprite', 'panelTexture', 'guideFocus', 'requireTexture']);
 addCheck('cocos mobile safe area component', 'client/cocos/assets/scripts/components/MobileSafeAreaView.ts', ['@ccclass', 'MobileSafeAreaView', 'SafeArea', 'Widget', 'ON_WINDOW_RESIZE', 'minTouchInset', 'safeArea.updateArea()', 'Math.max(widget.top']);
 addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView', 'TexturedPanelView']);
@@ -187,7 +191,7 @@ addCheck('api documented expired submitted summary settlement', 'docs/api.md', [
 addCheck('api documented completion target', 'docs/api.md', ['completionScore = clamp(customersServed / 12', 'normal service target']);
 addCheck('api documented normal reward center', 'docs/api.md', ['normal 10-customer', 'about one `upgradeCost`']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
-addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'border-radius\\s*:', 'animation\\s*:', '@keyframes', 'scale\\s*\\(', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'UIOpacity', '.color\\s*=', 'validateCssTextureBackgrounds']);
+addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'border-radius\\s*:', 'animation\\s*:', '@keyframes', 'scale\\s*\\(', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'UIOpacity', '.color\\s*=', 'Button\\.Transition\\.(COLOR|SPRITE|SCALE)', 'validateCssTextureBackgrounds']);
 addCheck('texture policy verifies PNG dimensions', 'scripts/verify-texture-policy.mjs', ['expectedTextureDimensions', 'validatePngDimensions', 'fixed dimensions']);
 
 for (const check of checks) {

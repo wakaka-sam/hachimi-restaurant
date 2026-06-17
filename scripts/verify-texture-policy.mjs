@@ -13,7 +13,7 @@ const runtimeFiles = (await Promise.all(runtimeRoots.map((root) => listRuntimeFi
 const textureDir = 'client/assets/textures';
 const cocosTextureDir = 'client/cocos/assets/textures';
 const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|border-radius\s*:|animation\s*:|@keyframes|scale\s*\(|filter\s*:|\.grayscale\b|grayscale\s*=|opacity\s*:/i;
-const forbiddenCocosRuntimePattern = /\bUIOpacity\b|\.opacity\s*=|\.color\s*=|\bnew\s+Color\s*\(|[,{]\s*Color\s*[,}]/;
+const forbiddenCocosRuntimePattern = /\bUIOpacity\b|\.opacity\s*=|\.color\s*=|\bnew\s+Color\s*\(|[,{]\s*Color\s*[,}]|Button\.Transition\.(COLOR|SPRITE|SCALE)/;
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 const expectedTextureDimensions = {
   'button-disabled.png': [420, 120],

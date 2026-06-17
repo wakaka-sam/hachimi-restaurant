@@ -191,6 +191,7 @@ export class HachimiRestaurantGame extends Component {
 
   onLoad(): void {
     this.api = new ApiClient(this.apiBaseUrl);
+    this.configureButtonTransitions();
     this.startButton?.node.on(Button.EventType.CLICK, this.startBusiness, this);
     this.mainNavButton?.node.on(Button.EventType.CLICK, this.showMain, this);
     this.upgradeNavButton?.node.on(Button.EventType.CLICK, this.showUpgrade, this);
@@ -566,10 +567,30 @@ export class HachimiRestaurantGame extends Component {
   }
 
   private renderTexturedButtons(): void {
+    this.configureButtonTransitions();
     if (!this.textures) {
       return;
     }
     this.texturedButtons.forEach((view) => view.render(this.textures!));
+  }
+
+  private configureButtonTransitions(): void {
+    [
+      this.startButton,
+      this.mainNavButton,
+      this.upgradeNavButton,
+      this.taskNavButton,
+      this.resultMainButton,
+      this.resultUpgradeButton,
+      this.speedButton,
+      this.cashierButton,
+      this.finishButton,
+      this.restaurantUpgradeButton
+    ].forEach((button) => {
+      if (button) {
+        button.transition = Button.Transition.NONE;
+      }
+    });
   }
 
   private renderTexturedPanels(): void {

@@ -31,6 +31,9 @@ export class TaskItemView extends Component {
 
   bind(onClaim: (taskId: string) => void): void {
     this.onClaim = onClaim;
+    if (this.claimButton) {
+      this.claimButton.transition = Button.Transition.NONE;
+    }
     this.claimButton?.node.on(Button.EventType.CLICK, this.handleClick, this);
   }
 
@@ -55,6 +58,7 @@ export class TaskItemView extends Component {
       this.buttonLabel.string = task.claimed ? '已领取' : '领取';
     }
     if (this.claimButton) {
+      this.claimButton.transition = Button.Transition.NONE;
       this.claimButton.interactable = task.completed && !task.claimed;
     }
   }

@@ -30,6 +30,9 @@ export class PartUpgradeView extends Component {
   bind(part: PartKey, onUpgrade: (part: PartKey) => void): void {
     this.part = part;
     this.onUpgrade = onUpgrade;
+    if (this.upgradeButton) {
+      this.upgradeButton.transition = Button.Transition.NONE;
+    }
     this.upgradeButton?.node.on(Button.EventType.CLICK, this.handleClick, this);
   }
 
@@ -53,6 +56,7 @@ export class PartUpgradeView extends Component {
       sprite.node.active = true;
     });
     if (this.upgradeButton) {
+      this.upgradeButton.transition = Button.Transition.NONE;
       this.upgradeButton.interactable = !maxed && profile.player.coins >= cost;
     }
     if (this.buttonLabel) {
