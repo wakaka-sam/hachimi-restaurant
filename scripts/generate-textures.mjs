@@ -196,28 +196,109 @@ function drawPanel(width, height, base = colors.warmPanel) {
   return image;
 }
 
-function drawRestaurantBackground() {
-  const image = createImage(720, 1280, colors.cream);
-  rect(image, 0, 0, 720, 690, [255, 227, 190, 255]);
+function drawRestaurantBackground(stage = 1) {
+  const variants = {
+    1: {
+      base: colors.cream,
+      wall: [255, 227, 190, 255],
+      wallLine: [236, 190, 148, 255],
+      wallAccent: [248, 210, 170, 255],
+      floor: [214, 160, 102, 255],
+      floorLine: [158, 105, 62, 255],
+      floorAccent: [186, 126, 72, 255],
+      sign: [178, 112, 64, 255],
+      signFace: [255, 239, 204, 255],
+      extra: 'starter'
+    },
+    2: {
+      base: [234, 247, 232, 255],
+      wall: [209, 234, 217, 255],
+      wallLine: [154, 202, 174, 255],
+      wallAccent: [232, 250, 235, 255],
+      floor: [188, 151, 105, 255],
+      floorLine: [124, 96, 67, 255],
+      floorAccent: [218, 178, 119, 255],
+      sign: [72, 132, 104, 255],
+      signFace: [247, 246, 210, 255],
+      extra: 'garden'
+    },
+    3: {
+      base: [236, 230, 249, 255],
+      wall: [216, 205, 239, 255],
+      wallLine: [161, 138, 194, 255],
+      wallAccent: [244, 238, 255, 255],
+      floor: [132, 92, 74, 255],
+      floorLine: [76, 48, 41, 255],
+      floorAccent: [173, 125, 92, 255],
+      sign: [84, 63, 121, 255],
+      signFace: [255, 236, 168, 255],
+      extra: 'deluxe'
+    }
+  };
+  const theme = variants[Math.max(1, Math.min(3, stage))];
+  const image = createImage(720, 1280, theme.base);
+  rect(image, 0, 0, 720, 690, theme.wall);
   for (let y = 42; y < 690; y += 84) {
-    line(image, 0, y, 720, y, 3, [236, 190, 148, 255]);
+    line(image, 0, y, 720, y, 3, theme.wallLine);
   }
   for (let x = -80; x < 760; x += 120) {
-    line(image, x, 0, x + 120, 690, 2, [248, 210, 170, 255]);
+    line(image, x, 0, x + 120, 690, 2, theme.wallAccent);
   }
-  rect(image, 0, 690, 720, 590, [214, 160, 102, 255]);
+  rect(image, 0, 690, 720, 590, theme.floor);
   for (let y = 720; y < 1280; y += 86) {
-    line(image, 0, y, 720, y - 50, 4, [158, 105, 62, 255]);
+    line(image, 0, y, 720, y - 50, 4, theme.floorLine);
   }
   for (let x = -120; x < 780; x += 120) {
-    line(image, x, 690, x + 120, 1280, 3, [186, 126, 72, 255]);
+    line(image, x, 690, x + 120, 1280, 3, theme.floorAccent);
   }
-  roundedRect(image, 46, 84, 628, 160, 36, [178, 112, 64, 255]);
-  roundedRect(image, 68, 106, 584, 116, 26, [255, 239, 204, 255]);
+  if (theme.extra === 'garden') {
+    roundedRect(image, 78, 292, 146, 116, 20, [92, 147, 132, 255]);
+    roundedRect(image, 90, 304, 122, 92, 14, [180, 225, 235, 255]);
+    line(image, 151, 306, 151, 394, 4, [92, 147, 132, 255]);
+    line(image, 92, 350, 210, 350, 4, [92, 147, 132, 255]);
+    roundedRect(image, 500, 292, 146, 116, 20, [92, 147, 132, 255]);
+    roundedRect(image, 512, 304, 122, 92, 14, [180, 225, 235, 255]);
+    line(image, 573, 306, 573, 394, 4, [92, 147, 132, 255]);
+    line(image, 514, 350, 632, 350, 4, [92, 147, 132, 255]);
+    rect(image, 94, 604, 70, 76, [119, 72, 49, 255]);
+    circle(image, 128, 586, 38, [82, 157, 87, 255]);
+    circle(image, 92, 606, 28, [103, 179, 94, 255]);
+    circle(image, 168, 608, 28, [103, 179, 94, 255]);
+    rect(image, 556, 604, 70, 76, [119, 72, 49, 255]);
+    circle(image, 590, 586, 38, [82, 157, 87, 255]);
+    circle(image, 554, 606, 28, [103, 179, 94, 255]);
+    circle(image, 630, 608, 28, [103, 179, 94, 255]);
+  } else if (theme.extra === 'deluxe') {
+    rect(image, 0, 612, 720, 34, [111, 73, 64, 255]);
+    for (let x = 58; x < 720; x += 116) {
+      line(image, x, 28, x + 42, 690, 3, [235, 224, 255, 160]);
+      circle(image, x + 18, 320, 8, [255, 221, 115, 255]);
+      circle(image, x + 18, 320, 4, [255, 249, 202, 255]);
+    }
+    circle(image, 360, 344, 38, [255, 221, 115, 255]);
+    line(image, 360, 244, 360, 344, 5, [111, 73, 64, 255]);
+    line(image, 312, 374, 408, 374, 5, [111, 73, 64, 255]);
+    circle(image, 312, 386, 12, [255, 238, 154, 255]);
+    circle(image, 408, 386, 12, [255, 238, 154, 255]);
+    roundedRect(image, 44, 520, 130, 92, 18, [111, 73, 64, 255]);
+    roundedRect(image, 58, 532, 102, 68, 12, [255, 232, 189, 255]);
+    roundedRect(image, 546, 520, 130, 92, 18, [111, 73, 64, 255]);
+    roundedRect(image, 560, 532, 102, 68, 12, [255, 232, 189, 255]);
+  }
+  roundedRect(image, 46, 84, 628, 160, 36, theme.sign);
+  roundedRect(image, 68, 106, 584, 116, 26, theme.signFace);
   circle(image, 360, 162, 32, [255, 210, 104, 255]);
   circle(image, 342, 152, 7, colors.darkBrown);
   circle(image, 378, 152, 7, colors.darkBrown);
   ellipse(image, 360, 177, 22, 10, [231, 122, 96, 255]);
+  if (stage >= 2) {
+    circle(image, 282, 162, 18, [255, 210, 104, 255]);
+    circle(image, 438, 162, 18, [255, 210, 104, 255]);
+  }
+  if (stage >= 3) {
+    roundedRect(image, 246, 122, 228, 18, 9, [255, 221, 115, 255]);
+    roundedRect(image, 230, 202, 260, 16, 8, [255, 221, 115, 255]);
+  }
   return image;
 }
 
@@ -313,7 +394,10 @@ function drawIcon(kind) {
   return image;
 }
 
-await save('restaurant-bg.png', drawRestaurantBackground());
+await save('restaurant-bg.png', drawRestaurantBackground(1));
+await save('restaurant-bg-stage-1.png', drawRestaurantBackground(1));
+await save('restaurant-bg-stage-2.png', drawRestaurantBackground(2));
+await save('restaurant-bg-stage-3.png', drawRestaurantBackground(3));
 await save('panel.png', drawPanel(640, 220));
 await save('card.png', drawPanel(520, 260, [255, 238, 194, 255]));
 await save('button.png', drawPanel(420, 120, [255, 195, 82, 255]));

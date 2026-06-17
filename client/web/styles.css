@@ -13,7 +13,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background-image: url("/textures/restaurant-bg.png");
+  background-image: url("/textures/restaurant-bg-stage-1.png");
   background-position: center top;
   background-size: cover;
   overscroll-behavior: none;
@@ -176,7 +176,7 @@ button {
 
 .restaurant-scene,
 .business-scene {
-  background-image: url("/textures/restaurant-bg.png");
+  background-image: url("/textures/restaurant-bg-stage-1.png");
   background-size: cover;
   background-position: center top;
 }

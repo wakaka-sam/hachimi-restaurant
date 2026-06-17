@@ -80,6 +80,9 @@ export class HachimiRestaurantGame extends Component {
   restaurantUpgradeButton: Button | null = null;
 
   @property(Sprite)
+  restaurantBackgroundSprite: Sprite | null = null;
+
+  @property(Sprite)
   cashierSprite: Sprite | null = null;
 
   @property([TableSlotView])
@@ -253,6 +256,7 @@ export class HachimiRestaurantGame extends Component {
   }
 
   private renderAll(): void {
+    this.renderRestaurantBackground();
     this.renderHeader();
     this.renderGuide();
     this.renderBusiness();
@@ -275,6 +279,13 @@ export class HachimiRestaurantGame extends Component {
         this.profile.activeSession || this.profile.player.stamina >= CONSTANTS.sessionStaminaCost
       );
     }
+  }
+
+  private renderRestaurantBackground(): void {
+    if (!this.profile || !this.textures || !this.restaurantBackgroundSprite) {
+      return;
+    }
+    this.restaurantBackgroundSprite.spriteFrame = this.textures.getRestaurantBackground(this.profile.player.restaurantLevel);
   }
 
   private renderBusiness(): void {

@@ -7,6 +7,9 @@ export class TextureCatalog extends Component {
   @property(SpriteFrame)
   restaurantBackground: SpriteFrame | null = null;
 
+  @property([SpriteFrame])
+  restaurantBackgrounds: SpriteFrame[] = [];
+
   @property(SpriteFrame)
   panel: SpriteFrame | null = null;
 
@@ -52,5 +55,17 @@ export class TextureCatalog extends Component {
       throw new Error(`TextureCatalog missing SpriteFrame: ${String(name)}`);
     }
     return value as SpriteFrame;
+  }
+
+  getRestaurantBackground(restaurantLevel: number): SpriteFrame {
+    const frames = this.restaurantBackgrounds.length > 0
+      ? this.restaurantBackgrounds
+      : this.restaurantBackground ? [this.restaurantBackground] : [];
+    const index = Math.min(frames.length - 1, Math.max(0, restaurantLevel - 1));
+    const frame = frames[index];
+    if (!frame) {
+      throw new Error('TextureCatalog missing restaurant background SpriteFrame.');
+    }
+    return frame;
   }
 }

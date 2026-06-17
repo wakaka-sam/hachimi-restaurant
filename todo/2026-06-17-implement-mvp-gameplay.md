@@ -74,6 +74,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Upgrade a part.
   - Claim guide task reward.
 - Added matching guide label/message support to the Cocos controller and scene wiring contract.
+- Added three restaurant background stage textures so overall restaurant upgrades visibly improve the dining room:
+  - Level 1 uses the starter restaurant.
+  - Level 2 uses the garden restaurant.
+  - Level 3+ uses the deluxe restaurant.
+- Wired restaurant stage textures into the Web prototype, Cocos texture catalog, and Cocos scene wiring contract.
 
 ## Remaining Work
 
@@ -91,6 +96,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared economy, stamina, and performance formulas.
   - Web core screens and service chain.
   - Web first-run guide highlights.
+  - Web and Cocos restaurant visual stage wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos guide label wiring.
   - Required PNG texture presence in both Web and Cocos asset trees.

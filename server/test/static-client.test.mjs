@@ -31,7 +31,7 @@ test('backend serves the texture-based Web prototype and PNG assets', async (t) 
 
   const css = await fetch(`${baseUrl}/styles.css`);
   assert.equal(css.status, 200);
-  assert.match(await css.text(), /restaurant-bg\.png/);
+  assert.match(await css.text(), /restaurant-bg-stage-1\.png/);
 
   const texture = await fetch(`${baseUrl}/textures/customer-cat.png`);
   assert.equal(texture.status, 200);

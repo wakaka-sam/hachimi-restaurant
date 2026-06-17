@@ -9,6 +9,11 @@ const PLAYER_ID = localStorage.getItem('hachimi-player-id') || crypto.randomUUID
 localStorage.setItem('hachimi-player-id', PLAYER_ID);
 
 const textures = {
+  restaurantBackgrounds: [
+    '/textures/restaurant-bg-stage-1.png',
+    '/textures/restaurant-bg-stage-2.png',
+    '/textures/restaurant-bg-stage-3.png'
+  ],
   coin: '/textures/icon-coin.png',
   stamina: '/textures/icon-stamina.png',
   star: '/textures/icon-star.png',
@@ -121,6 +126,7 @@ function render() {
     return;
   }
 
+  document.body.style.backgroundImage = `url("${getRestaurantBackgroundUrl()}")`;
   app.append(renderTopBar());
 
   if (state.message) {
@@ -186,7 +192,7 @@ function setScreen(screen) {
 function renderMainScene() {
   const { player, activeSession } = state.profile;
   const guide = getGuideStep();
-  return h('section', { class: 'scene restaurant-scene' },
+  return h('section', getRestaurantSceneAttrs('scene restaurant-scene'),
     h('div', { class: 'status-grid' }, PARTS.map((part) => h('div', { class: 'part-chip' },
       h('div', {}, PART_LABELS[part]),
       renderStars(player.parts[part])
@@ -361,7 +367,7 @@ function renderBusinessScreen() {
   }
 
   const guide = getGuideStep();
-  return h('section', { class: 'scene business-scene' },
+  return h('section', getRestaurantSceneAttrs('scene business-scene'),
     h('div', { class: 'business-hud' },
       h('span', { class: 'timer-pill' }, `剩余 ${Math.ceil(game.timeLeft)}s`),
       h('span', { class: 'timer-pill' }, game.session.speedMode),
@@ -692,4 +698,25 @@ function getGuideStep() {
   }
 
   return null;
+}
+
+function getRestaurantStageIndex(profile = state.profile) {
+  if (!profile) {
+    return 0;
+  }
+  const level = Math.max(1, profile.player.restaurantLevel || 1);
+  return Math.min(textures.restaurantBackgrounds.length - 1, level - 1);
+}
+
+function getRestaurantBackgroundUrl(profile = state.profile) {
+  return textures.restaurantBackgrounds[getRestaurantStageIndex(profile)];
+}
+
+function getRestaurantSceneAttrs(className) {
+  const stage = getRestaurantStageIndex() + 1;
+  return {
+    class: className,
+    style: `background-image: url("${getRestaurantBackgroundUrl()}")`,
+    dataset: { restaurantStage: String(stage) }
+  };
 }

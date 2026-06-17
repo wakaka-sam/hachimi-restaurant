@@ -27,6 +27,7 @@
   },
   "textureCatalog": [
     "restaurantBackground",
+    "restaurantBackgrounds",
     "panel",
     "card",
     "button",
@@ -43,6 +44,9 @@
   ],
   "textureFiles": [
     "restaurant-bg.png",
+    "restaurant-bg-stage-1.png",
+    "restaurant-bg-stage-2.png",
+    "restaurant-bg-stage-3.png",
     "panel.png",
     "card.png",
     "button.png",
@@ -71,6 +75,11 @@
     "businessStatsLabel",
     "resultLabel",
     "guideLabel"
+  ],
+  "sprites": [
+    "restaurantBackgroundSprite",
+    "cashierSprite",
+    "waitingCustomerSprites"
   ],
   "buttons": [
     "startButton",
