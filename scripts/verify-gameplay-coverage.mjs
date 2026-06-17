@@ -29,10 +29,12 @@ addCheck('backend part upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/p
 addCheck('backend restaurant upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/restaurant']);
 addCheck('backend task claim endpoint', 'server/src/app.mjs', ['/api/tasks/claim']);
 addCheck('backend active session remaining time', 'server/src/app.mjs', ['serializeBusinessSession', 'remainingSeconds', 'recoveryWindowSeconds']);
+addCheck('backend profile stamina recovery status', 'server/src/app.mjs', ['getStaminaRecovery', 'staminaRecovery']);
 addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_READY', 'getMinimumSettlementRealSeconds', 'minimumRealSeconds']);
 addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', ['settleExpiredSessions', 'getExpiredActiveSessions', 'createExpiredSummary']);
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
+addCheck('shared stamina recovery status', 'shared/game-rules.mjs', ['getStaminaRecovery', 'secondsUntilNext', 'secondsUntilFull', 'nextRecoveryAt']);
 addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds', 'moveSpeedMultiplier']);
 addCheck('shared max session customer cap tests', 'server/test/game-rules.test.mjs', ['session summary validation enforces the 18 customer cap', 'too_many_customers']);
 addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.75', '1.3']);
@@ -44,6 +46,7 @@ addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "s
 addCheck('web 2x speed support', 'client/web/main.js', ["state.speedMode === '1x' ? '2x' : '1x'", "speedMode: state.speedMode", 'toggleBusinessSpeed', "game.speedMode === '1x' ? '2x' : '1x'"]);
 addCheck('web blocks manual early settlement', 'client/web/main.js', ["disabled: !game.finished"]);
 addCheck('web resumed session remaining time', 'client/web/main.js', ['session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
+addCheck('web stamina recovery display', 'client/web/main.js', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext']);
 addCheck('web click service chain', 'client/web/main.js', ['seatCustomer', "customer.phase = 'eating'", 'collectCustomer']);
 addCheck('web table countdown labels', 'client/web/main.js', ['formatSeconds', 'customer.phaseTime', 'customer.patience']);
 addCheck('web initial customer wave', 'client/web/main.js', ['tuning.initialCustomerCount', 'spawnCustomer']);
@@ -65,6 +68,7 @@ addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiR
 addCheck('cocos in-session speed toggle', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['toggleSpeed', 'simulation.toggleSpeedMode', 'simulation.speedMode']);
 addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable = simulation.finished']);
 addCheck('cocos resumed session remaining time', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
+addCheck('cocos stamina recovery display', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext']);
 addCheck('cocos restaurant visual stages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['restaurantBackgroundSprite', 'renderRestaurantBackground', 'getRestaurantBackground']);
 addCheck('cocos business feedback labels', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['satisfactionLabel', 'feedbackLabel', 'satisfactionPercent', 'lastFeedback']);
 addCheck('cocos main part status views', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['PartStatusView', 'partStatusViews', 'renderPartStatus']);
@@ -91,6 +95,7 @@ addCheck('product documented initial customer wave', 'docs/product.md', ['开场
 addCheck('product documented waiting queue cap', 'docs/product.md', ['等待队列最多显示 4 位顾客']);
 addCheck('product documented table countdown feedback', 'docs/product.md', ['餐桌状态需要显示阶段剩余时间或耐心倒计时']);
 addCheck('product documented max session customer cap', 'docs/product.md', ['每局 18 位顾客上限', '后端不可结算']);
+addCheck('product documented backend stamina recovery display', 'docs/product.md', ['下一点体力倒计时', '后端返回的恢复状态']);
 
 for (const check of checks) {
   let source = '';

@@ -11,6 +11,7 @@ import {
   calculateReward,
   getEconomy,
   getPartEffectDescription,
+  getStaminaRecovery,
   getTaskStatuses,
   getTuning,
   normalizeSessionSummary,
@@ -194,6 +195,7 @@ function serializeProfile(player, store, now = new Date()) {
       stats: player.stats,
       daily: player.daily
     },
+    staminaRecovery: getStaminaRecovery(player, now),
     economy,
     partLabels: PART_LABELS,
     partEffects: Object.fromEntries(PARTS.map((part) => [part, getPartEffectDescription(part, player)])),

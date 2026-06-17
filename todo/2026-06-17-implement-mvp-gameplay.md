@@ -95,6 +95,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added speed-neutral reward verification:
   - Rule tests now prove identical 1x/2x summaries produce the same reward and performance factor.
   - Static coverage tracks the speed-neutral reward regression test.
+- Added backend stamina recovery status:
+  - Shared rules expose next stamina recovery countdown, full recovery countdown, and recovery timestamps from backend time.
+  - Profile responses include `staminaRecovery` so clients do not infer recovery from local-only time.
+  - Cocos and Web debug top bars display the backend-provided next stamina recovery countdown.
 - Improved中断恢复:
   - Backend active session responses include elapsed/remaining game seconds and recovery window.
   - 2x sessions use a shorter real-time active window while preserving the 2-minute recovery window.
@@ -162,10 +166,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 24 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 26 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
+  - Backend stamina recovery status and client countdown display.
   - Speed-neutral 1x/2x reward calculation.
   - Shared营业密度 tuning.
   - Shared max-session customer cap validation.

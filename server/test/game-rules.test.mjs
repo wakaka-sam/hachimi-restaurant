@@ -6,6 +6,7 @@ import {
   createDefaultPlayer,
   getEconomy,
   getEffectivePartStars,
+  getStaminaRecovery,
   getTuning,
   calculateReward,
   normalizeSessionSummary,
@@ -180,4 +181,25 @@ test('stamina recovers by backend time and caps at 60', () => {
 
   refreshStamina(player, new Date('2026-06-17T06:00:00.000Z'));
   assert.equal(player.stamina, 60);
+});
+
+test('stamina recovery status exposes backend countdowns', () => {
+  const player = createDefaultPlayer('stamina-recovery-test', new Date('2026-06-17T00:00:00.000Z'));
+  player.stamina = 50;
+  player.staminaUpdatedAt = '2026-06-17T00:00:00.000Z';
+
+  const recovery = getStaminaRecovery(player, new Date('2026-06-17T00:02:10.000Z'));
+
+  assert.equal(recovery.isFull, false);
+  assert.equal(recovery.recoverIntervalSeconds, 300);
+  assert.equal(recovery.secondsUntilNext, 170);
+  assert.equal(recovery.secondsUntilFull, 2870);
+  assert.equal(recovery.nextRecoveryAt, '2026-06-17T00:05:00.000Z');
+  assert.equal(recovery.fullRecoveryAt, '2026-06-17T00:50:00.000Z');
+
+  player.stamina = 60;
+  const full = getStaminaRecovery(player, new Date('2026-06-17T00:02:10.000Z'));
+  assert.equal(full.isFull, true);
+  assert.equal(full.nextRecoveryAt, null);
+  assert.equal(full.fullRecoveryAt, null);
 });

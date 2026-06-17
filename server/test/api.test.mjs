@@ -199,6 +199,30 @@ test('API profile exposes all MVP guide, daily, and growth tasks', async (t) => 
   }
 });
 
+test('API profile exposes backend stamina recovery status', async (t) => {
+  const { app, store, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const player = store.getPlayer('api-test-player');
+  player.stamina = 50;
+  player.staminaUpdatedAt = new Date(Date.now() - 120_000).toISOString();
+
+  const profile = await request(baseUrl, '/api/player/profile');
+
+  assert.equal(profile.status, 200);
+  assert.equal(profile.body.profile.player.stamina, 50);
+  assert.equal(profile.body.profile.staminaRecovery.isFull, false);
+  assert.equal(profile.body.profile.staminaRecovery.recoverIntervalSeconds, 300);
+  assert.ok(profile.body.profile.staminaRecovery.secondsUntilNext > 0);
+  assert.ok(profile.body.profile.staminaRecovery.secondsUntilNext <= 180);
+  assert.ok(
+    profile.body.profile.staminaRecovery.secondsUntilFull
+      > profile.body.profile.staminaRecovery.secondsUntilNext
+  );
+  assert.ok(profile.body.profile.staminaRecovery.nextRecoveryAt);
+  assert.ok(profile.body.profile.staminaRecovery.fullRecoveryAt);
+});
+
 test('API prevents double settlement of a business session', async (t) => {
   const { app, store, baseUrl } = await startTestServer();
   t.after(() => app.close());

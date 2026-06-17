@@ -28,8 +28,18 @@ export interface EconomyState {
   upgradeCost: number;
 }
 
+export interface StaminaRecoveryState {
+  isFull: boolean;
+  recoverIntervalSeconds: number;
+  secondsUntilNext: number;
+  secondsUntilFull: number;
+  nextRecoveryAt: string | null;
+  fullRecoveryAt: string | null;
+}
+
 export interface ProfileState {
   player: PlayerState;
+  staminaRecovery?: StaminaRecoveryState;
   economy: EconomyState;
   partLabels: Record<PartKey, string>;
   partEffects: Record<PartKey, string>;

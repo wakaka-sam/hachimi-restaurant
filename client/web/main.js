@@ -165,10 +165,27 @@ function renderTopBar() {
     ),
     h('div', { class: 'stats-row' },
       h('span', { class: 'stat-pill' }, h('img', { class: 'stat-icon', src: textures.coin, alt: '' }), player.coins),
-      h('span', { class: 'stat-pill' }, h('img', { class: 'stat-icon', src: textures.stamina, alt: '' }), `${player.stamina}/${player.staminaMax}`),
+      h('span', { class: 'stat-pill' }, h('img', { class: 'stat-icon', src: textures.stamina, alt: '' }), formatStaminaLabel()),
       h('span', { class: 'stat-pill' }, `下次 ${economy.expectedRevenue}`)
     )
   );
+}
+
+function formatStaminaLabel() {
+  const { player, staminaRecovery } = state.profile;
+  const base = `${player.stamina}/${player.staminaMax}`;
+  if (!staminaRecovery || staminaRecovery.isFull) {
+    return base;
+  }
+  return `${base} · ${formatShortDuration(staminaRecovery.secondsUntilNext)}`;
+}
+
+function formatShortDuration(seconds) {
+  const safeSeconds = Math.max(0, Math.ceil(seconds));
+  if (safeSeconds >= 60) {
+    return `${Math.ceil(safeSeconds / 60)}m`;
+  }
+  return `${safeSeconds}s`;
 }
 
 function renderNavigation(guide = null) {

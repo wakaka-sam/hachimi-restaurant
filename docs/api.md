@@ -92,7 +92,13 @@ Response includes:
 
 ```text
 player
-stamina recovery status
+staminaRecovery:
+  isFull
+  recoverIntervalSeconds
+  secondsUntilNext
+  secondsUntilFull
+  nextRecoveryAt
+  fullRecoveryAt
 restaurant level
 part stars
 current upgrade cost

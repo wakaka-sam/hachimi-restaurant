@@ -322,7 +322,7 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
     if (this.coinLabel) this.coinLabel.string = `${this.profile.player.coins}`;
-    if (this.staminaLabel) this.staminaLabel.string = `${this.profile.player.stamina}/${this.profile.player.staminaMax}`;
+    if (this.staminaLabel) this.staminaLabel.string = this.formatStaminaLabel();
     if (this.levelLabel) this.levelLabel.string = `餐厅 Lv.${this.profile.player.restaurantLevel}`;
     if (this.nextRevenueLabel) this.nextRevenueLabel.string = `下次 ${this.profile.economy.expectedRevenue}`;
     if (this.speedLabel) this.speedLabel.string = this.speedMode;
@@ -501,5 +501,25 @@ export class HachimiRestaurantGame extends Component {
 
   private formatError(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
+  }
+
+  private formatStaminaLabel(): string {
+    if (!this.profile) {
+      return '';
+    }
+    const base = `${this.profile.player.stamina}/${this.profile.player.staminaMax}`;
+    const recovery = this.profile.staminaRecovery;
+    if (!recovery || recovery.isFull) {
+      return base;
+    }
+    return `${base} · ${this.formatShortDuration(recovery.secondsUntilNext)}`;
+  }
+
+  private formatShortDuration(seconds: number): string {
+    const safeSeconds = Math.max(0, Math.ceil(seconds));
+    if (safeSeconds >= 60) {
+      return `${Math.ceil(safeSeconds / 60)}m`;
+    }
+    return `${safeSeconds}s`;
   }
 }

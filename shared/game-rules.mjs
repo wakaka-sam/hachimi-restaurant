@@ -273,6 +273,41 @@ export function refreshStamina(player, now = new Date()) {
   return player;
 }
 
+export function getStaminaRecovery(player, now = new Date()) {
+  normalizePlayer(player, now);
+  const recoverIntervalSeconds = Math.round(CONSTANTS.staminaRecoverMs / 1000);
+
+  if (player.stamina >= CONSTANTS.staminaMax) {
+    return {
+      isFull: true,
+      recoverIntervalSeconds,
+      secondsUntilNext: 0,
+      secondsUntilFull: 0,
+      nextRecoveryAt: null,
+      fullRecoveryAt: null
+    };
+  }
+
+  const nowMs = new Date(now).getTime();
+  const updatedMs = new Date(player.staminaUpdatedAt).getTime();
+  const elapsedMs = Math.max(0, nowMs - updatedMs);
+  const remainderMs = elapsedMs % CONSTANTS.staminaRecoverMs;
+  const secondsUntilNext = elapsedMs >= CONSTANTS.staminaRecoverMs
+    ? 0
+    : Math.ceil((CONSTANTS.staminaRecoverMs - remainderMs) / 1000);
+  const missingStamina = Math.max(0, CONSTANTS.staminaMax - player.stamina);
+  const secondsUntilFull = secondsUntilNext + Math.max(0, missingStamina - 1) * recoverIntervalSeconds;
+
+  return {
+    isFull: false,
+    recoverIntervalSeconds,
+    secondsUntilNext,
+    secondsUntilFull,
+    nextRecoveryAt: toIso(nowMs + secondsUntilNext * 1000),
+    fullRecoveryAt: toIso(nowMs + secondsUntilFull * 1000)
+  };
+}
+
 export function getIncomePower(player) {
   normalizePlayer(player);
   const partStars = PARTS.reduce((sum, part) => sum + player.parts[part], 0);
