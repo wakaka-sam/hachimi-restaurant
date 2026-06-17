@@ -114,6 +114,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared task statuses now expose `typeLabel` for guide, daily, and growth tasks.
   - Web debug task screen groups tasks by type.
   - Cocos `TaskItemView` can render the task type label for every task row.
+- Added daily task reset verification:
+  - Backend task tests now prove daily task claim keys are scoped by backend date.
+  - API tests prove a daily task cannot be claimed twice on the same backend date, but can be completed and claimed again the next day.
+  - Task reward claims remain auxiliary and do not change `incomePower`.
 - Reserved customer type data for future special guests:
   - MVP customers now carry `customerType: normal` in Cocos and the Web debug harness.
   - Session summaries preserve `customerTypes.normal` for backend records.
@@ -170,7 +174,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 27 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 29 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -185,6 +189,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend auto-settlement for expired active sessions.
   - Backend exposure of all guide, daily, and growth tasks.
   - Shared/Web/Cocos task type labels and grouping.
+  - Backend-date daily task reset and once-per-day claim protection.
   - Web core screens and service chain.
   - Web and Cocos initial customer wave wiring.
   - Web and Cocos manual early-settlement blocking.

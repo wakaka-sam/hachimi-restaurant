@@ -28,6 +28,8 @@ addCheck('backend session finish endpoint', 'server/src/app.mjs', ['/api/session
 addCheck('backend part upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/part']);
 addCheck('backend restaurant upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/restaurant']);
 addCheck('backend task claim endpoint', 'server/src/app.mjs', ['/api/tasks/claim']);
+addCheck('backend testable clock', 'server/src/app.mjs', ['nowProvider = () => new Date()', 'const now = nowProvider()']);
+addCheck('backend daily task claim reset test', 'server/test/api.test.mjs', ['API daily task claims reset by backend date', 'TASK_ALREADY_CLAIMED', '2026-06-18:daily_sessions_3']);
 addCheck('backend active session remaining time', 'server/src/app.mjs', ['serializeBusinessSession', 'remainingSeconds', 'recoveryWindowSeconds']);
 addCheck('backend profile stamina recovery status', 'server/src/app.mjs', ['getStaminaRecovery', 'staminaRecovery']);
 addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_READY', 'getMinimumSettlementRealSeconds', 'minimumRealSeconds']);
@@ -42,6 +44,7 @@ addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs',
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
 addCheck('shared task type labels', 'shared/game-rules.mjs', ['TASK_TYPE_LABELS', 'typeLabel']);
+addCheck('shared daily task claim keys', 'server/test/game-rules.test.mjs', ['daily task claim keys are scoped by backend date', '2026-06-17:daily_sessions_3', '2026-06-18:daily_sessions_3']);
 addCheck('server configurable Web static root', 'server/src/server.mjs', ['WEB_STATIC_ROOT', 'clientRoot']);
 addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "screen === 'business'", "screen === 'upgrade'", "screen === 'tasks'"]);
 addCheck('web 2x speed support', 'client/web/main.js', ["state.speedMode === '1x' ? '2x' : '1x'", "speedMode: state.speedMode", 'toggleBusinessSpeed', "game.speedMode === '1x' ? '2x' : '1x'"]);
@@ -101,6 +104,7 @@ addCheck('product documented table countdown feedback', 'docs/product.md', ['餐
 addCheck('product documented max session customer cap', 'docs/product.md', ['每局 18 位顾客上限', '后端不可结算']);
 addCheck('product documented backend stamina recovery display', 'docs/product.md', ['下一点体力倒计时', '后端返回的恢复状态']);
 addCheck('product documented task type separation', 'docs/product.md', ['明确区分引导任务、每日任务、成长任务']);
+addCheck('product documented daily task reset', 'docs/product.md', ['每日任务进度按后端日期刷新', '每天最多领取一次']);
 
 for (const check of checks) {
   let source = '';

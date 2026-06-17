@@ -5,9 +5,9 @@ import { createApp } from '../src/app.mjs';
 import { GameStore } from '../src/store.mjs';
 import { TASK_DEFINITIONS, TASK_TYPE_LABELS } from '../../shared/game-rules.mjs';
 
-async function startTestServer() {
+async function startTestServer(options = {}) {
   const store = await new GameStore().load();
-  const app = createApp({ store, rootDir: process.cwd() });
+  const app = createApp({ store, rootDir: process.cwd(), ...options });
   app.listen(0, '127.0.0.1');
   await once(app, 'listening');
   const { port } = app.address();
@@ -199,6 +199,59 @@ test('API profile exposes all MVP guide, daily, and growth tasks', async (t) => 
     );
     assert.equal(task.typeLabel, TASK_TYPE_LABELS[definition.type]);
   }
+});
+
+test('API daily task claims reset by backend date without changing income power', async (t) => {
+  let currentNow = new Date('2026-06-17T08:00:00.000Z');
+  const { app, store, baseUrl } = await startTestServer({ nowProvider: () => currentNow });
+  t.after(() => app.close());
+
+  const player = store.getPlayer('api-test-player', currentNow);
+  player.stamina = 40;
+  player.daily = {
+    date: '2026-06-17',
+    sessions: 3,
+    partUpgrades: 0,
+    coinsEarned: 0,
+    customersServed: 0
+  };
+
+  const firstClaim = await request(baseUrl, '/api/tasks/claim', {
+    method: 'POST',
+    body: { taskId: 'daily_sessions_3' }
+  });
+
+  assert.equal(firstClaim.status, 200);
+  assert.equal(firstClaim.body.claimedTask.claimKey, '2026-06-17:daily_sessions_3');
+  assert.equal(firstClaim.body.profile.economy.incomePower, 0);
+  assert.equal(firstClaim.body.profile.player.stats.totalTasksClaimed, 1);
+
+  const duplicateClaim = await request(baseUrl, '/api/tasks/claim', {
+    method: 'POST',
+    body: { taskId: 'daily_sessions_3' }
+  });
+
+  assert.equal(duplicateClaim.status, 400);
+  assert.equal(duplicateClaim.body.error.code, 'TASK_ALREADY_CLAIMED');
+
+  currentNow = new Date('2026-06-18T08:00:00.000Z');
+  player.daily = {
+    date: '2026-06-18',
+    sessions: 3,
+    partUpgrades: 0,
+    coinsEarned: 0,
+    customersServed: 0
+  };
+
+  const nextDayClaim = await request(baseUrl, '/api/tasks/claim', {
+    method: 'POST',
+    body: { taskId: 'daily_sessions_3' }
+  });
+
+  assert.equal(nextDayClaim.status, 200);
+  assert.equal(nextDayClaim.body.claimedTask.claimKey, '2026-06-18:daily_sessions_3');
+  assert.equal(nextDayClaim.body.profile.economy.incomePower, 0);
+  assert.equal(nextDayClaim.body.profile.player.stats.totalTasksClaimed, 2);
 });
 
 test('API profile exposes backend stamina recovery status', async (t) => {

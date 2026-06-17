@@ -31,7 +31,12 @@ const MIME_TYPES = {
   '.md': 'text/markdown; charset=utf-8'
 };
 
-export function createApp({ store, rootDir = process.cwd(), clientRoot: configuredClientRoot = null }) {
+export function createApp({
+  store,
+  rootDir = process.cwd(),
+  clientRoot: configuredClientRoot = null,
+  nowProvider = () => new Date()
+}) {
   const clientRoot = configuredClientRoot ? resolve(configuredClientRoot) : resolve(rootDir, 'client/web');
   const textureRoot = resolve(rootDir, 'client/assets/textures');
   const sharedRoot = resolve(rootDir, 'shared');
@@ -49,7 +54,7 @@ export function createApp({ store, rootDir = process.cwd(), clientRoot: configur
       const url = new URL(request.url, 'http://localhost');
 
       if (url.pathname.startsWith('/api/')) {
-        await handleApi(request, response, store, url);
+        await handleApi(request, response, store, url, nowProvider);
         return;
       }
 
@@ -111,9 +116,9 @@ async function serveStatic(response, root, requestedPath) {
   }
 }
 
-async function handleApi(request, response, store, url) {
+async function handleApi(request, response, store, url, nowProvider = () => new Date()) {
   const playerId = getPlayerId(request, url);
-  const now = new Date();
+  const now = nowProvider();
 
   if (request.method === 'GET' && url.pathname === '/api/health') {
     sendJson(response, 200, { ok: true, service: 'hachimi-restaurant', now: toIso(now) });

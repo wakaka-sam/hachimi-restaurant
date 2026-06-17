@@ -3,11 +3,13 @@ import assert from 'node:assert/strict';
 import {
   CONSTANTS,
   CUSTOMER_TYPES,
+  TASK_DEFINITIONS,
   TASK_TYPE_LABELS,
   createDefaultPlayer,
   getEconomy,
   getEffectivePartStars,
   getStaminaRecovery,
+  getTaskClaimKey,
   getTaskStatuses,
   getTuning,
   calculateReward,
@@ -186,6 +188,17 @@ test('task statuses expose guide daily and growth labels', () => {
     [...new Set(statuses.map((task) => task.typeLabel))].sort(),
     ['引导任务', '成长任务', '每日任务'].sort()
   );
+});
+
+test('daily task claim keys are scoped by backend date', () => {
+  const dailyTask = TASK_DEFINITIONS.find((task) => task.id === 'daily_sessions_3');
+  const guideTask = TASK_DEFINITIONS.find((task) => task.id === 'guide_first_session');
+
+  assert.ok(dailyTask);
+  assert.ok(guideTask);
+  assert.equal(getTaskClaimKey(dailyTask, new Date('2026-06-17T08:00:00.000Z')), '2026-06-17:daily_sessions_3');
+  assert.equal(getTaskClaimKey(dailyTask, new Date('2026-06-18T08:00:00.000Z')), '2026-06-18:daily_sessions_3');
+  assert.equal(getTaskClaimKey(guideTask, new Date('2026-06-18T08:00:00.000Z')), 'guide_first_session');
 });
 
 test('stamina recovers by backend time and caps at 60', () => {
