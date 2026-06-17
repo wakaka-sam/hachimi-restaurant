@@ -31,6 +31,8 @@ scripts/sync-cocos-textures.mjs # Copies PNG textures into the Cocos assets tree
 client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 ```
 
+`client/cocos/assets/scripts/core/GameRules.ts` mirrors the subset of shared constants and labels needed by the Cocos runtime. `npm run verify:rules` compares that mirror against `shared/game-rules.mjs`; update both files together when gameplay constants change.
+
 ## Data Authority
 
 The backend is authoritative for:

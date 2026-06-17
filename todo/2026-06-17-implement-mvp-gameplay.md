@@ -248,6 +248,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Invalid POST JSON now returns `INVALID_JSON` instead of falling through as an internal error.
   - Oversized JSON bodies now return `REQUEST_TOO_LARGE`.
   - API docs and tests cover these request boundary errors.
+- Added Cocos/shared gameplay rule drift verification:
+  - `npm run verify:rules` now compares the Cocos `GameRules.ts` mirror against `shared/game-rules.mjs`.
+  - The full `npm run verify` pipeline now fails if shared gameplay constants, labels, parts, customer types, or task types drift from the Cocos production client.
 
 ## Remaining Work
 
@@ -260,13 +263,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 46 Node tests, 149 gameplay coverage checks, and stricter static texture policy checks.
+- Current automated coverage: 46 Node tests, 152 gameplay coverage checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
   - Backend invalid/oversized JSON body errors.
   - Backend file-backed player/session persistence across store reloads.
   - Shared economy, stamina, and performance formulas.
+  - Cocos mirrored gameplay constants and labels stay aligned with shared backend rules.
   - Completion score calculated against the 12-customer normal service target.
   - Normal business performance stays close to one upgrade cost.
   - Backend stamina recovery status plus client next-stamina and full-recovery countdown display.

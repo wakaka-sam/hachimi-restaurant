@@ -45,6 +45,9 @@ addCheck('backend rejects invalid summary numeric bounds', 'server/test/api.test
 addCheck('server production Cocos Web root guard', 'server/src/config.mjs', ['NODE_ENV', 'production', 'WEB_STATIC_ROOT must point to Cocos Web build output']);
 addCheck('server production root guard test', 'server/test/static-client.test.mjs', ['production server config requires a Cocos Web static root', 'WEB_STATIC_ROOT must point to Cocos Web build output', "WEB_STATIC_ROOT: 'client/web'", "WEB_STATIC_ROOT: './client/web/build'"]);
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
+addCheck('cocos shared rules verifier', 'scripts/verify-cocos-shared-rules.mjs', ['createSourceFile', 'CLIENT_CONSTANT_KEYS', 'PART_LABELS', 'TASK_TYPE_LABELS']);
+addCheck('cocos shared rules verification command', 'package.json', ['verify:rules', 'verify:textures && npm run verify:rules']);
+addCheck('architecture documents Cocos rule mirror', 'docs/architecture.md', ['verify:rules', 'client/cocos/assets/scripts/core/GameRules.ts', 'shared/game-rules.mjs']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
 addCheck('shared stamina recovery status', 'shared/game-rules.mjs', ['getStaminaRecovery', 'secondsUntilNext', 'secondsUntilFull', 'nextRecoveryAt']);
 addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'normalCustomersPerSession: 12', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds', 'moveSpeedMultiplier']);
