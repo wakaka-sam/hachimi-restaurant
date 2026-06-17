@@ -78,6 +78,8 @@ Wire the navigation buttons to the controller properties instead of relying only
 - `resultMainButton`
 - `resultUpgradeButton`
 
+The task screen should provide three section header labels bound to `guideTaskHeaderLabel`, `dailyTaskHeaderLabel`, and `growthTaskHeaderLabel`. `HachimiRestaurantGame` renders guide, daily, and growth section counts from the backend task states so the Cocos task screen clearly separates task types in addition to each row's `typeLabel`.
+
 The first scene pass should provide at least 28 `TexturedButtonView` instances: 10 fixed screen/control buttons, 5 part-upgrade buttons, and 13 task claim buttons. If task rows become virtualized later, update `scene-wiring.json` and the verification rule in the same task.
 
 Each `PartUpgradeView` must wire `titleLabel`, `costLabel`, `effectLabel`, `starSprites`, `upgradeButton`, and `buttonLabel`. These fields carry the required upgrade-screen information: current star state, shared upgrade cost, insufficient coin shortage, next-star effect, and max-star state.

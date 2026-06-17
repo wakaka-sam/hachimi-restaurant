@@ -1,6 +1,16 @@
 import { _decorator, Button, Component, Label, Node, Sprite } from 'cc';
 import { BusinessSimulation } from './core/BusinessSimulation';
-import { CONSTANTS, PARTS, PartKey, ProfileState, SettlementState, SpeedMode } from './core/GameRules';
+import {
+  CONSTANTS,
+  PARTS,
+  PartKey,
+  ProfileState,
+  SettlementState,
+  SpeedMode,
+  TASK_TYPES,
+  TASK_TYPE_LABELS,
+  TaskType
+} from './core/GameRules';
 import { ApiClient } from './services/ApiClient';
 import { PartStatusView } from './components/PartStatusView';
 import { PartUpgradeView } from './components/PartUpgradeView';
@@ -71,6 +81,15 @@ export class HachimiRestaurantGame extends Component {
 
   @property(Label)
   guideLabel: Label | null = null;
+
+  @property(Label)
+  guideTaskHeaderLabel: Label | null = null;
+
+  @property(Label)
+  dailyTaskHeaderLabel: Label | null = null;
+
+  @property(Label)
+  growthTaskHeaderLabel: Label | null = null;
 
   @property(Button)
   startButton: Button | null = null;
@@ -414,12 +433,30 @@ export class HachimiRestaurantGame extends Component {
     if (!this.profile) {
       return;
     }
+    const taskHeaderLabels: Record<TaskType, Label | null> = {
+      guide: this.guideTaskHeaderLabel,
+      daily: this.dailyTaskHeaderLabel,
+      growth: this.growthTaskHeaderLabel
+    };
+    TASK_TYPES.forEach((type) => this.renderTaskSectionHeader(taskHeaderLabels[type], type));
     this.taskViews.forEach((view, index) => {
       view.node.active = index < this.profile!.tasks.length;
       if (index < this.profile!.tasks.length) {
         view.render(this.profile!.tasks[index]);
       }
     });
+  }
+
+  private renderTaskSectionHeader(label: Label | null, type: TaskType): void {
+    if (!label || !this.profile) {
+      return;
+    }
+    const tasks = this.profile.tasks.filter((task) => task.type === type);
+    const completed = tasks.filter((task) => task.completed).length;
+    const claimable = tasks.filter((task) => task.completed && !task.claimed).length;
+    label.node.active = tasks.length > 0;
+    label.string = `${TASK_TYPE_LABELS[type]} ${completed}/${tasks.length}`
+      + (claimable > 0 ? ` · 可领 ${claimable}` : '');
   }
 
   private renderResult(): void {

@@ -50,6 +50,11 @@
     "waitingCustomerSprites": 4
   },
   "componentProperties": {
+    "HachimiRestaurantGame": [
+      "guideTaskHeaderLabel",
+      "dailyTaskHeaderLabel",
+      "growthTaskHeaderLabel"
+    ],
     "PartUpgradeView": [
       "titleLabel",
       "costLabel",
@@ -66,6 +71,18 @@
       "rewardLabel",
       "buttonLabel",
       "claimButton"
+    ]
+  },
+  "taskSections": {
+    "types": [
+      "guide",
+      "daily",
+      "growth"
+    ],
+    "headerLabels": [
+      "guideTaskHeaderLabel",
+      "dailyTaskHeaderLabel",
+      "growthTaskHeaderLabel"
     ]
   },
   "textureCatalog": [
@@ -121,7 +138,10 @@
     "satisfactionLabel",
     "feedbackLabel",
     "resultLabel",
-    "guideLabel"
+    "guideLabel",
+    "guideTaskHeaderLabel",
+    "dailyTaskHeaderLabel",
+    "growthTaskHeaderLabel"
   ],
   "sprites": [
     "restaurantBackgroundSprite",

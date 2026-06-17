@@ -120,6 +120,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared task statuses now expose `typeLabel` for guide, daily, and growth tasks.
   - Web debug task screen groups tasks by type.
   - Cocos `TaskItemView` can render the task type label for every task row.
+- Added Cocos task section headers:
+  - `HachimiRestaurantGame` renders guide, daily, and growth task header counts from backend task states.
+  - Scene wiring now requires `guideTaskHeaderLabel`, `dailyTaskHeaderLabel`, and `growthTaskHeaderLabel`.
+  - The Cocos task screen therefore has explicit type sections in addition to row-level type labels.
 - Added daily task reset verification:
   - Backend task tests now prove daily task claim keys are scoped by backend date.
   - API tests prove a daily task cannot be claimed twice on the same backend date, but can be completed and claimed again the next day.
@@ -207,6 +211,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend auto-settlement for expired active sessions.
   - Backend exposure of all guide, daily, and growth tasks.
   - Shared/Web/Cocos task type labels and grouping.
+  - Cocos task section header wiring for guide, daily, and growth tasks.
   - Shared task reward field and daily reward budget constraints.
   - Backend-date daily task reset and once-per-day claim protection.
   - Web core screens and service chain.
