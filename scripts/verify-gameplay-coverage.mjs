@@ -1,5 +1,6 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { TASK_DEFINITIONS } from '../shared/game-rules.mjs';
 
 const checks = [];
 let failed = false;
@@ -130,6 +131,10 @@ for (const screen of ['mainScreen', 'businessScreen', 'upgradeScreen', 'taskScre
   }
 }
 
+if ((sceneWiring.minimumInstances?.TaskItemView || 0) < TASK_DEFINITIONS.length) {
+  fail(`Cocos scene wiring manifest needs at least ${TASK_DEFINITIONS.length} TaskItemView rows`);
+}
+
 for (const label of ['guideLabel', 'satisfactionLabel', 'feedbackLabel']) {
   if (!sceneWiring.labels?.includes(label)) {
     fail(`Cocos scene wiring manifest missing ${label}`);
@@ -149,7 +154,7 @@ if (failed) {
   process.exit(1);
 }
 
-console.log(`Gameplay coverage verified: ${checks.length} checks, ${requiredTextures.length} required textures, ${cocosScriptFiles.length} Cocos scripts.`);
+console.log(`Gameplay coverage verified: ${checks.length} checks, ${requiredTextures.length} required textures, ${TASK_DEFINITIONS.length} task rows, ${cocosScriptFiles.length} Cocos scripts.`);
 
 async function listFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

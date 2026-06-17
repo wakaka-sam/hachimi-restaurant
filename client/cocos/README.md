@@ -50,7 +50,7 @@ Create a portrait scene in Cocos Creator and attach:
 - `TextureCatalog` to a child node and assign every PNG as a `SpriteFrame`.
 - `TableSlotView` to each table slot node.
 - `PartUpgradeView` to each upgrade card node.
-- `TaskItemView` to each task row node.
+- `TaskItemView` to each task row node. The current MVP task list has 13 backend tasks, so the scene needs at least 13 task row instances unless a later virtualized list component replaces the fixed rows.
 
 Then wire the serialized properties in the inspector.
 

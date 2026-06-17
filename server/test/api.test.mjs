@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { createApp } from '../src/app.mjs';
 import { GameStore } from '../src/store.mjs';
+import { TASK_DEFINITIONS } from '../../shared/game-rules.mjs';
 
 async function startTestServer() {
   const store = await new GameStore().load();
@@ -175,6 +176,26 @@ test('API supports guide task claim and follow-up task claim', async (t) => {
   });
   assert.equal(secondClaim.status, 200);
   assert.equal(secondClaim.body.profile.player.stats.totalTasksClaimed, 2);
+});
+
+test('API profile exposes all MVP guide, daily, and growth tasks', async (t) => {
+  const { app, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const profile = await request(baseUrl, '/api/player/profile');
+
+  assert.equal(profile.status, 200);
+  assert.equal(profile.body.profile.tasks.length, TASK_DEFINITIONS.length);
+  assert.deepEqual(
+    [...new Set(profile.body.profile.tasks.map((task) => task.type))].sort(),
+    ['daily', 'growth', 'guide']
+  );
+  for (const definition of TASK_DEFINITIONS) {
+    assert.ok(
+      profile.body.profile.tasks.some((task) => task.id === definition.id),
+      `missing task ${definition.id}`
+    );
+  }
 });
 
 test('API prevents double settlement of a business session', async (t) => {

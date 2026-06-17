@@ -100,6 +100,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend rejects valid-looking settlements before the minimum real time for a 90-second 2x session has elapsed.
   - Cocos and Web debug harness disable manual settlement while the local营业 countdown is still running.
   - API docs now include `SESSION_NOT_READY`.
+- Tightened MVP task screen coverage:
+  - Cocos scene wiring now requires enough `TaskItemView` rows for all 13 MVP guide/daily/growth tasks.
+  - API tests verify every task definition is exposed in the player profile.
 
 ## Remaining Work
 
@@ -112,13 +115,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 18 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 19 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
   - Backend early-settlement rejection.
+  - Backend exposure of all guide, daily, and growth tasks.
   - Web core screens and service chain.
   - Web and Cocos manual early-settlement blocking.
   - Web and Cocos resumed session remaining-time handling.
@@ -127,6 +131,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos restaurant visual stage wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
+  - Cocos task row count covers all MVP task definitions.
   - Cocos guide label wiring.
   - Required PNG texture presence in both Web and Cocos asset trees.
 - Cocos TypeScript source compiles under `client/cocos/tsconfig.json`.

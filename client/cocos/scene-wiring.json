@@ -23,7 +23,7 @@
   "minimumInstances": {
     "TableSlotView": 5,
     "PartUpgradeView": 5,
-    "TaskItemView": 8
+    "TaskItemView": 13
   },
   "textureCatalog": [
     "restaurantBackground",
