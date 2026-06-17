@@ -252,6 +252,7 @@ function startLocalGame(session) {
     combo: 0,
     maxCombo: 0,
     nextCustomerId: 1,
+    speedMode: session.speedMode,
     feedback: '',
     feedbackTimeLeft: 0,
     lastTick: performance.now(),
@@ -271,7 +272,7 @@ function tickGame() {
   const now = performance.now();
   const realDelta = Math.min(0.5, (now - state.game.lastTick) / 1000);
   state.game.lastTick = now;
-  const speed = state.game.session.speedMode === '2x' ? 2 : 1;
+  const speed = state.game.speedMode === '2x' ? 2 : 1;
   updateGame(realDelta * speed);
   render();
 }
@@ -377,7 +378,7 @@ function renderBusinessScreen() {
   return h('section', getRestaurantSceneAttrs('scene business-scene'),
     h('div', { class: 'business-hud' },
       h('span', { class: 'timer-pill' }, `剩余 ${Math.ceil(game.timeLeft)}s`),
-      h('span', { class: 'timer-pill' }, game.session.speedMode),
+      textureButton(game.speedMode === '1x' ? '1 倍速' : '2 倍速', toggleBusinessSpeed, { className: 'compact' }),
       textureButton('结束结算', finishBusiness, { className: 'compact' })
     ),
     guide ? h('div', { class: 'guide-cue business-guide' }, guide.message) : null,
@@ -499,6 +500,15 @@ function getSatisfactionPercent(game) {
   return `${Math.round((game.satisfactionSum / game.served) * 100)}%`;
 }
 
+function toggleBusinessSpeed() {
+  if (!state.game || state.game.finished) {
+    return;
+  }
+  state.game.speedMode = state.game.speedMode === '1x' ? '2x' : '1x';
+  setBusinessFeedback(`已切换 ${state.game.speedMode}`);
+  render();
+}
+
 async function finishBusiness() {
   const game = state.game;
   if (!game || game.finished) {
@@ -519,7 +529,7 @@ async function finishBusiness() {
           averageSatisfaction,
           maxCombo: game.maxCombo,
           durationSeconds: CONSTANTS.sessionDurationSeconds,
-          speedMode: game.session.speedMode,
+          speedMode: game.speedMode,
           clientVersion: 'web-prototype-0.1.0'
         }
       }

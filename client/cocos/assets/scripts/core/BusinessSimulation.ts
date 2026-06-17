@@ -28,7 +28,7 @@ export interface LocalBusinessSummary {
 export class BusinessSimulation {
   readonly tables: TableState[];
   readonly waiting: LocalCustomer[] = [];
-  readonly speedMode: SpeedMode;
+  speedMode: SpeedMode;
   timeLeft: number = CONSTANTS.sessionDurationSeconds;
   spawnCooldown: number = 1;
   customersServed: number = 0;
@@ -44,6 +44,15 @@ export class BusinessSimulation {
   constructor(readonly tuning: TuningState, speedMode: SpeedMode) {
     this.speedMode = speedMode;
     this.tables = Array.from({ length: tuning.tableCapacity }, () => ({ customer: null }));
+  }
+
+  setSpeedMode(speedMode: SpeedMode): void {
+    this.speedMode = speedMode;
+    this.setFeedback(`已切换 ${speedMode}`);
+  }
+
+  toggleSpeedMode(): void {
+    this.setSpeedMode(this.speedMode === '1x' ? '2x' : '1x');
   }
 
   update(realDeltaSeconds: number): void {

@@ -176,6 +176,7 @@ export class HachimiRestaurantGame extends Component {
       }
       this.activeSessionId = response.session.sessionId;
       this.simulation = new BusinessSimulation(response.profile.tuning, response.session.speedMode);
+      this.speedMode = response.session.speedMode;
       this.finishing = false;
       this.setScreen('business');
       this.renderAll();
@@ -238,7 +239,12 @@ export class HachimiRestaurantGame extends Component {
   }
 
   private toggleSpeed(): void {
-    this.speedMode = this.speedMode === '1x' ? '2x' : '1x';
+    if (this.simulation && this.activeScreen === 'business') {
+      this.simulation.toggleSpeedMode();
+      this.speedMode = this.simulation.speedMode;
+    } else {
+      this.speedMode = this.speedMode === '1x' ? '2x' : '1x';
+    }
     this.renderAll();
   }
 
@@ -301,6 +307,7 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
     if (this.timerLabel) this.timerLabel.string = `剩余 ${Math.ceil(simulation.timeLeft)}s`;
+    if (this.speedLabel) this.speedLabel.string = simulation.speedMode;
     if (this.businessStatsLabel) {
       this.businessStatsLabel.string =
         `服务 ${simulation.customersServed} / 离开 ${simulation.customersLost} / 连击 ${simulation.combo}`;
