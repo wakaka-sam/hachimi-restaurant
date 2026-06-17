@@ -349,6 +349,7 @@ function spawnCustomer() {
   const animal = textures.animals[(game.nextCustomerId - 1) % textures.animals.length];
   game.waiting.push({
     id: game.nextCustomerId,
+    customerType: 'normal',
     animal,
     patience: game.tuning.patienceSeconds,
     maxPatience: game.tuning.patienceSeconds
@@ -530,7 +531,10 @@ async function finishBusiness() {
           maxCombo: game.maxCombo,
           durationSeconds: CONSTANTS.sessionDurationSeconds,
           speedMode: game.speedMode,
-          clientVersion: 'web-prototype-0.1.0'
+          clientVersion: 'web-prototype-0.1.0',
+          customerTypes: {
+            normal: game.served + game.lost
+          }
         }
       }
     });

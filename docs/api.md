@@ -127,6 +127,8 @@ maxCombo
 durationSeconds
 speedMode
 clientVersion
+customerTypes:
+  normal
 ```
 
 Backend behavior:

@@ -30,6 +30,8 @@ export const DEFAULT_PARTS = Object.freeze({
   wall: 0
 });
 
+export const CUSTOMER_TYPES = ['normal'];
+
 export const TASK_DEFINITIONS = Object.freeze([
   {
     id: 'guide_first_session',
@@ -336,15 +338,31 @@ export function getPartEffectDescription(part, player) {
 }
 
 export function normalizeSessionSummary(summary = {}) {
+  const customersServed = Math.max(0, Math.floor(Number(summary.customersServed || 0)));
+  const customersLost = Math.max(0, Math.floor(Number(summary.customersLost || 0)));
   return {
-    customersServed: Math.max(0, Math.floor(Number(summary.customersServed || 0))),
-    customersLost: Math.max(0, Math.floor(Number(summary.customersLost || 0))),
+    customersServed,
+    customersLost,
     averageSatisfaction: clamp(Number(summary.averageSatisfaction ?? 0), 0, 1),
     maxCombo: Math.max(0, Math.floor(Number(summary.maxCombo || 0))),
     durationSeconds: clamp(Number(summary.durationSeconds || 0), 0, CONSTANTS.sessionDurationSeconds),
     speedMode: summary.speedMode === '2x' ? '2x' : '1x',
-    clientVersion: String(summary.clientVersion || 'unknown')
+    clientVersion: String(summary.clientVersion || 'unknown'),
+    customerTypes: normalizeCustomerTypes(summary.customerTypes, customersServed + customersLost)
   };
+}
+
+export function normalizeCustomerTypes(customerTypes = {}, fallbackTotal = 0) {
+  const normalized = Object.fromEntries(CUSTOMER_TYPES.map((type) => [type, 0]));
+  for (const [type, count] of Object.entries(customerTypes || {})) {
+    if (CUSTOMER_TYPES.includes(type)) {
+      normalized[type] = Math.max(0, Math.floor(Number(count || 0)));
+    }
+  }
+  if (Object.values(normalized).every((count) => count === 0) && fallbackTotal > 0) {
+    normalized.normal = fallbackTotal;
+  }
+  return normalized;
 }
 
 export function validateSessionSummary(summary = {}) {

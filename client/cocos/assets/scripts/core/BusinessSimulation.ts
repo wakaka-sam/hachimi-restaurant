@@ -1,9 +1,10 @@
-import { CONSTANTS, SpeedMode, TuningState, clamp } from './GameRules';
+import { CONSTANTS, CustomerType, SpeedMode, TuningState, clamp } from './GameRules';
 
 export type CustomerPhase = 'waiting' | 'seated' | 'readyFood' | 'eating' | 'readyPay';
 
 export interface LocalCustomer {
   id: number;
+  customerType: CustomerType;
   animalIndex: number;
   phase: CustomerPhase;
   patience: number;
@@ -23,6 +24,7 @@ export interface LocalBusinessSummary {
   durationSeconds: number;
   speedMode: SpeedMode;
   clientVersion: string;
+  customerTypes: Record<CustomerType, number>;
 }
 
 export class BusinessSimulation {
@@ -130,7 +132,10 @@ export class BusinessSimulation {
       maxCombo: this.maxCombo,
       durationSeconds: CONSTANTS.sessionDurationSeconds,
       speedMode: this.speedMode,
-      clientVersion: 'cocos-source-0.1.0'
+      clientVersion: 'cocos-source-0.1.0',
+      customerTypes: {
+        normal: this.customersServed + this.customersLost
+      }
     };
   }
 
@@ -145,6 +150,7 @@ export class BusinessSimulation {
   private spawnCustomer(): void {
     this.waiting.push({
       id: this.nextCustomerId,
+      customerType: 'normal',
       animalIndex: (this.nextCustomerId - 1) % 4,
       phase: 'waiting',
       patience: this.tuning.patienceSeconds,

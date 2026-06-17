@@ -103,6 +103,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened MVP task screen coverage:
   - Cocos scene wiring now requires enough `TaskItemView` rows for all 13 MVP guide/daily/growth tasks.
   - API tests verify every task definition is exposed in the player profile.
+- Reserved customer type data for future special guests:
+  - MVP customers now carry `customerType: normal` in Cocos and the Web debug harness.
+  - Session summaries preserve `customerTypes.normal` for backend records.
+  - Shared rules expose the current supported customer type list.
 
 ## Remaining Work
 
@@ -115,10 +119,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 19 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 20 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
+  - Shared normal customer type reservation.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
   - Backend early-settlement rejection.

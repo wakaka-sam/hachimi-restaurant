@@ -76,6 +76,7 @@ test('API supports business session settlement and part upgrade', async (t) => {
   assert.equal(finish.status, 200);
   assert.equal(finish.body.profile.player.coins, finish.body.settlement.rewardCoins);
   assert.ok(finish.body.settlement.rewardCoins >= 75);
+  assert.deepEqual(finish.body.session.summary.customerTypes, { normal: 12 });
 
   const upgrade = await request(baseUrl, '/api/upgrade/part', {
     method: 'POST',

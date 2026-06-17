@@ -1,5 +1,6 @@
 export type PartKey = 'cashier' | 'table' | 'chair' | 'floor' | 'wall';
 export type SpeedMode = '1x' | '2x';
+export type CustomerType = 'normal';
 
 export interface PartStars {
   cashier: number;
@@ -83,6 +84,7 @@ export interface SessionSummary {
   durationSeconds: number;
   speedMode: SpeedMode;
   clientVersion: string;
+  customerTypes: Record<CustomerType, number>;
 }
 
 export interface SettlementState {
@@ -99,6 +101,7 @@ export interface SettlementState {
 }
 
 export const PARTS: PartKey[] = ['cashier', 'table', 'chair', 'floor', 'wall'];
+export const CUSTOMER_TYPES: CustomerType[] = ['normal'];
 
 export const PART_LABELS: Record<PartKey, string> = {
   cashier: '收银机',

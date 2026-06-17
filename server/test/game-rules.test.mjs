@@ -2,11 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   CONSTANTS,
+  CUSTOMER_TYPES,
   createDefaultPlayer,
   getEconomy,
   getEffectivePartStars,
   getTuning,
   calculateReward,
+  normalizeSessionSummary,
   refreshStamina
 } from '../../shared/game-rules.mjs';
 
@@ -92,6 +94,25 @@ test('performance reward is clamped between 75 and 130 percent', () => {
     durationSeconds: CONSTANTS.sessionDurationSeconds
   });
   assert.equal(excellent.rewardCoins, 130);
+});
+
+test('session summaries reserve normal customer type counts', () => {
+  assert.deepEqual(CUSTOMER_TYPES, ['normal']);
+
+  const fallback = normalizeSessionSummary({
+    customersServed: 7,
+    customersLost: 2,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+  assert.deepEqual(fallback.customerTypes, { normal: 9 });
+
+  const explicit = normalizeSessionSummary({
+    customersServed: 7,
+    customersLost: 2,
+    customerTypes: { normal: 6, vip: 99 },
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+  assert.deepEqual(explicit.customerTypes, { normal: 6 });
 });
 
 test('stamina recovers by backend time and caps at 60', () => {
