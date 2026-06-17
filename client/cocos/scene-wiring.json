@@ -27,6 +27,9 @@
     "PartUpgradeView": 5,
     "TaskItemView": 13
   },
+  "minimumSpriteArrayLengths": {
+    "waitingCustomerSprites": 4
+  },
   "textureCatalog": [
     "restaurantBackground",
     "restaurantBackgrounds",

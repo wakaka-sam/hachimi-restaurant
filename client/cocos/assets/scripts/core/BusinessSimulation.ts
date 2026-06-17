@@ -76,7 +76,11 @@ export class BusinessSimulation {
     this.spawnCooldown -= delta;
 
     const crowdCount = this.waiting.length + this.tables.filter((table) => table.customer).length;
-    if (this.spawnCooldown <= 0 && crowdCount < this.tables.length + 4) {
+    if (
+      this.spawnCooldown <= 0
+      && this.waiting.length < CONSTANTS.maxWaitingCustomers
+      && crowdCount < this.tables.length + CONSTANTS.maxWaitingCustomers
+    ) {
       this.spawnCustomer();
       this.spawnCooldown = this.tuning.spawnIntervalSeconds;
     }

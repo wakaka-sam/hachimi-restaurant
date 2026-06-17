@@ -128,6 +128,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `HachimiRestaurantGame` now owns main, upgrade, task, result-to-main, and result-to-upgrade button properties.
   - Navigation buttons are wired in `onLoad` and refresh screen state/guide messages when pressed.
   - Scene wiring and static coverage require the navigation buttons so the four MVP screens remain reachable in the production Cocos client.
+- Added visible waiting queue limits:
+  - Shared rules now expose `maxWaitingCustomers = 4`.
+  - Cocos and Web debug simulations pause natural customer spawning when the visible waiting queue is full.
+  - Cocos scene wiring now requires at least 4 `waitingCustomerSprites` so every waiting customer has a texture-backed visual slot.
 
 ## Remaining Work
 
@@ -162,6 +166,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos main-screen five-part star status wiring.
   - Cocos MVP screen navigation wiring.
   - Web and Cocos locked table slot texture wiring.
+  - Web and Cocos waiting queue cap wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.
   - Cocos guide label wiring.

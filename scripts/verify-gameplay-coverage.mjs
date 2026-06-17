@@ -33,7 +33,7 @@ addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_
 addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', ['settleExpiredSessions', 'getExpiredActiveSessions', 'createExpiredSummary']);
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
-addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds']);
+addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds']);
 addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.75', '1.3']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
@@ -44,6 +44,7 @@ addCheck('web blocks manual early settlement', 'client/web/main.js', ["disabled:
 addCheck('web resumed session remaining time', 'client/web/main.js', ['session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
 addCheck('web click service chain', 'client/web/main.js', ['seatCustomer', "customer.phase = 'eating'", 'collectCustomer']);
 addCheck('web initial customer wave', 'client/web/main.js', ['tuning.initialCustomerCount', 'spawnCustomer']);
+addCheck('web waiting queue cap', 'client/web/main.js', ['CONSTANTS.maxWaitingCustomers', 'game.waiting.length']);
 addCheck('web locked table slots', 'client/web/main.js', ['table-locked.png', 'CONSTANTS.maxTableSlots', '未解锁']);
 addCheck('web normal customer type', 'client/web/main.js', ["customerType: 'normal'", 'customerTypes']);
 addCheck('web business feedback', 'client/web/main.js', ['setBusinessFeedback', 'getSatisfactionPercent', '收银成功 满意', '顾客离开，连击中断']);
@@ -64,6 +65,7 @@ addCheck('cocos main part status views', 'client/cocos/assets/scripts/HachimiRes
 addCheck('cocos locked table slots', 'client/cocos/assets/scripts/components/TableSlotView.ts', ['tableLocked', 'unlocked', '未解锁']);
 addCheck('cocos business simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['seatCustomer', 'handleTablePressed', 'collectFirstReadyPay', 'getSummary']);
 addCheck('cocos initial customer wave', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['initialCustomerCount', 'spawnCustomer', 'spawnIntervalSeconds']);
+addCheck('cocos waiting queue cap', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['CONSTANTS.maxWaitingCustomers', 'this.waiting.length']);
 addCheck('cocos normal customer type', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ["customerType: 'normal'", 'customerTypes']);
 addCheck('cocos simulation speed mode toggle', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['setSpeedMode', 'toggleSpeedMode', "speedMode === '1x' ? '2x' : '1x'"]);
 addCheck('cocos business feedback simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['lastFeedback', 'feedbackTimeLeft', 'averageSatisfaction', '收银成功 满意', '顾客离开，连击中断']);
@@ -76,6 +78,7 @@ addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini 
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
 addCheck('product documented locked table slots', 'docs/product.md', ['场景预留 5 个桌位', '未解锁桌位显示锁定贴图']);
 addCheck('product documented initial customer wave', 'docs/product.md', ['开场先进入 2 位初始顾客']);
+addCheck('product documented waiting queue cap', 'docs/product.md', ['等待队列最多显示 4 位顾客']);
 
 for (const check of checks) {
   let source = '';
@@ -163,6 +166,10 @@ for (const label of ['guideLabel', 'satisfactionLabel', 'feedbackLabel']) {
 
 if (!sceneWiring.sprites?.includes('restaurantBackgroundSprite')) {
   fail('Cocos scene wiring manifest missing restaurantBackgroundSprite');
+}
+
+if ((sceneWiring.minimumSpriteArrayLengths?.waitingCustomerSprites || 0) < 4) {
+  fail('Cocos scene wiring manifest needs at least 4 waitingCustomerSprites');
 }
 
 for (const button of ['startButton', 'mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']) {

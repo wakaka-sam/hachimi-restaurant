@@ -21,6 +21,7 @@ export const CONSTANTS = {
   maxSpeedMultiplier: 2,
   maxTableSlots: 5,
   initialCustomerCount: 2,
+  maxWaitingCustomers: 4,
   maxCustomersPerSession: 18
 };
 

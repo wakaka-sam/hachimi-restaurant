@@ -81,6 +81,7 @@ test('initial handfeel tuning matches MVP business density targets', () => {
   assert.equal(tuning.tableCapacity, 2);
   assert.equal(tuning.initialCustomerCount, 2);
   assert.equal(CONSTANTS.maxTableSlots, 5);
+  assert.equal(CONSTANTS.maxWaitingCustomers, 4);
   assert.ok(tuning.spawnIntervalSeconds >= 6);
   assert.ok(tuning.spawnIntervalSeconds <= 8);
   assert.ok(tuning.prepDelaySeconds + tuning.eatingSeconds >= 18);

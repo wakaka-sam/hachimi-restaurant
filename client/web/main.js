@@ -291,7 +291,11 @@ function updateGame(delta) {
 
   game.spawnCooldown -= delta;
   const crowdCount = game.waiting.length + game.tables.filter(Boolean).length;
-  if (game.spawnCooldown <= 0 && crowdCount < game.tables.length + 4) {
+  if (
+    game.spawnCooldown <= 0
+    && game.waiting.length < CONSTANTS.maxWaitingCustomers
+    && crowdCount < game.tables.length + CONSTANTS.maxWaitingCustomers
+  ) {
     spawnCustomer();
     game.spawnCooldown = game.tuning.spawnIntervalSeconds * (0.85 + Math.random() * 0.3);
   }
