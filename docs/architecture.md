@@ -33,7 +33,7 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `client/cocos/assets/scripts/core/GameRules.ts` mirrors the subset of shared constants and labels needed by the Cocos runtime. `npm run verify:rules` compares that mirror against `shared/game-rules.mjs`; update both files together when gameplay constants change.
 
-`npm run verify:cocos-project` validates the Cocos project metadata before the editor is available: Cocos Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
+`npm run verify:cocos-project` validates the Cocos project metadata before the editor is available: Cocos Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, the per-screen `sceneBlueprint`, and generated-directory ignore rules.
 
 `npm run verify:cocos-api` executes the Cocos API client against a mocked `cc.sys` runtime. It verifies same-origin Web requests, `https://animalapi.wakaka007.cn` fallback for non-browser targets, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` recovery fields.
 

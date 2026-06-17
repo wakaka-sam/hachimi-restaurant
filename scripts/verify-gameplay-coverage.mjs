@@ -149,6 +149,8 @@ addCheck('cocos scene wiring textured panels', 'client/cocos/scene-wiring.json',
 addCheck('cocos scene wiring task section headers', 'client/cocos/scene-wiring.json', ['taskSections', 'guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel']);
 addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json', ['componentProperties', 'TaskItemView', 'typeLabel']);
 addCheck('cocos scene wiring waiting queue countdown labels', 'client/cocos/scene-wiring.json', ['waitingCustomerLabels', 'minimumLabelArrayLengths']);
+addCheck('cocos scene blueprint manifest', 'client/cocos/scene-wiring.json', ['sceneBlueprint', 'mainScreen', 'businessScreen', 'upgradeScreen', 'taskScreen', 'resultScreen', 'componentInstances', 'textureSurfaces']);
+addCheck('cocos scene blueprint verification', 'scripts/verify-cocos-project.mjs', ['validateSceneBlueprint', 'componentTotals', 'validateTextureSurfaces', 'safeAreaNode']);
 addCheck('cocos scene wiring source property validation', 'scripts/verify-gameplay-coverage.mjs', ['componentSourceFiles', 'assertSourceContainsProperties', 'sceneWiring.textureCatalog']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);

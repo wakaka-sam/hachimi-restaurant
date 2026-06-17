@@ -108,8 +108,10 @@ The expected scene contract is recorded in:
 client/cocos/scene-wiring.json
 ```
 
+The manifest includes a `sceneBlueprint` section that maps each core screen to its safe-area node, labels, buttons, sprites, component instance counts, and texture-backed panel roles. Keep that blueprint updated whenever the Cocos scene layout changes.
+
 `npm run verify:gameplay` checks that this manifest names the required Cocos components, screens, and PNG texture files.
-`npm run verify:cocos-project` checks that the Cocos project metadata, portrait design resolution, scene contract, and generated-directory ignore rules stay aligned.
+`npm run verify:cocos-project` checks that the Cocos project metadata, portrait design resolution, scene blueprint, scene contract, and generated-directory ignore rules stay aligned.
 `npm run verify:cocos-api` executes the Cocos API client with a mocked `cc.sys` runtime and verifies Web same-origin calls, non-browser production host resolution, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` error handling.
 `npm run verify:cocos-simulation` executes the pure Cocos business simulation outside the editor and verifies the click service chain, 2x speed, waiting queue cap, 18-customer cap, and snapshot restore behavior.
 `npm run verify:cocos-components` executes the texture-backed Cocos UI components outside the editor and verifies table slot states, upgrade-card stars and costs, task rows, textured buttons, textured panels, and mobile safe-area behavior.

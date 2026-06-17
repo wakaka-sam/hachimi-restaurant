@@ -185,6 +185,146 @@
     "finishButton",
     "restaurantUpgradeButton"
   ],
+  "sceneBlueprint": {
+    "shared": {
+      "rootComponent": "HachimiRestaurantGame",
+      "textureCatalog": "TextureCatalog",
+      "topBarLabels": [
+        "coinLabel",
+        "staminaLabel",
+        "levelLabel",
+        "nextRevenueLabel"
+      ],
+      "navigationButtons": [
+        "mainNavButton",
+        "upgradeNavButton",
+        "taskNavButton"
+      ],
+      "textureSurfaces": [
+        "topBarPanel",
+        "messagePanel"
+      ]
+    },
+    "screens": {
+      "mainScreen": {
+        "safeAreaNode": "mainSafeArea",
+        "labels": [
+          "startButtonLabel",
+          "guideLabel"
+        ],
+        "buttons": [
+          "startButton",
+          "upgradeNavButton",
+          "taskNavButton"
+        ],
+        "sprites": [
+          "restaurantBackgroundSprite"
+        ],
+        "componentInstances": {
+          "PartStatusView": 5,
+          "TexturedButtonView": 3,
+          "TexturedPanelView": 7
+        },
+        "textureSurfaces": [
+          "mainPartStatusPanels"
+        ]
+      },
+      "businessScreen": {
+        "safeAreaNode": "businessSafeArea",
+        "labels": [
+          "timerLabel",
+          "speedLabel",
+          "businessStatsLabel",
+          "satisfactionLabel",
+          "feedbackLabel",
+          "guideLabel",
+          "waitingCustomerLabels"
+        ],
+        "buttons": [
+          "speedButton",
+          "cashierButton",
+          "finishButton"
+        ],
+        "sprites": [
+          "cashierSprite",
+          "waitingCustomerSprites"
+        ],
+        "componentInstances": {
+          "TableSlotView": 5,
+          "TexturedButtonView": 3,
+          "TexturedPanelView": 1
+        },
+        "minimumSpriteArrayLengths": {
+          "waitingCustomerSprites": 4
+        },
+        "minimumLabelArrayLengths": {
+          "waitingCustomerLabels": 4
+        },
+        "textureSurfaces": [
+          "businessHudPanel"
+        ]
+      },
+      "upgradeScreen": {
+        "safeAreaNode": "upgradeSafeArea",
+        "labels": [
+          "guideLabel"
+        ],
+        "buttons": [
+          "mainNavButton",
+          "taskNavButton",
+          "restaurantUpgradeButton"
+        ],
+        "sprites": [],
+        "componentInstances": {
+          "PartUpgradeView": 5,
+          "TexturedButtonView": 6,
+          "TexturedPanelView": 5
+        },
+        "textureSurfaces": [
+          "partUpgradeCards"
+        ]
+      },
+      "taskScreen": {
+        "safeAreaNode": "taskSafeArea",
+        "labels": [
+          "guideTaskHeaderLabel",
+          "dailyTaskHeaderLabel",
+          "growthTaskHeaderLabel"
+        ],
+        "buttons": [
+          "mainNavButton",
+          "upgradeNavButton"
+        ],
+        "sprites": [],
+        "componentInstances": {
+          "TaskItemView": 13,
+          "TexturedButtonView": 15,
+          "TexturedPanelView": 13
+        },
+        "textureSurfaces": [
+          "taskRows"
+        ]
+      },
+      "resultScreen": {
+        "safeAreaNode": "resultSafeArea",
+        "labels": [
+          "resultLabel"
+        ],
+        "buttons": [
+          "resultMainButton",
+          "resultUpgradeButton"
+        ],
+        "sprites": [],
+        "componentInstances": {
+          "TexturedButtonView": 2,
+          "TexturedPanelView": 1
+        },
+        "textureSurfaces": [
+          "resultPanel"
+        ]
+      }
+    }
+  },
   "artPolicy": {
     "allowed": [
       "Sprite",

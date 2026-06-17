@@ -258,7 +258,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `npm run verify:textures` now enforces expected dimensions for every runtime PNG texture.
   - The texture policy rejects unexpected PNG files without an explicit dimension contract, preventing accidental placeholder art from silently entering Web or Cocos.
 - Tightened Cocos project structure verification:
-  - Added `npm run verify:cocos-project` to check Cocos Creator 3.8.x metadata, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
+  - Added `npm run verify:cocos-project` to check Cocos Creator 3.8.x metadata, portrait 720 x 1280 design resolution, scene-wiring alignment, per-screen scene blueprint alignment, and generated-directory ignore rules.
+  - `client/cocos/scene-wiring.json` now maps each core screen to its safe-area node, labels, buttons, sprites, component instance counts, and texture-backed panel roles.
   - Full `npm run verify` now runs the Cocos project metadata check before rule drift, gameplay coverage, typecheck, and backend tests.
   - `.gitignore` now explicitly excludes Cocos Creator generated `build`, `library`, `temp`, and `local` directories.
 - Added executable Cocos business simulation verification:
@@ -289,7 +290,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 47 Node tests, 162 gameplay coverage checks, executable Cocos API, simulation, UI component, and main-controller checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 164 gameplay coverage checks, executable Cocos API, simulation, UI component, and main-controller checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -319,6 +320,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared/Web/Cocos task type labels and grouping.
   - Cocos task section header wiring for guide, daily, and growth tasks.
   - Cocos scene wiring manifest properties matching TypeScript source declarations.
+  - Cocos per-screen scene blueprint for safe areas, labels, buttons, sprites, component instances, and texture surfaces.
   - Shared task reward field and daily reward budget constraints.
   - Shared overall task coin reward budget constraints.
   - API response envelope documentation for success, error, and `SESSION_NOT_READY` responses.
