@@ -37,3 +37,29 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 
 - Cocos Creator is not installed in this environment. This implementation starts with a texture-based Web prototype and shared gameplay code, while keeping `client/` structured for a later Cocos Creator scene migration.
 - This is still an active implementation task until the Cocos client is complete and the full objective has been verified end to end.
+
+## Current Progress
+
+- Implemented shared gameplay rules in `shared/game-rules.mjs`.
+- Implemented the Node.js backend MVP API in `server/src/`.
+- Implemented a texture-based Web playable prototype in `client/web/`.
+- Generated PNG texture assets under `client/assets/textures/`.
+- Added automated tests for:
+  - 8% `incomePower` economy growth.
+  - Stamina recovery.
+  - Session settlement.
+  - Invalid settlement rejection.
+  - Full 25 part-upgrade cycle.
+  - Restaurant upgrade without income regression.
+  - Guide task claims.
+  - Double settlement prevention.
+  - Static Web prototype and PNG texture serving.
+  - Runtime client policy forbidding canvas/SVG art drawing.
+- Added `npm run verify:textures` to enforce the texture asset policy.
+
+## Remaining Work
+
+- Create the formal Cocos Creator project/scene once Cocos Creator is available.
+- Port the Web prototype interaction model into Cocos components.
+- Reuse `client/assets/textures/` as sprite textures in the Cocos scene.
+- Verify the Cocos build targets for Web first, then WeChat Mini Game and Douyin Mini Game.

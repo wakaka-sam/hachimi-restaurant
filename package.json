@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "generate:textures": "node scripts/generate-textures.mjs",
+    "verify:textures": "node scripts/verify-texture-policy.mjs",
+    "verify": "npm run verify:textures && npm test",
     "start": "node server/src/server.mjs",
     "test": "node --test server/test/*.test.mjs"
   },
