@@ -1,6 +1,7 @@
 import { sys } from 'cc';
 import { BusinessSession, PartKey, ProfileState, SettlementState, SpeedMode } from '../core/GameRules';
 import { LocalBusinessSummary } from '../core/BusinessSimulation';
+import { requestJson } from './ApiTransport';
 
 export const PRODUCTION_API_BASE_URL = 'https://animalapi.wakaka007.cn';
 
@@ -92,16 +93,19 @@ export class ApiClient {
     return payload.profile;
   }
 
-  private async request<T>(path: string, options: { method?: string; body?: unknown } = {}): Promise<T> {
-    const response = await fetch(`${this.resolvedBaseUrl}${path}`, {
+  private async request<T extends ApiResponse<unknown>>(
+    path: string,
+    options: { method?: string; body?: unknown } = {}
+  ): Promise<T> {
+    const response = await requestJson<T>(`${this.resolvedBaseUrl}${path}`, {
       method: options.method || 'GET',
       headers: {
         'content-type': 'application/json',
         'x-player-id': this.getPlayerId()
       },
-      body: options.body ? JSON.stringify(options.body) : undefined
+      body: options.body
     });
-    const payload = await response.json();
+    const payload = response.payload;
     if (!response.ok || !payload.ok) {
       throw new Error(payload.error?.message || payload.error?.code || 'Request failed.');
     }

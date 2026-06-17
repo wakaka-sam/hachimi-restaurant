@@ -98,6 +98,8 @@ addCheck('cocos simulation speed mode toggle', 'client/cocos/assets/scripts/core
 addCheck('cocos business feedback simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['lastFeedback', 'feedbackTimeLeft', 'averageSatisfaction', '服务成功', '收银成功 连击', '顾客离开，连击中断']);
 addCheck('cocos api client endpoints', 'client/cocos/assets/scripts/services/ApiClient.ts', ['/api/player/profile', '/api/session/start', '/api/session/finish', '/api/upgrade/part', '/api/upgrade/restaurant', '/api/tasks/claim']);
 addCheck('cocos api host resolution', 'client/cocos/assets/scripts/services/ApiClient.ts', ['PRODUCTION_API_BASE_URL', 'https://animalapi.wakaka007.cn', 'resolveBaseUrl', 'sys.isBrowser']);
+addCheck('cocos api transport wrapper', 'client/cocos/assets/scripts/services/ApiClient.ts', ['requestJson', 'x-player-id']);
+addCheck('cocos api transport fallback', 'client/cocos/assets/scripts/services/ApiTransport.ts', ['globalThis.fetch', 'XMLHttpRequest', 'requestJsonWithXhr']);
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'restaurantBackgrounds', 'getRestaurantBackground', 'tableEmpty', 'tableLocked', 'cashier', 'animals', 'starIcon', 'starIconEmpty', 'getStarFrame']);
 addCheck('cocos part status component', 'client/cocos/assets/scripts/components/PartStatusView.ts', ['@ccclass', 'PartStatusView', 'PART_LABELS', 'starSprites', 'getStarFrame']);
 addCheck('cocos part upgrade required details', 'client/cocos/assets/scripts/components/PartUpgradeView.ts', ['@ccclass', 'PartUpgradeView', 'costLabel', 'effectLabel', 'buttonLabel', '还差', '已满星', '满星', 'profile.partEffects', 'getStarFrame']);
@@ -121,6 +123,7 @@ addCheck('platforms documented implementation source of truth', 'docs/platforms.
 addCheck('deployment documents production Web root guard', 'docs/deployment.md', ['NODE_ENV=production', 'server refuses to start unless `WEB_STATIC_ROOT` is set', 'must never point to `client/web`']);
 addCheck('web debug harness forbids production root', 'client/web/README.md', ['must never be used as `WEB_STATIC_ROOT` in production', 'Cocos Web build output']);
 addCheck('platforms documented api host resolution', 'docs/platforms.md', ['API Host Resolution', 'same-origin', 'https://animalapi.wakaka007.cn']);
+addCheck('platforms documented network adapter', 'docs/platforms.md', ['Network Adapter', 'fetch', 'XMLHttpRequest']);
 addCheck('platforms documented mobile safe area', 'docs/platforms.md', ['Mobile Layout', 'MobileSafeAreaView', 'notches and bottom gesture regions']);
 addCheck('product documented locked table slots', 'docs/product.md', ['场景预留 5 个桌位', '未解锁桌位显示锁定贴图']);
 addCheck('product documented initial customer wave', 'docs/product.md', ['开场先进入 2 位初始顾客']);

@@ -84,6 +84,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos Web builds use same-origin `/api` routes when `apiBaseUrl` is empty.
   - WeChat Mini Game, Douyin Mini Game, and other non-browser Cocos runtimes default to `https://animalapi.wakaka007.cn`.
   - The Cocos inspector can still override `apiBaseUrl` for local preview or staging.
+  - Cocos API requests now go through `ApiTransport`, using `fetch` when available and `XMLHttpRequest` as the fallback transport.
 - Updated handfeel tuning so an overall restaurant upgrade preserves long-term gameplay feel after part stars reset.
 - Added three restaurant background stage textures so overall restaurant upgrades visibly improve the dining room:
   - Level 1 uses the starter restaurant.
@@ -235,6 +236,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos resumable-session start button label wiring.
   - Web and Cocos in-session 1x/2x speed switching.
   - Cocos API host resolution for Web same-origin and non-browser mini-game targets.
+  - Cocos API transport wrapper with `fetch` and `XMLHttpRequest` fallback.
   - Web first-run guide highlights.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos explicit service success, customer leaving, combo, and cashier success feedback copy.
