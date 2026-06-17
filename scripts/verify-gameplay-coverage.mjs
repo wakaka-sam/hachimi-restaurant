@@ -57,7 +57,7 @@ addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['get
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
 addCheck('shared task type labels', 'shared/game-rules.mjs', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('shared task reward fields', 'shared/game-rules.mjs', ['TASK_REWARD_FIELDS', 'resolveRewardAmount', 'getTaskRewardSummary']);
-addCheck('shared task reward budget tests', 'server/test/game-rules.test.mjs', ['task rewards are limited to coins and stamina', 'daily task reward budget matches the MVP band', 'getTaskRewardSummary']);
+addCheck('shared task reward budget tests', 'server/test/game-rules.test.mjs', ['task rewards are limited to coins and stamina', 'daily task reward budget matches the MVP band', 'overall task coin rewards stay within the auxiliary progression band', 'getTaskRewardSummary']);
 addCheck('shared daily task claim keys', 'server/test/game-rules.test.mjs', ['daily task claim keys are scoped by backend date', '2026-06-17:daily_sessions_3', '2026-06-18:daily_sessions_3']);
 addCheck('server configurable Web static root', 'server/src/server.mjs', ['resolveServerConfig', 'clientRoot']);
 addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "screen === 'business'", "screen === 'upgrade'", "screen === 'tasks'"]);
@@ -149,6 +149,7 @@ addCheck('product documented task type separation', 'docs/product.md', ['明确�
 addCheck('product documented daily task reset', 'docs/product.md', ['每日任务进度按后端日期刷新', '每天最多领取一次']);
 addCheck('product documented business feedback scope', 'docs/product.md', ['服务成功', '顾客离开', '连击', '收银成功']);
 addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);
+addCheck('api documented overall task coin budget', 'docs/api.md', ['Overall task coin reward budget', '20% and 30%', 'first 20-session growth-cycle']);
 addCheck('api documented response envelope', 'docs/api.md', ['Response Envelope', 'ok: true', 'ok: false', 'POST /api/session/finish', 'SESSION_NOT_READY']);
 addCheck('api documented customer type totals', 'docs/api.md', ['customer type totals', 'customersServed + customersLost', 'normal']);
 addCheck('api documented summary duration validation', 'docs/api.md', ['durationSeconds', '90 seconds of game time', 'anti-early-settlement']);

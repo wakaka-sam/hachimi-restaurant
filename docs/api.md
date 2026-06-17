@@ -296,6 +296,11 @@ Daily task reward budget:
 - Total daily task stamina rewards should stay between 10 and 20 stamina.
 - Shared rule tests must fail if task definitions introduce reward fields outside the MVP coin/stamina set.
 
+Overall task coin reward budget:
+
+- Across the 13 MVP guide, daily, and growth task definitions, total coin rewards should stay between 20% and 30% of the first 20-session growth-cycle main-loop coin revenue.
+- This keeps task coins auxiliary to the main business loop while stamina rewards remain governed by their own stamina caps.
+
 ## Error Conventions
 
 MVP error codes should cover:

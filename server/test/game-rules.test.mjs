@@ -354,6 +354,19 @@ test('daily task reward budget matches the MVP band', () => {
   assert.ok(dailySummary.stamina <= 20);
 });
 
+test('overall task coin rewards stay within the auxiliary progression band', () => {
+  const player = createDefaultPlayer('overall-task-budget-test', new Date('2026-06-17T00:00:00.000Z'));
+  const expectedRevenue = getEconomy(player).expectedRevenue;
+  const allRewards = getTaskRewardSummary(player);
+  const firstGrowthCycleSessions = 20;
+  const mainLoopCoinBaseline = expectedRevenue * firstGrowthCycleSessions;
+
+  assert.equal(allRewards.type, 'all');
+  assert.equal(allRewards.taskCount, TASK_DEFINITIONS.length);
+  assert.ok(allRewards.coins >= mainLoopCoinBaseline * 0.2);
+  assert.ok(allRewards.coins <= mainLoopCoinBaseline * 0.3);
+});
+
 test('daily task claim keys are scoped by backend date', () => {
   const dailyTask = TASK_DEFINITIONS.find((task) => task.id === 'daily_sessions_3');
   const guideTask = TASK_DEFINITIONS.find((task) => task.id === 'guide_first_session');
