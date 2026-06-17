@@ -37,8 +37,7 @@ const SESSION_SUMMARY_FIELDS = [
   'averageSatisfaction',
   'maxCombo',
   'durationSeconds',
-  'customerTypes',
-  'clientVersion'
+  'customerTypes'
 ];
 
 export function createApp({

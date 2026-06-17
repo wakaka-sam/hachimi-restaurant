@@ -35,6 +35,7 @@ addCheck('backend profile stamina recovery status', 'server/src/app.mjs', ['getS
 addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_READY', 'getMinimumSettlementRealSeconds', 'minimumRealSeconds']);
 addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', ['settleExpiredSessions', 'getExpiredActiveSessions', 'createExpiredSummary']);
 addCheck('backend accepts valid expired completed summaries', 'server/test/api.test.mjs', ['expired completed session summary', 'rewardCoins, 130', 'customersServed, 12']);
+addCheck('backend keeps expired metadata as fallback settlement', 'server/test/api.test.mjs', ['expired client metadata', 'resumed-client', 'rewardCoins, 75']);
 addCheck('backend rejects mismatched customer type totals', 'server/test/api.test.mjs', ['mismatched customer type totals', 'customer_type_count_mismatch']);
 addCheck('backend rejects non-90-second summaries', 'server/test/api.test.mjs', ['non-90-second duration', 'invalid_duration']);
 addCheck('backend rejects invalid summary numeric bounds', 'server/test/api.test.mjs', ['invalid numeric bounds', 'invalid_satisfaction']);

@@ -431,6 +431,33 @@ test('API settles an expired session without summary with minimum guaranteed rew
   assert.equal(finish.body.profile.player.coins, 75);
 });
 
+test('API does not treat expired client metadata as a completed summary', async (t) => {
+  const { app, store, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: {}
+  });
+  assert.equal(start.status, 200);
+
+  const session = store.getSession(start.body.session.sessionId);
+  session.expiresAt = '2000-01-01T00:00:00.000Z';
+
+  const finish = await request(baseUrl, '/api/session/finish', {
+    method: 'POST',
+    body: {
+      sessionId: session.sessionId,
+      clientVersion: 'resumed-client'
+    }
+  });
+
+  assert.equal(finish.status, 200);
+  assert.equal(finish.body.session.status, 'expired');
+  assert.equal(finish.body.session.summary.clientVersion, 'resumed-client');
+  assert.equal(finish.body.settlement.rewardCoins, 75);
+});
+
 test('API settles an expired completed session summary when provided', async (t) => {
   const { app, store, baseUrl } = await startTestServer();
   t.after(() => app.close());
