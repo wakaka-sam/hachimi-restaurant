@@ -492,7 +492,7 @@ function handleTableClick(index) {
   } else if (customer.phase === 'readyFood') {
     customer.phase = 'eating';
     customer.phaseTime = getMovementAdjustedDuration(game.tuning.eatingSeconds);
-    setBusinessFeedback('上菜完成');
+    setBusinessFeedback('服务成功：上菜完成');
   } else if (customer.phase === 'readyPay') {
     collectCustomer(index);
   }
@@ -537,7 +537,7 @@ function collectCustomer(index) {
   game.combo += 1;
   game.maxCombo = Math.max(game.maxCombo, game.combo);
   game.tables[index] = null;
-  setBusinessFeedback(`收银成功 满意 ${Math.round(satisfaction * 100)}%`);
+  setBusinessFeedback(`收银成功 连击 ${game.combo} 满意 ${Math.round(satisfaction * 100)}%`);
 }
 
 function setBusinessFeedback(message) {

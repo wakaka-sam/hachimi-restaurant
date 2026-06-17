@@ -118,7 +118,7 @@ export class BusinessSimulation {
     if (table.customer.phase === 'readyFood') {
       table.customer.phase = 'eating';
       table.customer.phaseTime = this.getMovementAdjustedDuration(this.tuning.eatingSeconds);
-      this.setFeedback('上菜完成');
+      this.setFeedback('服务成功：上菜完成');
       return;
     }
     if (table.customer.phase === 'readyPay') {
@@ -242,7 +242,7 @@ export class BusinessSimulation {
     this.combo += 1;
     this.maxCombo = Math.max(this.maxCombo, this.combo);
     table.customer = null;
-    this.setFeedback(`收银成功 满意 ${Math.round(satisfaction * 100)}%`);
+    this.setFeedback(`收银成功 连击 ${this.combo} 满意 ${Math.round(satisfaction * 100)}%`);
   }
 
   private loseCustomer(): void {

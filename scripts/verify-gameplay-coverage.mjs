@@ -63,7 +63,7 @@ addCheck('web max session customer cap', 'client/web/main.js', ['canSpawnMoreCus
 addCheck('web floor movement tuning', 'client/web/main.js', ['getMovementAdjustedDuration', 'moveSpeedMultiplier']);
 addCheck('web locked table slots', 'client/web/main.js', ['table-locked.png', 'CONSTANTS.maxTableSlots', '未解锁']);
 addCheck('web normal customer type', 'client/web/main.js', ["customerType: 'normal'", 'customerTypes']);
-addCheck('web business feedback', 'client/web/main.js', ['setBusinessFeedback', 'getSatisfactionPercent', '收银成功 满意', '顾客离开，连击中断']);
+addCheck('web business feedback', 'client/web/main.js', ['setBusinessFeedback', 'getSatisfactionPercent', '服务成功', '收银成功 连击', '顾客离开，连击中断']);
 addCheck('web business feedback texture', 'client/web/styles.css', ['business-feedback', 'background-image: url("/textures/card.png")']);
 addCheck('web task claim', 'client/web/main.js', ['/api/tasks/claim', 'claimTask']);
 addCheck('web task type grouping', 'client/web/main.js', ['groupTasksByType', 'TASK_TYPE_LABELS', 'task-section']);
@@ -93,7 +93,7 @@ addCheck('cocos max session customer cap', 'client/cocos/assets/scripts/core/Bus
 addCheck('cocos floor movement tuning', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['getMovementAdjustedDuration', 'moveSpeedMultiplier']);
 addCheck('cocos normal customer type', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ["customerType: 'normal'", 'customerTypes']);
 addCheck('cocos simulation speed mode toggle', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['setSpeedMode', 'toggleSpeedMode', "speedMode === '1x' ? '2x' : '1x'"]);
-addCheck('cocos business feedback simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['lastFeedback', 'feedbackTimeLeft', 'averageSatisfaction', '收银成功 满意', '顾客离开，连击中断']);
+addCheck('cocos business feedback simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['lastFeedback', 'feedbackTimeLeft', 'averageSatisfaction', '服务成功', '收银成功 连击', '顾客离开，连击中断']);
 addCheck('cocos api client endpoints', 'client/cocos/assets/scripts/services/ApiClient.ts', ['/api/player/profile', '/api/session/start', '/api/session/finish', '/api/upgrade/part', '/api/upgrade/restaurant', '/api/tasks/claim']);
 addCheck('cocos api host resolution', 'client/cocos/assets/scripts/services/ApiClient.ts', ['PRODUCTION_API_BASE_URL', 'https://animalapi.wakaka007.cn', 'resolveBaseUrl', 'sys.isBrowser']);
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'restaurantBackgrounds', 'getRestaurantBackground', 'tableEmpty', 'tableLocked', 'cashier', 'animals', 'starIcon', 'starIconEmpty', 'getStarFrame']);
@@ -126,6 +126,7 @@ addCheck('product documented max session customer cap', 'docs/product.md', ['每
 addCheck('product documented backend stamina recovery display', 'docs/product.md', ['下一点体力倒计时', '满体力时间', '后端返回的恢复状态']);
 addCheck('product documented task type separation', 'docs/product.md', ['明确区分引导任务、每日任务、成长任务']);
 addCheck('product documented daily task reset', 'docs/product.md', ['每日任务进度按后端日期刷新', '每天最多领取一次']);
+addCheck('product documented business feedback scope', 'docs/product.md', ['服务成功', '顾客离开', '连击', '收银成功']);
 addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
 addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'validateCssTextureBackgrounds']);

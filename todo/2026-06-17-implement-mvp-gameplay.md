@@ -94,6 +94,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos simulation now tracks average satisfaction and short-lived operation feedback.
   - Cocos controller exposes satisfaction and feedback labels for the营业 scene.
   - Web debug harness mirrors the same satisfaction and instant feedback behavior for local verification.
+  - Web and Cocos instant feedback now explicitly covers service success, customer leaving, combo, and cashier success.
 - Implemented the documented常驻 2 倍速入口 during营业:
   - Cocos simulation can switch between 1x and 2x while a session is running.
   - Cocos controller routes the speed button to the active simulation when on the营业 screen.
@@ -233,6 +234,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos API host resolution for Web same-origin and non-browser mini-game targets.
   - Web first-run guide highlights.
   - Web and Cocos营业满意度/即时反馈 wiring.
+  - Web and Cocos explicit service success, customer leaving, combo, and cashier success feedback copy.
   - Web and Cocos restaurant visual stage wiring.
   - Cocos main-screen five-part star status wiring.
   - Cocos MVP screen navigation wiring.
