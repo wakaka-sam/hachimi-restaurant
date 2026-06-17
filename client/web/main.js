@@ -252,6 +252,8 @@ function startLocalGame(session) {
     combo: 0,
     maxCombo: 0,
     nextCustomerId: 1,
+    feedback: '',
+    feedbackTimeLeft: 0,
     lastTick: performance.now(),
     finished: false
   };
@@ -277,6 +279,10 @@ function tickGame() {
 function updateGame(delta) {
   const game = state.game;
   game.timeLeft = Math.max(0, game.timeLeft - delta);
+  game.feedbackTimeLeft = Math.max(0, game.feedbackTimeLeft - delta);
+  if (game.feedbackTimeLeft <= 0) {
+    game.feedback = '';
+  }
 
   game.spawnCooldown -= delta;
   const crowdCount = game.waiting.length + game.tables.filter(Boolean).length;
@@ -358,6 +364,7 @@ function loseCustomer() {
   const game = state.game;
   game.lost += 1;
   game.combo = 0;
+  setBusinessFeedback('顾客离开，连击中断');
 }
 
 function renderBusinessScreen() {
@@ -374,6 +381,7 @@ function renderBusinessScreen() {
       textureButton('结束结算', finishBusiness, { className: 'compact' })
     ),
     guide ? h('div', { class: 'guide-cue business-guide' }, guide.message) : null,
+    game.feedback ? h('div', { class: 'business-feedback' }, game.feedback) : null,
     h('div', { class: 'table-zone' }, game.tables.map((customer, index) => renderTable(customer, index))),
     h('div', { class: 'waiting-row' }, game.waiting.map((customer) => h('div', { class: 'waiting-customer' },
       h('img', { src: customer.animal, alt: '等待中的小动物' }),
@@ -386,7 +394,7 @@ function renderBusinessScreen() {
       h('span', { class: 'stat-pill' }, `服务 ${game.served}`),
       h('span', { class: 'stat-pill' }, `离开 ${game.lost}`),
       h('span', { class: 'stat-pill' }, `连击 ${game.combo}`),
-      h('span', { class: 'stat-pill' }, `等待 ${game.waiting.length}`)
+      h('span', { class: 'stat-pill' }, `满意 ${getSatisfactionPercent(game)}`)
     )
   );
 }
@@ -432,6 +440,7 @@ function handleTableClick(index) {
   } else if (customer.phase === 'readyFood') {
     customer.phase = 'eating';
     customer.phaseTime = game.tuning.eatingSeconds;
+    setBusinessFeedback('上菜完成');
   } else if (customer.phase === 'readyPay') {
     collectCustomer(index);
   }
@@ -449,6 +458,7 @@ function seatCustomer(index) {
     phase: 'seated',
     phaseTime: game.tuning.prepDelaySeconds
   };
+  setBusinessFeedback('安排入座');
 }
 
 function collectFirstReadyPay() {
@@ -471,6 +481,22 @@ function collectCustomer(index) {
   game.combo += 1;
   game.maxCombo = Math.max(game.maxCombo, game.combo);
   game.tables[index] = null;
+  setBusinessFeedback(`收银成功 满意 ${Math.round(satisfaction * 100)}%`);
+}
+
+function setBusinessFeedback(message) {
+  if (!state.game) {
+    return;
+  }
+  state.game.feedback = message;
+  state.game.feedbackTimeLeft = 2.2;
+}
+
+function getSatisfactionPercent(game) {
+  if (!game.served) {
+    return '--';
+  }
+  return `${Math.round((game.satisfactionSum / game.served) * 100)}%`;
 }
 
 async function finishBusiness() {

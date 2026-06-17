@@ -35,6 +35,8 @@ addCheck('server configurable Web static root', 'server/src/server.mjs', ['WEB_S
 addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "screen === 'business'", "screen === 'upgrade'", "screen === 'tasks'"]);
 addCheck('web 2x speed support', 'client/web/main.js', ["state.speedMode === '1x' ? '2x' : '1x'", "speedMode: state.speedMode"]);
 addCheck('web click service chain', 'client/web/main.js', ['seatCustomer', "customer.phase = 'eating'", 'collectCustomer']);
+addCheck('web business feedback', 'client/web/main.js', ['setBusinessFeedback', 'getSatisfactionPercent', '收银成功 满意', '顾客离开，连击中断']);
+addCheck('web business feedback texture', 'client/web/styles.css', ['business-feedback', 'background-image: url("/textures/card.png")']);
 addCheck('web task claim', 'client/web/main.js', ['/api/tasks/claim', 'claimTask']);
 addCheck('web first-run guide highlights', 'client/web/main.js', ['getGuideStep', 'startBusiness', 'seatCustomer', 'serveFood', 'collectPay', 'upgradePart', 'claimTask']);
 addCheck('web restaurant visual stages', 'client/web/main.js', ['restaurantBackgrounds', 'getRestaurantStageIndex', 'getRestaurantSceneAttrs', 'restaurant-bg-stage-3.png']);
@@ -42,7 +44,9 @@ addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'backg
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
 addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideLabel', 'getGuideMessage', '开始营业', '完成上菜', '领取引导任务奖励']);
 addCheck('cocos restaurant visual stages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['restaurantBackgroundSprite', 'renderRestaurantBackground', 'getRestaurantBackground']);
+addCheck('cocos business feedback labels', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['satisfactionLabel', 'feedbackLabel', 'satisfactionPercent', 'lastFeedback']);
 addCheck('cocos business simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['seatCustomer', 'handleTablePressed', 'collectFirstReadyPay', 'getSummary']);
+addCheck('cocos business feedback simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['lastFeedback', 'feedbackTimeLeft', 'averageSatisfaction', '收银成功 满意', '顾客离开，连击中断']);
 addCheck('cocos api client endpoints', 'client/cocos/assets/scripts/services/ApiClient.ts', ['/api/player/profile', '/api/session/start', '/api/session/finish', '/api/upgrade/part', '/api/upgrade/restaurant', '/api/tasks/claim']);
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'restaurantBackgrounds', 'getRestaurantBackground', 'tableEmpty', 'cashier', 'animals', 'starIcon']);
 addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartUpgradeView', 'TaskItemView']);
@@ -118,8 +122,10 @@ for (const screen of ['mainScreen', 'businessScreen', 'upgradeScreen', 'taskScre
   }
 }
 
-if (!sceneWiring.labels?.includes('guideLabel')) {
-  fail('Cocos scene wiring manifest missing guideLabel');
+for (const label of ['guideLabel', 'satisfactionLabel', 'feedbackLabel']) {
+  if (!sceneWiring.labels?.includes(label)) {
+    fail(`Cocos scene wiring manifest missing ${label}`);
+  }
 }
 
 if (!sceneWiring.sprites?.includes('restaurantBackgroundSprite')) {

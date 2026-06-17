@@ -59,6 +59,12 @@ export class HachimiRestaurantGame extends Component {
   businessStatsLabel: Label | null = null;
 
   @property(Label)
+  satisfactionLabel: Label | null = null;
+
+  @property(Label)
+  feedbackLabel: Label | null = null;
+
+  @property(Label)
   resultLabel: Label | null = null;
 
   @property(Label)
@@ -298,6 +304,15 @@ export class HachimiRestaurantGame extends Component {
     if (this.businessStatsLabel) {
       this.businessStatsLabel.string =
         `服务 ${simulation.customersServed} / 离开 ${simulation.customersLost} / 连击 ${simulation.combo}`;
+    }
+    if (this.satisfactionLabel) {
+      this.satisfactionLabel.string = simulation.customersServed > 0
+        ? `满意 ${simulation.satisfactionPercent}%`
+        : '满意 --';
+    }
+    if (this.feedbackLabel) {
+      this.feedbackLabel.string = simulation.lastFeedback;
+      this.feedbackLabel.node.active = simulation.lastFeedback.length > 0;
     }
     this.tableSlots.forEach((slot, index) => {
       slot.render(simulation.tables[index]?.customer || null, simulation.waiting.length, textures);

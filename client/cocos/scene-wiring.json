@@ -73,6 +73,8 @@
     "timerLabel",
     "speedLabel",
     "businessStatsLabel",
+    "satisfactionLabel",
+    "feedbackLabel",
     "resultLabel",
     "guideLabel"
   ],

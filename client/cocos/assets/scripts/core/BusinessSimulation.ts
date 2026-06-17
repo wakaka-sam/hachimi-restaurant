@@ -37,6 +37,8 @@ export class BusinessSimulation {
   combo: number = 0;
   maxCombo: number = 0;
   nextCustomerId: number = 1;
+  lastFeedback = '';
+  feedbackTimeLeft = 0;
   finished = false;
 
   constructor(readonly tuning: TuningState, speedMode: SpeedMode) {
@@ -50,6 +52,10 @@ export class BusinessSimulation {
     }
     const speed = this.speedMode === '2x' ? 2 : 1;
     const delta = realDeltaSeconds * speed;
+    this.feedbackTimeLeft = Math.max(0, this.feedbackTimeLeft - delta);
+    if (this.feedbackTimeLeft <= 0) {
+      this.lastFeedback = '';
+    }
     this.timeLeft = Math.max(0, this.timeLeft - delta);
     this.spawnCooldown -= delta;
 
@@ -76,6 +82,7 @@ export class BusinessSimulation {
     customer.phase = 'seated';
     customer.phaseTime = this.tuning.prepDelaySeconds;
     table.customer = customer;
+    this.setFeedback('安排入座');
   }
 
   handleTablePressed(tableIndex: number): void {
@@ -90,6 +97,7 @@ export class BusinessSimulation {
     if (table.customer.phase === 'readyFood') {
       table.customer.phase = 'eating';
       table.customer.phaseTime = this.tuning.eatingSeconds;
+      this.setFeedback('上菜完成');
       return;
     }
     if (table.customer.phase === 'readyPay') {
@@ -108,12 +116,20 @@ export class BusinessSimulation {
     return {
       customersServed: this.customersServed,
       customersLost: this.customersLost,
-      averageSatisfaction: this.customersServed > 0 ? this.satisfactionSum / this.customersServed : 0,
+      averageSatisfaction: this.averageSatisfaction,
       maxCombo: this.maxCombo,
       durationSeconds: CONSTANTS.sessionDurationSeconds,
       speedMode: this.speedMode,
       clientVersion: 'cocos-source-0.1.0'
     };
+  }
+
+  get averageSatisfaction(): number {
+    return this.customersServed > 0 ? this.satisfactionSum / this.customersServed : 0;
+  }
+
+  get satisfactionPercent(): number {
+    return Math.round(this.averageSatisfaction * 100);
   }
 
   private spawnCustomer(): void {
@@ -193,10 +209,17 @@ export class BusinessSimulation {
     this.combo += 1;
     this.maxCombo = Math.max(this.maxCombo, this.combo);
     table.customer = null;
+    this.setFeedback(`收银成功 满意 ${Math.round(satisfaction * 100)}%`);
   }
 
   private loseCustomer(): void {
     this.customersLost += 1;
     this.combo = 0;
+    this.setFeedback('顾客离开，连击中断');
+  }
+
+  private setFeedback(message: string): void {
+    this.lastFeedback = message;
+    this.feedbackTimeLeft = 2.2;
   }
 }

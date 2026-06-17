@@ -84,6 +84,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Level 2 uses the garden restaurant.
   - Level 3+ uses the deluxe restaurant.
 - Wired restaurant stage textures into the Web debug harness, Cocos texture catalog, and Cocos scene wiring contract.
+- Added live营业反馈 for service quality:
+  - Cocos simulation now tracks average satisfaction and short-lived operation feedback.
+  - Cocos controller exposes satisfaction and feedback labels for the营业 scene.
+  - Web debug harness mirrors the same satisfaction and instant feedback behavior for local verification.
 
 ## Remaining Work
 
@@ -103,6 +107,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared restaurant-upgrade handfeel retention.
   - Web core screens and service chain.
   - Web first-run guide highlights.
+  - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos restaurant visual stage wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos guide label wiring.

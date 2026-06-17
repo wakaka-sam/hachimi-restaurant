@@ -150,6 +150,25 @@ button {
   z-index: 6;
 }
 
+.business-feedback {
+  position: absolute;
+  left: 50%;
+  top: 138px;
+  z-index: 6;
+  min-width: 154px;
+  min-height: 42px;
+  padding: 8px 14px;
+  transform: translateX(-50%);
+  background-image: url("/textures/card.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 900;
+}
+
 .guide-focus {
   animation: guide-pulse 1s ease-in-out infinite alternate;
   filter: brightness(1.12) saturate(1.08);
