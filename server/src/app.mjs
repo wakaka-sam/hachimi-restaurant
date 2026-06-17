@@ -199,7 +199,20 @@ function serializeProfile(player, store, now = new Date()) {
     tuning: getTuning(player),
     allPartsMaxed: areAllPartsMaxed(player),
     tasks: getTaskStatuses(player, now),
-    activeSession
+    activeSession: activeSession ? serializeBusinessSession(activeSession, now) : null
+  };
+}
+
+function serializeBusinessSession(session, now = new Date()) {
+  const speedMultiplier = session.speedMode === '2x' ? 2 : 1;
+  const elapsedRealSeconds = Math.max(0, (new Date(now).getTime() - new Date(session.startedAt).getTime()) / 1000);
+  const elapsedGameSeconds = Math.min(CONSTANTS.sessionDurationSeconds, elapsedRealSeconds * speedMultiplier);
+  const remainingSeconds = Math.max(0, CONSTANTS.sessionDurationSeconds - elapsedGameSeconds);
+  return {
+    ...session,
+    elapsedSeconds: Math.round(elapsedGameSeconds),
+    remainingSeconds: Math.ceil(remainingSeconds),
+    recoveryWindowSeconds: CONSTANTS.sessionRecoveryWindowSeconds
   };
 }
 
@@ -212,7 +225,7 @@ async function startSession(response, store, playerId, body, now) {
     sendJson(response, 200, {
       ok: true,
       resumed: true,
-      session: existing,
+      session: serializeBusinessSession(existing, now),
       profile: serializeProfile(player, store, now)
     });
     return;
@@ -224,12 +237,14 @@ async function startSession(response, store, playerId, body, now) {
   }
 
   const speedMode = body.speedMode === '2x' ? '2x' : '1x';
+  const speedMultiplier = speedMode === '2x' ? 2 : 1;
+  const realSessionSeconds = Math.ceil(CONSTANTS.sessionDurationSeconds / speedMultiplier);
   player.stamina -= CONSTANTS.sessionStaminaCost;
   player.staminaUpdatedAt = toIso(now);
   player.updatedAt = toIso(now);
 
   const expiresAt = new Date(
-    now.getTime() + (CONSTANTS.sessionDurationSeconds + CONSTANTS.sessionRecoveryWindowSeconds) * 1000
+    now.getTime() + (realSessionSeconds + CONSTANTS.sessionRecoveryWindowSeconds) * 1000
   );
   const session = {
     sessionId: randomUUID(),
@@ -248,7 +263,7 @@ async function startSession(response, store, playerId, body, now) {
   sendJson(response, 200, {
     ok: true,
     resumed: false,
-    session,
+    session: serializeBusinessSession(session, now),
     gameplay: {
       durationSeconds: CONSTANTS.sessionDurationSeconds,
       staminaCost: CONSTANTS.sessionStaminaCost,
@@ -315,7 +330,7 @@ async function finishSession(response, store, playerId, body, now) {
 
   sendJson(response, 200, {
     ok: true,
-    session,
+    session: serializeBusinessSession(session, now),
     settlement,
     profile: serializeProfile(player, store, now)
   });

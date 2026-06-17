@@ -29,7 +29,7 @@ export class BusinessSimulation {
   readonly tables: TableState[];
   readonly waiting: LocalCustomer[] = [];
   speedMode: SpeedMode;
-  timeLeft: number = CONSTANTS.sessionDurationSeconds;
+  timeLeft: number;
   spawnCooldown: number = 1;
   customersServed: number = 0;
   customersLost: number = 0;
@@ -41,8 +41,9 @@ export class BusinessSimulation {
   feedbackTimeLeft = 0;
   finished = false;
 
-  constructor(readonly tuning: TuningState, speedMode: SpeedMode) {
+  constructor(readonly tuning: TuningState, speedMode: SpeedMode, remainingSeconds: number = CONSTANTS.sessionDurationSeconds) {
     this.speedMode = speedMode;
+    this.timeLeft = clamp(remainingSeconds, 0, CONSTANTS.sessionDurationSeconds);
     this.tables = Array.from({ length: tuning.tableCapacity }, () => ({ customer: null }));
   }
 

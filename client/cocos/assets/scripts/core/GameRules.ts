@@ -70,6 +70,9 @@ export interface BusinessSession {
   expiresAt: string;
   speedMode: SpeedMode;
   status: 'active' | 'finished' | 'expired';
+  elapsedSeconds?: number;
+  remainingSeconds?: number;
+  recoveryWindowSeconds?: number;
 }
 
 export interface SessionSummary {

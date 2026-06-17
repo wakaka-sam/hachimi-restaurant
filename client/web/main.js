@@ -242,7 +242,7 @@ function startLocalGame(session) {
   state.game = {
     session,
     tuning,
-    timeLeft: CONSTANTS.sessionDurationSeconds,
+    timeLeft: Math.max(0, Math.min(CONSTANTS.sessionDurationSeconds, session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds)),
     spawnCooldown: 1,
     waiting: [],
     tables: Array.from({ length: tuning.tableCapacity }, () => null),

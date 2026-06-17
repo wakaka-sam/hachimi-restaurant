@@ -175,7 +175,11 @@ export class HachimiRestaurantGame extends Component {
         throw new Error('Missing session from backend.');
       }
       this.activeSessionId = response.session.sessionId;
-      this.simulation = new BusinessSimulation(response.profile.tuning, response.session.speedMode);
+      this.simulation = new BusinessSimulation(
+        response.profile.tuning,
+        response.session.speedMode,
+        response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds
+      );
       this.speedMode = response.session.speedMode;
       this.finishing = false;
       this.setScreen('business');

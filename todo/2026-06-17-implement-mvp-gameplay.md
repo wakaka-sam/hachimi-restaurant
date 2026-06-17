@@ -92,6 +92,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos simulation can switch between 1x and 2x while a session is running.
   - Cocos controller routes the speed button to the active simulation when on the营业 screen.
   - Web debug harness mirrors in-session speed switching for local verification.
+- Improved中断恢复:
+  - Backend active session responses include elapsed/remaining game seconds and recovery window.
+  - 2x sessions use a shorter real-time active window while preserving the 2-minute recovery window.
+  - Cocos and Web debug harness resume active sessions from remaining time instead of restarting at 90 seconds.
 
 ## Remaining Work
 
@@ -104,12 +108,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 16 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 17 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
   - Shared restaurant-upgrade handfeel retention.
+  - Backend active session remaining-time recovery.
   - Web core screens and service chain.
+  - Web and Cocos resumed session remaining-time handling.
   - Web and Cocos in-session 1x/2x speed switching.
   - Web first-run guide highlights.
   - Web and Cocos营业满意度/即时反馈 wiring.

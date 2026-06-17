@@ -204,7 +204,7 @@ test('API prevents double settlement of a business session', async (t) => {
 });
 
 test('API resumes an active business session instead of charging stamina again', async (t) => {
-  const { app, baseUrl } = await startTestServer();
+  const { app, store, baseUrl } = await startTestServer();
   t.after(() => app.close());
 
   const firstStart = await request(baseUrl, '/api/session/start', {
@@ -213,6 +213,10 @@ test('API resumes an active business session instead of charging stamina again',
   });
   assert.equal(firstStart.status, 200);
   assert.equal(firstStart.body.profile.player.stamina, 50);
+  assert.equal(firstStart.body.session.remainingSeconds, 90);
+
+  const session = store.getSession(firstStart.body.session.sessionId);
+  session.startedAt = new Date(Date.now() - 30_000).toISOString();
 
   const secondStart = await request(baseUrl, '/api/session/start', {
     method: 'POST',
@@ -223,6 +227,25 @@ test('API resumes an active business session instead of charging stamina again',
   assert.equal(secondStart.body.session.sessionId, firstStart.body.session.sessionId);
   assert.equal(secondStart.body.profile.player.stamina, 50);
   assert.equal(secondStart.body.session.speedMode, '1x');
+  assert.ok(secondStart.body.session.remainingSeconds <= 61);
+  assert.ok(secondStart.body.session.remainingSeconds >= 59);
+});
+
+test('API uses speed mode to define the active session recovery window', async (t) => {
+  const { app, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: { speedMode: '2x' }
+  });
+
+  assert.equal(start.status, 200);
+  const startedAt = new Date(start.body.session.startedAt).getTime();
+  const expiresAt = new Date(start.body.session.expiresAt).getTime();
+  assert.equal(Math.round((expiresAt - startedAt) / 1000), 165);
+  assert.equal(start.body.session.remainingSeconds, 90);
+  assert.equal(start.body.session.recoveryWindowSeconds, 120);
 });
 
 test('API rejects session start when stamina is below 10', async (t) => {
