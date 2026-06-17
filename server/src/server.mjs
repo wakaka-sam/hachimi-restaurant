@@ -1,11 +1,10 @@
 import { resolve } from 'node:path';
 import { createApp } from './app.mjs';
+import { resolveServerConfig } from './config.mjs';
 import { GameStore } from './store.mjs';
 
 const rootDir = resolve(import.meta.dirname, '../..');
-const port = Number(process.env.PORT || 4173);
-const dataFile = process.env.GAME_DATA_FILE || resolve(rootDir, 'server/data/game-state.json');
-const clientRoot = process.env.WEB_STATIC_ROOT ? resolve(rootDir, process.env.WEB_STATIC_ROOT) : undefined;
+const { port, dataFile, clientRoot } = resolveServerConfig(process.env, rootDir);
 
 const store = await new GameStore({ filePath: dataFile }).load();
 const app = createApp({ store, rootDir, clientRoot });

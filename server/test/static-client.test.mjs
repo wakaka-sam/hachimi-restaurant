@@ -5,6 +5,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createApp } from '../src/app.mjs';
+import { resolveServerConfig } from '../src/config.mjs';
 import { GameStore } from '../src/store.mjs';
 
 async function startTestServer(options = {}) {
@@ -54,6 +55,29 @@ test('backend can serve a configured Cocos Web static root', async (t) => {
   const html = await fetch(`${baseUrl}/`);
   assert.equal(html.status, 200);
   assert.match(await html.text(), /Cocos Web Build/);
+
+  const debugHarnessScript = await fetch(`${baseUrl}/main.js`);
+  assert.equal(debugHarnessScript.status, 404);
+});
+
+test('production server config requires a Cocos Web static root', () => {
+  const rootDir = process.cwd();
+
+  assert.throws(
+    () => resolveServerConfig({ NODE_ENV: 'production' }, rootDir),
+    /WEB_STATIC_ROOT must point to Cocos Web build output/
+  );
+
+  const config = resolveServerConfig({
+    NODE_ENV: 'production',
+    WEB_STATIC_ROOT: 'dist/cocos-web',
+    GAME_DATA_FILE: '/tmp/hachimi-state.json',
+    PORT: '5000'
+  }, rootDir);
+
+  assert.equal(config.port, 5000);
+  assert.equal(config.dataFile, '/tmp/hachimi-state.json');
+  assert.equal(config.clientRoot, join(rootDir, 'dist/cocos-web'));
 });
 
 test('runtime client sources do not use canvas or SVG drawing for art', async () => {

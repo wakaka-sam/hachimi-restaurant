@@ -16,6 +16,13 @@ There is one production client codebase: `client/cocos/`.
 
 Platform-specific behavior should be isolated behind adapters in the Cocos codebase when it appears, rather than branching gameplay logic per platform.
 
+Implementation source of truth:
+
+- Product behavior must be implemented in `client/cocos/` first.
+- The temporary `client/web/` harness may mirror Cocos behavior only for local backend/gameplay verification.
+- Production Web deployment must serve Cocos Web build output through `WEB_STATIC_ROOT`.
+- WeChat Mini Game and Douyin Mini Game packages must be built from the same Cocos project without separate gameplay forks.
+
 ## API Host Resolution
 
 The Cocos API client uses one endpoint resolution rule across targets:

@@ -78,6 +78,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added matching guide label/message support to the Cocos controller and scene wiring contract.
 - Recorded that the production Web client must be a Cocos Web build output, sharing the same codebase as WeChat Mini Game and Douyin Mini Game.
 - Added `WEB_STATIC_ROOT` support so production deployment can serve Cocos Web build output instead of the debug harness.
+- Added a production server guard so `NODE_ENV=production` refuses to start unless `WEB_STATIC_ROOT` points to Cocos Web build output.
+- Documented that `client/web/` must never be used as production `WEB_STATIC_ROOT`; it remains a local verification harness only.
 - Added Cocos API host resolution:
   - Cocos Web builds use same-origin `/api` routes when `apiBaseUrl` is empty.
   - WeChat Mini Game, Douyin Mini Game, and other non-browser Cocos runtimes default to `https://animalapi.wakaka007.cn`.
@@ -208,6 +210,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos locked table slot texture wiring.
   - Web and Cocos waiting queue cap wiring.
   - Web and Cocos max-session customer spawning cap.
+  - Production Web static root guard that prevents the debug harness from being used in production.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.
