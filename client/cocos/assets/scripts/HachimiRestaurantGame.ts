@@ -69,6 +69,9 @@ export class HachimiRestaurantGame extends Component {
   speedLabel: Label | null = null;
 
   @property(Label)
+  startButtonLabel: Label | null = null;
+
+  @property(Label)
   businessStatsLabel: Label | null = null;
 
   @property(Label)
@@ -353,6 +356,9 @@ export class HachimiRestaurantGame extends Component {
     if (this.levelLabel) this.levelLabel.string = `餐厅 Lv.${this.profile.player.restaurantLevel}`;
     if (this.nextRevenueLabel) this.nextRevenueLabel.string = `下次 ${this.profile.economy.expectedRevenue}`;
     if (this.speedLabel) this.speedLabel.string = this.speedMode;
+    if (this.startButtonLabel) {
+      this.startButtonLabel.string = this.profile.activeSession ? '继续营业' : '开始营业';
+    }
     if (this.startButton) {
       this.startButton.interactable = Boolean(
         this.profile.activeSession || this.profile.player.stamina >= CONSTANTS.sessionStaminaCost

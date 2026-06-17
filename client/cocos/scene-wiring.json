@@ -68,6 +68,7 @@
       "guideTaskHeaderLabel",
       "dailyTaskHeaderLabel",
       "growthTaskHeaderLabel",
+      "startButtonLabel",
       "waitingCustomerLabels",
       "texturedPanels"
     ],
@@ -156,6 +157,7 @@
     "messageLabel",
     "timerLabel",
     "speedLabel",
+    "startButtonLabel",
     "businessStatsLabel",
     "satisfactionLabel",
     "feedbackLabel",

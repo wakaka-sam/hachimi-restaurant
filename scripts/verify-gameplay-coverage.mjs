@@ -74,6 +74,7 @@ addCheck('web star state textures', 'client/web/main.js', ['starEmpty', 'icon-st
 addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'background-image: url("/textures/card.png")', 'guide-focus']);
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
 addCheck('cocos screen navigation buttons', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton', 'renderNavigation']);
+addCheck('cocos resumable session start button label', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['startButtonLabel', 'activeSession', '继续营业', '开始营业']);
 addCheck('cocos textured button refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedButtonView', 'texturedButtons', 'renderTexturedButtons']);
 addCheck('cocos textured panel refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedPanelView', 'texturedPanels', 'renderTexturedPanels']);
 addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideLabel', 'getGuideMessage', '开始营业', '完成上菜', '领取引导任务奖励']);
@@ -108,6 +109,7 @@ addCheck('cocos mobile safe area component', 'client/cocos/assets/scripts/compon
 addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView', 'TexturedPanelView']);
 addCheck('cocos scene wiring safe area contract', 'client/cocos/scene-wiring.json', ['MobileSafeAreaView', 'mainSafeArea', 'businessSafeArea', 'SafeArea', 'Widget', 'minTouchInset']);
 addCheck('cocos scene wiring manifest navigation buttons', 'client/cocos/scene-wiring.json', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']);
+addCheck('cocos scene wiring resumable start label', 'client/cocos/scene-wiring.json', ['startButtonLabel']);
 addCheck('cocos scene wiring part upgrade fields', 'client/cocos/scene-wiring.json', ['PartUpgradeView', 'costLabel', 'effectLabel', 'starSprites', 'buttonLabel']);
 addCheck('cocos scene wiring textured panels', 'client/cocos/scene-wiring.json', ['TexturedPanelView', 'texturedPanels', 'texturedPanelRoles', 'panelTexture']);
 addCheck('cocos scene wiring task section headers', 'client/cocos/scene-wiring.json', ['taskSections', 'guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel']);
@@ -254,6 +256,10 @@ for (const label of ['guideLabel', 'satisfactionLabel', 'feedbackLabel']) {
   }
 }
 
+if (!sceneWiring.labels?.includes('startButtonLabel')) {
+  fail('Cocos scene wiring manifest missing startButtonLabel');
+}
+
 for (const label of ['guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel']) {
   if (!sceneWiring.labels?.includes(label)) {
     fail(`Cocos scene wiring manifest missing task section label ${label}`);
@@ -286,6 +292,10 @@ if ((sceneWiring.minimumLabelArrayLengths?.waitingCustomerLabels || 0) < 4) {
 
 if (!sceneWiring.componentProperties?.HachimiRestaurantGame?.includes('waitingCustomerLabels')) {
   fail('Cocos scene wiring HachimiRestaurantGame missing waitingCustomerLabels');
+}
+
+if (!sceneWiring.componentProperties?.HachimiRestaurantGame?.includes('startButtonLabel')) {
+  fail('Cocos scene wiring HachimiRestaurantGame missing startButtonLabel');
 }
 
 for (const button of ['startButton', 'mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']) {
