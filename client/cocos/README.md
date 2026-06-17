@@ -80,6 +80,8 @@ Wire the navigation buttons to the controller properties instead of relying only
 
 The first scene pass should provide at least 28 `TexturedButtonView` instances: 10 fixed screen/control buttons, 5 part-upgrade buttons, and 13 task claim buttons. If task rows become virtualized later, update `scene-wiring.json` and the verification rule in the same task.
 
+Each `PartUpgradeView` must wire `titleLabel`, `costLabel`, `effectLabel`, `starSprites`, `upgradeButton`, and `buttonLabel`. These fields carry the required upgrade-screen information: current star state, shared upgrade cost, insufficient coin shortage, next-star effect, and max-star state.
+
 Then wire the serialized properties in the inspector.
 
 The expected scene contract is recorded in:

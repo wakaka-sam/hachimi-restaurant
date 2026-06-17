@@ -169,6 +169,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `MobileSafeAreaView` applies Cocos `SafeArea` and `Widget` layout to screen interaction roots.
   - Scene wiring now requires one safe-area root for each of the five MVP screens.
   - Platform docs now state that backgrounds may fill the canvas, but interactive controls must stay inside safe-area roots.
+- Added upgrade-screen detail coverage:
+  - Web and Cocos upgrade views must show current star state, shared cost, insufficient coin shortage, next-star effect, and max-star state.
+  - Cocos scene wiring now requires every `PartUpgradeView` to bind the labels, star sprites, and upgrade button that carry those states.
+  - Static coverage rejects recommendation copy in the free-upgrade UI.
 - Wired floor movement tuning into client simulations:
   - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
   - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
@@ -221,6 +225,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos max-session customer spawning cap.
   - Production Web static root guard that prevents the debug harness from being used in production.
   - Cocos mobile safe-area component and scene wiring contract.
+  - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.

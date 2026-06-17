@@ -69,6 +69,7 @@ addCheck('web task claim', 'client/web/main.js', ['/api/tasks/claim', 'claimTask
 addCheck('web task type grouping', 'client/web/main.js', ['groupTasksByType', 'TASK_TYPE_LABELS', 'task-section']);
 addCheck('web first-run guide highlights', 'client/web/main.js', ['getGuideStep', 'startBusiness', 'seatCustomer', 'serveFood', 'collectPay', 'upgradePart', 'claimTask']);
 addCheck('web restaurant visual stages', 'client/web/main.js', ['restaurantBackgrounds', 'getRestaurantStageIndex', 'getRestaurantSceneAttrs', 'restaurant-bg-stage-3.png']);
+addCheck('web upgrade screen required details', 'client/web/main.js', ['renderPartCard', 'renderStars(star)', '成本：', '还差', 'getPartEffectDescription', "'满星'"]);
 addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'background-image: url("/textures/card.png")', 'guide-focus']);
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
 addCheck('cocos screen navigation buttons', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton', 'renderNavigation']);
@@ -95,12 +96,14 @@ addCheck('cocos api client endpoints', 'client/cocos/assets/scripts/services/Api
 addCheck('cocos api host resolution', 'client/cocos/assets/scripts/services/ApiClient.ts', ['PRODUCTION_API_BASE_URL', 'https://animalapi.wakaka007.cn', 'resolveBaseUrl', 'sys.isBrowser']);
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'restaurantBackgrounds', 'getRestaurantBackground', 'tableEmpty', 'tableLocked', 'cashier', 'animals', 'starIcon']);
 addCheck('cocos part status component', 'client/cocos/assets/scripts/components/PartStatusView.ts', ['@ccclass', 'PartStatusView', 'PART_LABELS', 'starSprites', 'starIcon']);
+addCheck('cocos part upgrade required details', 'client/cocos/assets/scripts/components/PartUpgradeView.ts', ['@ccclass', 'PartUpgradeView', 'costLabel', 'effectLabel', 'buttonLabel', '还差', '已满星', '满星', 'profile.partEffects']);
 addCheck('cocos task type label component', 'client/cocos/assets/scripts/components/TaskItemView.ts', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('cocos textured button component', 'client/cocos/assets/scripts/components/TexturedButtonView.ts', ['@ccclass', 'TexturedButtonView', 'buttonDisabled', 'backgroundSprite']);
 addCheck('cocos mobile safe area component', 'client/cocos/assets/scripts/components/MobileSafeAreaView.ts', ['@ccclass', 'MobileSafeAreaView', 'SafeArea', 'Widget', 'ON_WINDOW_RESIZE', 'minTouchInset', 'safeArea.updateArea()', 'Math.max(widget.top']);
 addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView']);
 addCheck('cocos scene wiring safe area contract', 'client/cocos/scene-wiring.json', ['MobileSafeAreaView', 'mainSafeArea', 'businessSafeArea', 'SafeArea', 'Widget', 'minTouchInset']);
 addCheck('cocos scene wiring manifest navigation buttons', 'client/cocos/scene-wiring.json', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']);
+addCheck('cocos scene wiring part upgrade fields', 'client/cocos/scene-wiring.json', ['PartUpgradeView', 'costLabel', 'effectLabel', 'starSprites', 'buttonLabel']);
 addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json', ['componentProperties', 'TaskItemView', 'typeLabel']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
@@ -118,6 +121,7 @@ addCheck('product documented backend stamina recovery display', 'docs/product.md
 addCheck('product documented task type separation', 'docs/product.md', ['明确区分引导任务、每日任务、成长任务']);
 addCheck('product documented daily task reset', 'docs/product.md', ['每日任务进度按后端日期刷新', '每天最多领取一次']);
 addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);
+addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
 
 for (const check of checks) {
   let source = '';
@@ -206,6 +210,10 @@ if ((sceneWiring.minimumInstances?.PartStatusView || 0) < 5) {
   fail('Cocos scene wiring manifest needs at least 5 PartStatusView rows');
 }
 
+if ((sceneWiring.minimumInstances?.PartUpgradeView || 0) < 5) {
+  fail('Cocos scene wiring manifest needs at least 5 PartUpgradeView rows');
+}
+
 if ((sceneWiring.minimumInstances?.TexturedButtonView || 0) < 28) {
   fail('Cocos scene wiring manifest needs at least 28 TexturedButtonView instances');
 }
@@ -241,6 +249,19 @@ if ((sceneWiring.minimumSpriteArrayLengths?.waitingCustomerSprites || 0) < 4) {
 for (const button of ['startButton', 'mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']) {
   if (!sceneWiring.buttons?.includes(button)) {
     fail(`Cocos scene wiring manifest missing ${button}`);
+  }
+}
+
+for (const property of ['titleLabel', 'costLabel', 'effectLabel', 'starSprites', 'upgradeButton', 'buttonLabel']) {
+  if (!sceneWiring.componentProperties?.PartUpgradeView?.includes(property)) {
+    fail(`Cocos scene wiring PartUpgradeView missing ${property}`);
+  }
+}
+
+for (const file of ['client/web/main.js', 'client/cocos/assets/scripts/components/PartUpgradeView.ts']) {
+  const source = await readFile(file, 'utf8');
+  if (/推荐/.test(source)) {
+    fail(`${file} must not show recommendation copy on the free-upgrade screen`);
   }
 }
 

@@ -50,6 +50,14 @@
     "waitingCustomerSprites": 4
   },
   "componentProperties": {
+    "PartUpgradeView": [
+      "titleLabel",
+      "costLabel",
+      "effectLabel",
+      "starSprites",
+      "upgradeButton",
+      "buttonLabel"
+    ],
     "TaskItemView": [
       "typeLabel",
       "titleLabel",
