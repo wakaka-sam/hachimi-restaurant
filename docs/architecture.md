@@ -57,6 +57,8 @@ Do not introduce runtime canvas/SVG drawing for game art or UI surfaces unless a
 
 For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` references. Dynamic text may use `Label`. Do not use `Graphics`, custom drawing APIs, `UIOpacity`, or runtime color tinting for art states; create separate PNG textures for disabled, locked, empty, active, or highlighted states.
 
+`npm run verify:textures` also enforces the fixed dimension contract for every runtime PNG. This prevents gameplay-critical art from being replaced by undersized placeholders that would pass a file-existence check but break Cocos/Web layout.
+
 ## Local Run
 
 ```bash

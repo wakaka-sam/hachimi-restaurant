@@ -251,6 +251,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added Cocos/shared gameplay rule drift verification:
   - `npm run verify:rules` now compares the Cocos `GameRules.ts` mirror against `shared/game-rules.mjs`.
   - The full `npm run verify` pipeline now fails if shared gameplay constants, labels, parts, customer types, or task types drift from the Cocos production client.
+- Tightened texture asset verification:
+  - `npm run verify:textures` now enforces expected dimensions for every runtime PNG texture.
+  - The texture policy rejects unexpected PNG files without an explicit dimension contract, preventing accidental placeholder art from silently entering Web or Cocos.
 
 ## Remaining Work
 
@@ -263,7 +266,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 46 Node tests, 152 gameplay coverage checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 46 Node tests, 153 gameplay coverage checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -323,6 +326,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
   - Cocos art states cannot use runtime opacity or color tinting instead of PNG texture states.
+  - Runtime PNG textures keep their expected dimensions and explicit asset contract.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.

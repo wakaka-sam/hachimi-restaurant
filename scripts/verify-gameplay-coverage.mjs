@@ -174,6 +174,7 @@ addCheck('api documented completion target', 'docs/api.md', ['completionScore = 
 addCheck('api documented normal reward center', 'docs/api.md', ['normal 10-customer', 'about one `upgradeCost`']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
 addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'UIOpacity', '.color\\s*=', 'validateCssTextureBackgrounds']);
+addCheck('texture policy verifies PNG dimensions', 'scripts/verify-texture-policy.mjs', ['expectedTextureDimensions', 'validatePngDimensions', 'fixed dimensions']);
 
 for (const check of checks) {
   let source = '';
