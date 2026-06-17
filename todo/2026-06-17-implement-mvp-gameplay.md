@@ -212,6 +212,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened performance scoring against the documented business-density target:
   - Completion score now uses 12 completed customers as the normal 90-second service target.
   - Low-activity summaries no longer earn full completion credit just because no customers left.
+  - The performance-factor weights now center a normal 10-customer, moderate-satisfaction, low-combo session near one upgrade cost.
   - API and product docs now spell out the completion-score target used by backend settlement.
 
 ## Remaining Work
@@ -225,11 +226,12 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 41 Node tests, 133 gameplay coverage checks, and static texture policy checks.
+- Current automated coverage: 42 Node tests, 135 gameplay coverage checks, and static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
   - Completion score calculated against the 12-customer normal service target.
+  - Normal business performance stays close to one upgrade cost.
   - Backend stamina recovery status plus client next-stamina and full-recovery countdown display.
   - Speed-neutral 1x/2x reward calculation.
   - Shared营业密度 tuning.

@@ -224,7 +224,8 @@ test('performance reward is clamped between 75 and 130 percent', () => {
 });
 
 test('completion score uses the normal service target instead of only loss ratio', () => {
-  const lowActivity = calculatePerformance({
+  const player = createDefaultPlayer('completion-target-test', new Date('2026-06-17T00:00:00.000Z'));
+  const lowActivity = calculateReward(player, {
     customersServed: 1,
     customersLost: 0,
     averageSatisfaction: 1,
@@ -233,6 +234,7 @@ test('completion score uses the normal service target instead of only loss ratio
   });
 
   assert.equal(lowActivity.completionScore, 1 / CONSTANTS.normalCustomersPerSession);
+  assert.ok(lowActivity.rewardCoins < lowActivity.upgradeCost);
   assert.ok(lowActivity.performanceFactor < 1);
 
   const normalActivity = calculatePerformance({
@@ -244,6 +246,21 @@ test('completion score uses the normal service target instead of only loss ratio
   });
 
   assert.equal(normalActivity.completionScore, 1);
+});
+
+test('normal business performance stays close to one upgrade cost', () => {
+  const player = createDefaultPlayer('normal-reward-test', new Date('2026-06-17T00:00:00.000Z'));
+  const normal = calculateReward(player, {
+    customersServed: 10,
+    customersLost: 2,
+    averageSatisfaction: 0.6,
+    maxCombo: 2,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+
+  assert.ok(normal.rewardCoins >= normal.upgradeCost);
+  assert.ok(normal.rewardCoins <= Math.round(normal.upgradeCost * 1.05));
+  assert.ok(Math.abs(normal.performanceFactor - 1.0075) < 0.0001);
 });
 
 test('speed mode does not change reward for the same performance summary', () => {

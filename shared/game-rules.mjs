@@ -491,7 +491,7 @@ export function calculatePerformance(summary = {}) {
   const satisfactionScore = normalized.averageSatisfaction;
   const comboScore = clamp(normalized.maxCombo / 8, 0, 1);
   const performanceFactor = clamp(
-    0.75 + completionScore * 0.35 + satisfactionScore * 0.15 + comboScore * 0.05,
+    0.70 + completionScore * 0.15 + satisfactionScore * 0.20 + comboScore * 0.25,
     0.75,
     1.3
   );

@@ -183,10 +183,10 @@ actualRevenue = round(expectedRevenue * performanceFactor)
 
 ```text
 performanceFactor = clamp(
-  0.75
-  + completionScore * 0.35
-  + satisfactionScore * 0.15
-  + comboScore * 0.05,
+  0.70
+  + completionScore * 0.15
+  + satisfactionScore * 0.20
+  + comboScore * 0.25,
   0.75,
   1.30
 )
@@ -201,7 +201,7 @@ performanceFactor = clamp(
 体验结果：
 
 - 很差表现：约 0.75 倍，可能不足以升级一个部件。
-- 普通表现：约 1.00 倍，刚好升级一个部件。
+- 普通表现：约 1.00 到 1.05 倍，刚好升级一个部件。
 - 优秀表现：约 1.15 到 1.30 倍，升级后留少量余钱。
 
 正常完成营业时，保底收入不低于 `expectedRevenue * 0.75`。

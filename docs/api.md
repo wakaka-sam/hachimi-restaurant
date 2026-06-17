@@ -181,10 +181,10 @@ Performance formula:
 completionScore = clamp(customersServed / 12, 0, 1)
 
 performanceFactor = clamp(
-  0.75
-  + completionScore * 0.35
-  + satisfactionScore * 0.15
-  + comboScore * 0.05,
+  0.70
+  + completionScore * 0.15
+  + satisfactionScore * 0.20
+  + comboScore * 0.25,
   0.75,
   1.30
 )
@@ -193,6 +193,7 @@ rewardCoins = round(expectedRevenue * performanceFactor)
 ```
 
 The normal service target is 12 completed customers per 90-second session. This prevents a very low-activity summary with no lost customers from receiving full completion credit.
+The formula is centered so a normal 10-customer, moderate-satisfaction, low-combo session rewards about one `upgradeCost`, while excellent play can still reach the 1.30 cap.
 
 ### `POST /api/upgrade/part`
 

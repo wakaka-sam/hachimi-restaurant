@@ -49,8 +49,9 @@ addCheck('shared max session customer cap tests', 'server/test/game-rules.test.m
 addCheck('shared customer type total validation tests', 'server/test/game-rules.test.mjs', ['customer type totals to match customers', 'customer_type_count_mismatch']);
 addCheck('shared 90-second duration validation tests', 'server/test/game-rules.test.mjs', ['documented 90 second duration', 'invalid_duration']);
 addCheck('shared summary numeric bounds validation tests', 'server/test/game-rules.test.mjs', ['invalid numeric bounds', 'invalid_customer_count', 'invalid_satisfaction', 'invalid_combo', 'invalid_customer_type_count']);
-addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.75', '1.3']);
+addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.70', '0.75', '1.3']);
 addCheck('shared completion score normal target tests', 'server/test/game-rules.test.mjs', ['normal service target', 'normalCustomersPerSession', 'performanceFactor < 1']);
+addCheck('shared normal performance upgrade cost test', 'server/test/game-rules.test.mjs', ['normal business performance stays close to one upgrade cost', 'upgradeCost * 1.05', '1.0075']);
 addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs', ['speed mode does not change reward', "speedMode: '1x'", "speedMode: '2x'", 'performanceFactor']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
@@ -153,6 +154,7 @@ addCheck('api documented summary duration validation', 'docs/api.md', ['duration
 addCheck('api documented summary numeric bounds', 'docs/api.md', ['non-negative integers', 'averageSatisfaction', 'maxCombo']);
 addCheck('api documented expired submitted summary settlement', 'docs/api.md', ['manually finishes an already expired active session', 'valid completed summary', 'minimum guaranteed fallback summary']);
 addCheck('api documented completion target', 'docs/api.md', ['completionScore = clamp(customersServed / 12', 'normal service target']);
+addCheck('api documented normal reward center', 'docs/api.md', ['normal 10-customer', 'about one `upgradeCost`']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
 addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'validateCssTextureBackgrounds']);
 
