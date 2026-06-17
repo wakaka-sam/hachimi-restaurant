@@ -54,7 +54,7 @@ addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "s
 addCheck('web 2x speed support', 'client/web/main.js', ["state.speedMode === '1x' ? '2x' : '1x'", "speedMode: state.speedMode", 'toggleBusinessSpeed', "game.speedMode === '1x' ? '2x' : '1x'"]);
 addCheck('web blocks manual early settlement', 'client/web/main.js', ["disabled: !game.finished"]);
 addCheck('web resumed session remaining time', 'client/web/main.js', ['session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
-addCheck('web stamina recovery display', 'client/web/main.js', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext']);
+addCheck('web stamina recovery display', 'client/web/main.js', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext', 'secondsUntilFull']);
 addCheck('web click service chain', 'client/web/main.js', ['seatCustomer', "customer.phase = 'eating'", 'collectCustomer']);
 addCheck('web table countdown labels', 'client/web/main.js', ['formatSeconds', 'customer.phaseTime', 'customer.patience']);
 addCheck('web initial customer wave', 'client/web/main.js', ['tuning.initialCustomerCount', 'spawnCustomer']);
@@ -80,7 +80,7 @@ addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiR
 addCheck('cocos in-session speed toggle', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['toggleSpeed', 'simulation.toggleSpeedMode', 'simulation.speedMode']);
 addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable = simulation.finished']);
 addCheck('cocos resumed session remaining time', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
-addCheck('cocos stamina recovery display', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext']);
+addCheck('cocos stamina recovery display', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext', 'secondsUntilFull']);
 addCheck('cocos restaurant visual stages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['restaurantBackgroundSprite', 'renderRestaurantBackground', 'getRestaurantBackground']);
 addCheck('cocos business feedback labels', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['satisfactionLabel', 'feedbackLabel', 'satisfactionPercent', 'lastFeedback']);
 addCheck('cocos main part status views', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['PartStatusView', 'partStatusViews', 'renderPartStatus']);
@@ -123,7 +123,7 @@ addCheck('product documented initial customer wave', 'docs/product.md', ['开场
 addCheck('product documented waiting queue cap', 'docs/product.md', ['等待队列最多显示 4 位顾客']);
 addCheck('product documented table countdown feedback', 'docs/product.md', ['餐桌状态需要显示阶段剩余时间或耐心倒计时']);
 addCheck('product documented max session customer cap', 'docs/product.md', ['每局 18 位顾客上限', '后端不可结算']);
-addCheck('product documented backend stamina recovery display', 'docs/product.md', ['下一点体力倒计时', '后端返回的恢复状态']);
+addCheck('product documented backend stamina recovery display', 'docs/product.md', ['下一点体力倒计时', '满体力时间', '后端返回的恢复状态']);
 addCheck('product documented task type separation', 'docs/product.md', ['明确区分引导任务、每日任务、成长任务']);
 addCheck('product documented daily task reset', 'docs/product.md', ['每日任务进度按后端日期刷新', '每天最多领取一次']);
 addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);

@@ -179,7 +179,7 @@ function formatStaminaLabel() {
   if (!staminaRecovery || staminaRecovery.isFull) {
     return base;
   }
-  return `${base} · ${formatShortDuration(staminaRecovery.secondsUntilNext)}`;
+  return `${base} · +1 ${formatShortDuration(staminaRecovery.secondsUntilNext)} · 回满 ${formatShortDuration(staminaRecovery.secondsUntilFull)}`;
 }
 
 function formatShortDuration(seconds) {

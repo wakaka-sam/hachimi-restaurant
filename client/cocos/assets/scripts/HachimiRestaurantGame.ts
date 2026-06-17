@@ -561,7 +561,7 @@ export class HachimiRestaurantGame extends Component {
     if (!recovery || recovery.isFull) {
       return base;
     }
-    return `${base} · ${this.formatShortDuration(recovery.secondsUntilNext)}`;
+    return `${base} · +1 ${this.formatShortDuration(recovery.secondsUntilNext)} · 回满 ${this.formatShortDuration(recovery.secondsUntilFull)}`;
   }
 
   private formatShortDuration(seconds: number): string {

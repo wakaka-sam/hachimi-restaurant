@@ -104,7 +104,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added backend stamina recovery status:
   - Shared rules expose next stamina recovery countdown, full recovery countdown, and recovery timestamps from backend time.
   - Profile responses include `staminaRecovery` so clients do not infer recovery from local-only time.
-  - Cocos and Web debug top bars display the backend-provided next stamina recovery countdown.
+  - Cocos and Web debug top bars display the backend-provided next stamina recovery countdown and full recovery countdown.
 - Improved中断恢复:
   - Backend active session responses include elapsed/remaining game seconds and recovery window.
   - 2x sessions use a shorter real-time active window while preserving the 2-minute recovery window.
@@ -211,7 +211,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
-  - Backend stamina recovery status and client countdown display.
+  - Backend stamina recovery status plus client next-stamina and full-recovery countdown display.
   - Speed-neutral 1x/2x reward calculation.
   - Shared营业密度 tuning.
   - Shared max-session customer cap validation.
