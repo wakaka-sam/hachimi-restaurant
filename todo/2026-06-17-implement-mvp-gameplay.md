@@ -177,6 +177,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos upgrade views must show current star state, shared cost, insufficient coin shortage, next-star effect, and max-star state.
   - Cocos scene wiring now requires every `PartUpgradeView` to bind the labels, star sprites, and upgrade button that carry those states.
   - Static coverage rejects recommendation copy in the free-upgrade UI.
+- Tightened star texture policy:
+  - Added `icon-star-empty.png` for empty star states.
+  - Web and Cocos now switch between filled and empty star textures instead of runtime grayscale/filter effects.
+  - Texture verification now forbids gradient, shadow, filter, and grayscale drawing/effect tokens in runtime sources.
 - Wired floor movement tuning into client simulations:
   - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
   - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
@@ -231,6 +235,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Production Web static root guard that prevents the debug harness from being used in production.
   - Cocos mobile safe-area component and scene wiring contract.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
+  - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.

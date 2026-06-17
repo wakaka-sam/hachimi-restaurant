@@ -27,8 +27,7 @@ export class PartStatusView extends Component {
 
     this.starSprites.forEach((sprite, index) => {
       sprite.node.active = index < CONSTANTS.starsPerPart;
-      sprite.spriteFrame = textures.starIcon;
-      sprite.grayscale = index >= star;
+      sprite.spriteFrame = textures.getStarFrame(index < star);
     });
   }
 }

@@ -393,13 +393,16 @@ function drawIcon(kind) {
     circle(image, 48, 52, 24, [255, 235, 236, 255]);
     circle(image, 36, 40, 16, [255, 235, 236, 255]);
     circle(image, 60, 40, 16, [255, 235, 236, 255]);
-  } else if (kind === 'star') {
+  } else if (kind === 'star' || kind === 'star-empty') {
+    const rayColor = kind === 'star' ? [255, 246, 160, 255] : [180, 168, 148, 255];
+    const centerColor = kind === 'star' ? colors.yellow : [132, 122, 108, 255];
     for (let i = 0; i < 5; i += 1) {
       const angle = -Math.PI / 2 + i * (Math.PI * 2 / 5);
       const x = 48 + Math.cos(angle) * 30;
       const y = 48 + Math.sin(angle) * 30;
-      line(image, 48, 48, x, y, 12, [255, 246, 160, 255]);
+      line(image, 48, 48, x, y, 12, rayColor);
     }
+    circle(image, 48, 48, 12, centerColor);
   }
   return image;
 }
@@ -425,5 +428,6 @@ await save('customer-bear.png', drawAnimal('bear', [151, 98, 62, 255], [226, 178
 await save('icon-coin.png', drawIcon('coin'));
 await save('icon-stamina.png', drawIcon('stamina'));
 await save('icon-star.png', drawIcon('star'));
+await save('icon-star-empty.png', drawIcon('star-empty'));
 
 console.log(`Generated textures in ${outDir}`);

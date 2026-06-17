@@ -52,6 +52,9 @@ export class TextureCatalog extends Component {
   @property(SpriteFrame)
   starIcon: SpriteFrame | null = null;
 
+  @property(SpriteFrame)
+  starIconEmpty: SpriteFrame | null = null;
+
   requireTexture(name: keyof TextureCatalog): SpriteFrame {
     const value = this[name];
     if (!value || Array.isArray(value)) {
@@ -68,6 +71,14 @@ export class TextureCatalog extends Component {
     const frame = frames[index];
     if (!frame) {
       throw new Error('TextureCatalog missing restaurant background SpriteFrame.');
+    }
+    return frame;
+  }
+
+  getStarFrame(filled: boolean): SpriteFrame {
+    const frame = filled ? this.starIcon : this.starIconEmpty;
+    if (!frame) {
+      throw new Error(`TextureCatalog missing ${filled ? 'starIcon' : 'starIconEmpty'} SpriteFrame.`);
     }
     return frame;
   }

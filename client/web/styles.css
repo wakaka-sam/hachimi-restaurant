@@ -171,17 +171,14 @@ button {
 
 .guide-focus {
   animation: guide-pulse 1s ease-in-out infinite alternate;
-  filter: brightness(1.12) saturate(1.08);
   transform: scale(1.03);
 }
 
 @keyframes guide-pulse {
   from {
-    filter: brightness(1.04) saturate(1.04);
     transform: scale(1.01);
   }
   to {
-    filter: brightness(1.18) saturate(1.12);
     transform: scale(1.05);
   }
 }
@@ -241,11 +238,6 @@ button {
   width: 13px;
   height: 13px;
   object-fit: contain;
-}
-
-.star.empty {
-  opacity: 0.22;
-  filter: grayscale(1);
 }
 
 .panel {

@@ -84,6 +84,8 @@ The first scene pass should provide at least 28 `TexturedButtonView` instances: 
 
 Each `PartUpgradeView` must wire `titleLabel`, `costLabel`, `effectLabel`, `starSprites`, `upgradeButton`, and `buttonLabel`. These fields carry the required upgrade-screen information: current star state, shared upgrade cost, insufficient coin shortage, next-star effect, and max-star state.
 
+Filled and empty star states must use separate `SpriteFrame` textures: `icon-star.png` and `icon-star-empty.png`. Do not use runtime grayscale or filter effects to create empty stars.
+
 Then wire the serialized properties in the inspector.
 
 The expected scene contract is recorded in:

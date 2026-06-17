@@ -18,6 +18,7 @@ const textures = {
   coin: '/textures/icon-coin.png',
   stamina: '/textures/icon-stamina.png',
   star: '/textures/icon-star.png',
+  starEmpty: '/textures/icon-star-empty.png',
   table: {
     empty: '/textures/table-empty.png',
     locked: '/textures/table-locked.png',
@@ -235,7 +236,7 @@ function renderMainScene() {
 function renderStars(count) {
   return h('div', { class: 'stars' }, Array.from({ length: CONSTANTS.starsPerPart }, (_, index) => h('img', {
     class: `star ${index < count ? 'full' : 'empty'}`,
-    src: textures.star,
+    src: index < count ? textures.star : textures.starEmpty,
     alt: index < count ? '满星' : '空星'
   })));
 }

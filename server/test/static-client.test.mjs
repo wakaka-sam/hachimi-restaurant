@@ -80,13 +80,13 @@ test('production server config requires a Cocos Web static root', () => {
   assert.equal(config.clientRoot, join(rootDir, 'dist/cocos-web'));
 });
 
-test('runtime client sources do not use canvas or SVG drawing for art', async () => {
+test('runtime client sources do not use drawing or filter effects for art', async () => {
   const files = [
     'client/web/index.html',
     'client/web/main.js',
     'client/web/styles.css'
   ];
-  const forbidden = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas/i;
+  const forbidden = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:/i;
 
   for (const file of files) {
     const source = await readFile(file, 'utf8');

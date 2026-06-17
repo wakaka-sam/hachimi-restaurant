@@ -101,7 +101,8 @@
     "animals",
     "coinIcon",
     "staminaIcon",
-    "starIcon"
+    "starIcon",
+    "starIconEmpty"
   ],
   "textureFiles": [
     "restaurant-bg.png",
@@ -124,7 +125,8 @@
     "customer-bear.png",
     "icon-coin.png",
     "icon-stamina.png",
-    "icon-star.png"
+    "icon-star.png",
+    "icon-star-empty.png"
   ],
   "labels": [
     "coinLabel",

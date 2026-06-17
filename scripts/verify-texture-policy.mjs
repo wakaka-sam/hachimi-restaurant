@@ -12,7 +12,7 @@ const runtimeFiles = (await Promise.all(runtimeRoots.map((root) => listRuntimeFi
 
 const textureDir = 'client/assets/textures';
 const cocosTextureDir = 'client/cocos/assets/textures';
-const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b/i;
+const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:|\.grayscale\b|grayscale\s*=/i;
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 let failed = false;
 

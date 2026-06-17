@@ -49,9 +49,8 @@ export class PartUpgradeView extends Component {
       this.effectLabel.string = profile.partEffects[this.part] || '经营手感提升';
     }
     this.starSprites.forEach((sprite, index) => {
-      sprite.spriteFrame = textures.starIcon;
+      sprite.spriteFrame = textures.getStarFrame(index < star);
       sprite.node.active = true;
-      sprite.grayscale = index >= star;
     });
     if (this.upgradeButton) {
       this.upgradeButton.interactable = !maxed && profile.player.coins >= cost;
