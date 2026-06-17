@@ -41,6 +41,8 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `npm run verify:cocos-components` executes the texture-backed Cocos UI components outside the editor. It verifies table-state textures and labels, filled/empty star frames, upgrade-card cost and max states, task row claim states, textured button/panel frame switching, and mobile safe-area layout setup.
 
+`npm run verify:cocos-controller` executes the Cocos main scene controller outside the editor with a mocked backend API. It verifies profile rendering, screen navigation, business start, 2x speed switching, settlement success, `SESSION_NOT_READY` recovery, part/restaurant upgrades, task claims, and completed-session snapshot submission on startup.
+
 ## Data Authority
 
 The backend is authoritative for:
@@ -76,6 +78,7 @@ npm run verify:cocos-project
 npm run verify:cocos-api
 npm run verify:cocos-simulation
 npm run verify:cocos-components
+npm run verify:cocos-controller
 npm run typecheck:cocos
 npm run verify
 npm test
