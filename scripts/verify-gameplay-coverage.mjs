@@ -29,6 +29,7 @@ addCheck('backend part upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/p
 addCheck('backend restaurant upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/restaurant']);
 addCheck('backend task claim endpoint', 'server/src/app.mjs', ['/api/tasks/claim']);
 addCheck('backend health endpoint test', 'server/test/static-client.test.mjs', ['backend health endpoint reports service and backend time', '/api/health', 'hachimi-restaurant']);
+addCheck('backend request body error tests', 'server/test/api.test.mjs', ['API rejects invalid and oversized JSON bodies', 'INVALID_JSON', 'REQUEST_TOO_LARGE']);
 addCheck('backend testable clock', 'server/src/app.mjs', ['nowProvider = () => new Date()', 'const now = nowProvider()']);
 addCheck('backend daily task claim reset test', 'server/test/api.test.mjs', ['API daily task claims reset by backend date', 'TASK_ALREADY_CLAIMED', '2026-06-18:daily_sessions_3']);
 addCheck('backend active session remaining time', 'server/src/app.mjs', ['serializeBusinessSession', 'remainingSeconds', 'recoveryWindowSeconds']);
@@ -160,6 +161,7 @@ addCheck('product documented business feedback scope', 'docs/product.md', ['ÊúçÂ
 addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);
 addCheck('api documented overall task coin budget', 'docs/api.md', ['Overall task coin reward budget', '20% and 30%', 'first 20-session growth-cycle']);
 addCheck('api documented response envelope', 'docs/api.md', ['Response Envelope', 'ok: true', 'ok: false', 'POST /api/session/finish', 'SESSION_NOT_READY']);
+addCheck('api documented request body errors', 'docs/api.md', ['POST endpoints require valid JSON request bodies', 'INVALID_JSON', 'REQUEST_TOO_LARGE']);
 addCheck('api documented not-ready settlement recovery', 'docs/api.md', ['remainingRealSeconds', 'preserve the completed local summary snapshot', 'retry settlement after the wait']);
 addCheck('api documented customer type totals', 'docs/api.md', ['customer type totals', 'customersServed + customersLost', 'normal']);
 addCheck('api documented summary duration validation', 'docs/api.md', ['durationSeconds', '90 seconds of game time', 'anti-early-settlement']);

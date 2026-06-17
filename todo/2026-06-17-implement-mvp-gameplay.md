@@ -244,6 +244,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Added `.env.example` with the safe runtime variable list for local and gz server deployment.
   - Added a health endpoint regression test for `GET /api/health`.
   - Deployment docs now include environment variables, health check, production smoke check, and rollback notes.
+- Tightened API request body handling:
+  - Invalid POST JSON now returns `INVALID_JSON` instead of falling through as an internal error.
+  - Oversized JSON bodies now return `REQUEST_TOO_LARGE`.
+  - API docs and tests cover these request boundary errors.
 
 ## Remaining Work
 
@@ -256,10 +260,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 45 Node tests, 147 gameplay coverage checks, and stricter static texture policy checks.
+- Current automated coverage: 46 Node tests, 149 gameplay coverage checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
+  - Backend invalid/oversized JSON body errors.
   - Backend file-backed player/session persistence across store reloads.
   - Shared economy, stamina, and performance formulas.
   - Completion score calculated against the 12-customer normal service target.

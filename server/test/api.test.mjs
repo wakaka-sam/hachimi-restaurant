@@ -201,6 +201,37 @@ test('API profile exposes all MVP guide, daily, and growth tasks', async (t) => 
   }
 });
 
+test('API rejects invalid and oversized JSON bodies', async (t) => {
+  const { app, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const invalidJson = await fetch(`${baseUrl}/api/session/start`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-player-id': 'api-test-player'
+    },
+    body: '{"speedMode":'
+  });
+  const invalidBody = await invalidJson.json();
+  assert.equal(invalidJson.status, 400);
+  assert.equal(invalidBody.ok, false);
+  assert.equal(invalidBody.error.code, 'INVALID_JSON');
+
+  const oversizedJson = await fetch(`${baseUrl}/api/session/start`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-player-id': 'api-test-player'
+    },
+    body: JSON.stringify({ payload: 'x'.repeat(70 * 1024) })
+  });
+  const oversizedBody = await oversizedJson.json();
+  assert.equal(oversizedJson.status, 413);
+  assert.equal(oversizedBody.ok, false);
+  assert.equal(oversizedBody.error.code, 'REQUEST_TOO_LARGE');
+});
+
 test('API daily task claims reset by backend date without changing income power', async (t) => {
   let currentNow = new Date('2026-06-17T08:00:00.000Z');
   const { app, store, baseUrl } = await startTestServer({ nowProvider: () => currentNow });

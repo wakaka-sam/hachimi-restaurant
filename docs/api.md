@@ -115,6 +115,8 @@ error:
 `SESSION_NOT_READY` also returns the current serialized `session` and timing fields so clients can show remaining wait time instead of treating the response as a fatal failure.
 Clients should preserve the completed local summary snapshot when this happens, keep the player on the business/result recovery path, display `remainingRealSeconds`, and retry settlement after the wait instead of discarding the session.
 
+POST endpoints require valid JSON request bodies. Invalid JSON returns `INVALID_JSON`; request bodies larger than the backend request limit return `REQUEST_TOO_LARGE`.
+
 ### `GET /api/player/profile`
 
 Returns the current player state.
@@ -321,4 +323,6 @@ INVALID_SESSION_SUMMARY
 TASK_NOT_FOUND
 TASK_NOT_COMPLETE
 TASK_ALREADY_CLAIMED
+INVALID_JSON
+REQUEST_TOO_LARGE
 ```

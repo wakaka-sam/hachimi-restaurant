@@ -39,6 +39,7 @@ const SESSION_SUMMARY_FIELDS = [
   'durationSeconds',
   'customerTypes'
 ];
+const MAX_JSON_BODY_BYTES = 64 * 1024;
 
 export function createApp({
   store,
@@ -148,7 +149,16 @@ async function handleApi(request, response, store, url, nowProvider = () => new 
     return;
   }
 
-  const body = await readJson(request);
+  let body;
+  try {
+    body = await readJson(request);
+  } catch (error) {
+    if (error instanceof RequestBodyError) {
+      sendError(response, error.status, error.code, error.message);
+      return;
+    }
+    throw error;
+  }
 
   if (url.pathname === '/api/session/start') {
     await startSession(response, store, playerId, body, now);
@@ -184,14 +194,32 @@ function getPlayerId(request, url) {
 
 async function readJson(request) {
   const chunks = [];
+  let size = 0;
   for await (const chunk of request) {
+    size += Buffer.isBuffer(chunk) ? chunk.length : Buffer.byteLength(chunk);
+    if (size > MAX_JSON_BODY_BYTES) {
+      throw new RequestBodyError(413, 'REQUEST_TOO_LARGE', 'JSON request body is too large.');
+    }
     chunks.push(chunk);
   }
   const raw = Buffer.concat(chunks).toString('utf8').trim();
   if (!raw) {
     return {};
   }
-  return JSON.parse(raw);
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new RequestBodyError(400, 'INVALID_JSON', 'Request body must be valid JSON.');
+  }
+}
+
+class RequestBodyError extends Error {
+  constructor(status, code, message) {
+    super(message);
+    this.name = 'RequestBodyError';
+    this.status = status;
+    this.code = code;
+  }
 }
 
 function serializeProfile(player, store, now = new Date()) {
