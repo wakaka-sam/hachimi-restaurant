@@ -112,7 +112,7 @@
   "guideFocus": {
     "nodeArray": "guideFocusNodes",
     "panelArray": "guideFocusPanels",
-    "panelTexture": "card",
+    "panelTexture": "guideFocus",
     "keys": [
       "startBusiness",
       "upgradeNav",
@@ -129,6 +129,7 @@
     "restaurantBackgrounds",
     "panel",
     "card",
+    "guideFocus",
     "button",
     "buttonDisabled",
     "tableEmpty",
@@ -150,6 +151,7 @@
     "restaurant-bg-stage-3.png",
     "panel.png",
     "card.png",
+    "guide-focus.png",
     "button.png",
     "button-disabled.png",
     "table-empty.png",

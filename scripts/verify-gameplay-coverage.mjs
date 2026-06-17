@@ -100,7 +100,7 @@ addCheck('web first-run guide highlights', 'client/web/main.js', ['getGuideStep'
 addCheck('web restaurant visual stages', 'client/web/main.js', ['restaurantBackgrounds', 'getRestaurantStageIndex', 'getRestaurantSceneAttrs', 'restaurant-bg-stage-3.png']);
 addCheck('web upgrade screen required details', 'client/web/main.js', ['renderPartCard', 'renderStars(star)', '成本：', '还差', 'getPartEffectDescription', "'满星'"]);
 addCheck('web star state textures', 'client/web/main.js', ['starEmpty', 'icon-star-empty.png', 'index < count ? textures.star : textures.starEmpty']);
-addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'background-image: url("/textures/card.png")', 'guide-focus']);
+addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'background-image: url("/textures/card.png")', 'guide-focus.png']);
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
 addCheck('cocos screen navigation buttons', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton', 'renderNavigation']);
 addCheck('cocos resumable session start button label', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['startButtonLabel', 'activeSession', '继续营业', '开始营业']);
@@ -140,7 +140,7 @@ addCheck('cocos part upgrade required details', 'client/cocos/assets/scripts/com
 addCheck('cocos task type label component', 'client/cocos/assets/scripts/components/TaskItemView.ts', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('cocos task section headers', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel', 'renderTaskSectionHeader', 'TASK_TYPES', 'TASK_TYPE_LABELS', '可领']);
 addCheck('cocos textured button component', 'client/cocos/assets/scripts/components/TexturedButtonView.ts', ['@ccclass', 'TexturedButtonView', 'buttonDisabled', 'backgroundSprite']);
-addCheck('cocos textured panel component', 'client/cocos/assets/scripts/components/TexturedPanelView.ts', ['@ccclass', 'TexturedPanelView', 'backgroundSprite', 'panelTexture', 'requireTexture']);
+addCheck('cocos textured panel component', 'client/cocos/assets/scripts/components/TexturedPanelView.ts', ['@ccclass', 'TexturedPanelView', 'backgroundSprite', 'panelTexture', 'guideFocus', 'requireTexture']);
 addCheck('cocos mobile safe area component', 'client/cocos/assets/scripts/components/MobileSafeAreaView.ts', ['@ccclass', 'MobileSafeAreaView', 'SafeArea', 'Widget', 'ON_WINDOW_RESIZE', 'minTouchInset', 'safeArea.updateArea()', 'Math.max(widget.top']);
 addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView', 'TexturedPanelView']);
 addCheck('cocos scene wiring safe area contract', 'client/cocos/scene-wiring.json', ['MobileSafeAreaView', 'mainSafeArea', 'businessSafeArea', 'SafeArea', 'Widget', 'minTouchInset']);
@@ -153,7 +153,7 @@ addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json'
 addCheck('cocos scene wiring waiting queue countdown labels', 'client/cocos/scene-wiring.json', ['waitingCustomerLabels', 'minimumLabelArrayLengths']);
 addCheck('cocos scene blueprint manifest', 'client/cocos/scene-wiring.json', ['sceneBlueprint', 'mainScreen', 'businessScreen', 'upgradeScreen', 'taskScreen', 'resultScreen', 'componentInstances', 'textureSurfaces']);
 addCheck('cocos scene blueprint verification', 'scripts/verify-cocos-project.mjs', ['validateSceneBlueprint', 'componentTotals', 'validateTextureSurfaces', 'safeAreaNode']);
-addCheck('cocos scene wiring guide focus contract', 'client/cocos/scene-wiring.json', ['guideFocus', 'guideFocusNodes', 'guideFocusPanels', 'startBusiness', 'upgradeNav', 'taskNav', 'seatCustomer', 'serveFood', 'collectPay', 'upgradePart', 'claimTask']);
+addCheck('cocos scene wiring guide focus contract', 'client/cocos/scene-wiring.json', ['guideFocus', 'guideFocusNodes', 'guideFocusPanels', 'panelTexture', 'guideFocus', 'startBusiness', 'upgradeNav', 'taskNav', 'seatCustomer', 'serveFood', 'collectPay', 'upgradePart', 'claimTask']);
 addCheck('cocos scene wiring source property validation', 'scripts/verify-gameplay-coverage.mjs', ['componentSourceFiles', 'assertSourceContainsProperties', 'sceneWiring.textureCatalog']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
@@ -187,7 +187,7 @@ addCheck('api documented expired submitted summary settlement', 'docs/api.md', [
 addCheck('api documented completion target', 'docs/api.md', ['completionScore = clamp(customersServed / 12', 'normal service target']);
 addCheck('api documented normal reward center', 'docs/api.md', ['normal 10-customer', 'about one `upgradeCost`']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
-addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'border-radius\\s*:', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'UIOpacity', '.color\\s*=', 'validateCssTextureBackgrounds']);
+addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'border-radius\\s*:', 'animation\\s*:', '@keyframes', 'scale\\s*\\(', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'UIOpacity', '.color\\s*=', 'validateCssTextureBackgrounds']);
 addCheck('texture policy verifies PNG dimensions', 'scripts/verify-texture-policy.mjs', ['expectedTextureDimensions', 'validatePngDimensions', 'fixed dimensions']);
 
 for (const check of checks) {
@@ -238,6 +238,7 @@ const requiredTextures = [
   'customer-dog.png',
   'customer-rabbit.png',
   'customer-bear.png',
+  'guide-focus.png',
   'icon-coin.png',
   'icon-stamina.png',
   'icon-star.png',

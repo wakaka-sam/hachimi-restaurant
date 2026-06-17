@@ -169,17 +169,17 @@ button {
 }
 
 .guide-focus {
-  animation: guide-pulse 1s ease-in-out infinite alternate;
-  transform: scale(1.03);
+  background-image: url("/textures/guide-focus.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
-@keyframes guide-pulse {
-  from {
-    transform: scale(1.01);
-  }
-  to {
-    transform: scale(1.05);
-  }
+.texture-button.guide-focus {
+  background-image: url("/textures/guide-focus.png"), url("/textures/button.png");
+}
+
+.texture-button.guide-focus:disabled {
+  background-image: url("/textures/guide-focus.png"), url("/textures/button-disabled.png");
 }
 
 .scene {

@@ -203,6 +203,7 @@ function createTextureCatalog(TextureCatalog, cc) {
   textures.restaurantBackgrounds = [frame('restaurant-1'), frame('restaurant-2'), frame('restaurant-3')];
   textures.panel = frame('panel');
   textures.card = frame('card');
+  textures.guideFocus = frame('guide-focus');
   textures.button = frame('button');
   textures.buttonDisabled = frame('button-disabled');
   textures.tableEmpty = frame('table-empty');
@@ -502,6 +503,10 @@ function verifyTexturedPanelView(TexturedPanelView, cc, textures) {
   view.panelTexture = 'card';
   view.render(textures);
   assert.equal(view.backgroundSprite.spriteFrame.name, 'card');
+
+  view.panelTexture = 'guideFocus';
+  view.render(textures);
+  assert.equal(view.backgroundSprite.spriteFrame.name, 'guide-focus');
 }
 
 function verifyMobileSafeAreaView(MobileSafeAreaView, cc) {

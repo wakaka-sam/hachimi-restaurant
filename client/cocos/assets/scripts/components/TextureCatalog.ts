@@ -17,6 +17,9 @@ export class TextureCatalog extends Component {
   card: SpriteFrame | null = null;
 
   @property(SpriteFrame)
+  guideFocus: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
   button: SpriteFrame | null = null;
 
   @property(SpriteFrame)

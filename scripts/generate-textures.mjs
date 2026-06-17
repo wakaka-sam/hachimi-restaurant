@@ -196,6 +196,15 @@ function drawPanel(width, height, base = colors.warmPanel) {
   return image;
 }
 
+function drawGuideFocus() {
+  const image = createImage(520, 260, colors.transparent);
+  roundedRect(image, 0, 0, 520, 260, 26, [130, 88, 38, 210]);
+  roundedRect(image, 8, 8, 504, 244, 22, [255, 214, 76, 190]);
+  roundedRect(image, 24, 24, 472, 212, 18, [255, 246, 166, 88]);
+  roundedRect(image, 38, 38, 444, 184, 16, [255, 255, 255, 48]);
+  return image;
+}
+
 function drawRestaurantBackground(stage = 1) {
   const variants = {
     1: {
@@ -413,6 +422,7 @@ await save('restaurant-bg-stage-2.png', drawRestaurantBackground(2));
 await save('restaurant-bg-stage-3.png', drawRestaurantBackground(3));
 await save('panel.png', drawPanel(640, 220));
 await save('card.png', drawPanel(520, 260, [255, 238, 194, 255]));
+await save('guide-focus.png', drawGuideFocus());
 await save('button.png', drawPanel(420, 120, [255, 195, 82, 255]));
 await save('button-disabled.png', drawPanel(420, 120, [170, 160, 148, 255]));
 await save('table-empty.png', drawTable('empty'));

@@ -202,6 +202,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Removed the remaining CSS color background and opacity-based locked-table effect from the debug harness.
   - Texture verification now rejects non-transparent, non-texture CSS `background` and `background-color` declarations in runtime CSS.
   - Removed the debug harness scene `border-radius` clipping and added `border-radius` to runtime drawing/effect bans so CSS cannot create art shapes outside PNG textures.
+  - Added `guide-focus.png` and replaced the debug harness CSS pulse/scale guide highlight with texture-backed guide focus backgrounds.
+  - Texture verification now rejects runtime CSS `animation`, `@keyframes`, and `scale()` visual effects for art surfaces.
 - Wired floor movement tuning into client simulations:
   - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
   - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
@@ -362,7 +364,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
-  - Runtime CSS shape/effect styling such as `border-radius` is rejected for art surfaces.
+  - Runtime CSS shape/effect styling such as `border-radius`, `animation`, `@keyframes`, and `scale()` is rejected for art surfaces.
   - Cocos art states cannot use runtime opacity or color tinting instead of PNG texture states.
   - Runtime PNG textures keep their expected dimensions and explicit asset contract.
   - Web and Cocos floor movement/turnover tuning.

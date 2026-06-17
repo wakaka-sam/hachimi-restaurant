@@ -3,7 +3,7 @@ import { TextureCatalog } from './TextureCatalog';
 
 const { ccclass, property } = _decorator;
 
-type PanelTexture = 'panel' | 'card';
+type PanelTexture = 'panel' | 'card' | 'guideFocus';
 
 @ccclass('TexturedPanelView')
 export class TexturedPanelView extends Component {
@@ -17,7 +17,9 @@ export class TexturedPanelView extends Component {
     if (!this.backgroundSprite) {
       return;
     }
-    const textureName = this.panelTexture === 'card' ? 'card' : 'panel';
+    const textureName = this.panelTexture === 'guideFocus'
+      ? 'guideFocus'
+      : this.panelTexture === 'card' ? 'card' : 'panel';
     this.backgroundSprite.spriteFrame = textures.requireTexture(textureName);
   }
 }

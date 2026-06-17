@@ -146,7 +146,7 @@ function validateGuideFocus(sceneWiring, blueprint) {
   }
   assertEqual('sceneWiring.guideFocus.nodeArray', guideFocus.nodeArray, 'guideFocusNodes');
   assertEqual('sceneWiring.guideFocus.panelArray', guideFocus.panelArray, 'guideFocusPanels');
-  assertEqual('sceneWiring.guideFocus.panelTexture', guideFocus.panelTexture, 'card');
+  assertEqual('sceneWiring.guideFocus.panelTexture', guideFocus.panelTexture, 'guideFocus');
   assertEqual('sceneBlueprint.shared.guideFocusKeys', (blueprint.shared?.guideFocusKeys || []).join(','), requiredKeys.join(','));
   assertEqual('sceneWiring.guideFocus.keys', (guideFocus.keys || []).join(','), requiredKeys.join(','));
   for (const property of ['guideFocusNodes', 'guideFocusPanels']) {

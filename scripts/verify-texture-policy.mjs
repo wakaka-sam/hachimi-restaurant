@@ -12,7 +12,7 @@ const runtimeFiles = (await Promise.all(runtimeRoots.map((root) => listRuntimeFi
 
 const textureDir = 'client/assets/textures';
 const cocosTextureDir = 'client/cocos/assets/textures';
-const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|border-radius\s*:|filter\s*:|\.grayscale\b|grayscale\s*=|opacity\s*:/i;
+const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|border-radius\s*:|animation\s*:|@keyframes|scale\s*\(|filter\s*:|\.grayscale\b|grayscale\s*=|opacity\s*:/i;
 const forbiddenCocosRuntimePattern = /\bUIOpacity\b|\.opacity\s*=|\.color\s*=|\bnew\s+Color\s*\(|[,{]\s*Color\s*[,}]/;
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 const expectedTextureDimensions = {
@@ -24,6 +24,7 @@ const expectedTextureDimensions = {
   'customer-cat.png': [180, 180],
   'customer-dog.png': [180, 180],
   'customer-rabbit.png': [180, 180],
+  'guide-focus.png': [520, 260],
   'icon-coin.png': [96, 96],
   'icon-stamina.png': [96, 96],
   'icon-star-empty.png': [96, 96],

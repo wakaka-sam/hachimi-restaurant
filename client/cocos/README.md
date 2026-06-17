@@ -98,11 +98,11 @@ The first-run guide uses two ordered arrays: `guideFocusNodes` and `guideFocusPa
 startBusiness, upgradeNav, taskNav, seatCustomer, serveFood, collectPay, upgradePart, claimTask
 ```
 
-Each `guideFocusPanels` item should be a `TexturedPanelView` with `panelTexture = "card"` and a `SpriteFrame`-backed surface. The controller toggles the active focus node and panel from the current guide step; do not create guide highlights with runtime drawing, opacity, tinting, or CSS-like effects.
+Each `guideFocusPanels` item should be a `TexturedPanelView` with `panelTexture = "guideFocus"` and the `guide-focus.png` `SpriteFrame` assigned through `TextureCatalog.guideFocus`. The controller toggles the active focus node and panel from the current guide step; do not create guide highlights with runtime drawing, opacity, tinting, or CSS-like effects.
 
 The first scene pass should provide at least 28 `TexturedButtonView` instances: 10 fixed screen/control buttons, 5 part-upgrade buttons, and 13 task claim buttons. If task rows become virtualized later, update `scene-wiring.json` and the verification rule in the same task.
 
-The first scene pass should also provide at least 35 `TexturedPanelView` instances for the top bar, message panel, business HUD, five main part status panels, five part-upgrade cards, thirteen task rows, the result panel, and eight guide focus panels. Use `panelTexture = "panel"` for broad containers and `panelTexture = "card"` for repeated cards and guide focus panels.
+The first scene pass should also provide at least 35 `TexturedPanelView` instances for the top bar, message panel, business HUD, five main part status panels, five part-upgrade cards, thirteen task rows, the result panel, and eight guide focus panels. Use `panelTexture = "panel"` for broad containers, `panelTexture = "card"` for repeated cards, and `panelTexture = "guideFocus"` for guide focus panels.
 
 Each `PartUpgradeView` must wire `titleLabel`, `costLabel`, `effectLabel`, `starSprites`, `upgradeButton`, and `buttonLabel`. These fields carry the required upgrade-screen information: current star state, shared upgrade cost, insufficient coin shortage, next-star effect, and max-star state.
 
