@@ -261,6 +261,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Added `npm run verify:cocos-project` to check Cocos Creator 3.8.x metadata, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
   - Full `npm run verify` now runs the Cocos project metadata check before rule drift, gameplay coverage, typecheck, and backend tests.
   - `.gitignore` now explicitly excludes Cocos Creator generated `build`, `library`, `temp`, and `local` directories.
+- Added executable Cocos business simulation verification:
+  - `npm run verify:cocos-simulation` transpiles `client/cocos/assets/scripts/core/GameRules.ts` and `BusinessSimulation.ts` outside the editor.
+  - The verifier executes the click service chain, 2x game-time scaling, waiting queue cap, 18-customer session cap, and local snapshot restore.
+  - Full `npm run verify` now runs this Cocos simulation gate before gameplay coverage, typecheck, and backend tests.
 
 ## Remaining Work
 
@@ -273,7 +277,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 47 Node tests, 154 gameplay coverage checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 156 gameplay coverage checks, executable Cocos simulation checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -327,6 +331,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos waiting queue cap wiring.
   - Cocos waiting queue patience countdown label wiring.
   - Web and Cocos max-session customer spawning cap.
+  - Cocos business simulation executable service chain, speed mode, queue cap, customer cap, and snapshot restore.
   - Production Web static root guard that prevents the debug harness from being used in production.
   - Cocos texture-backed panel/card surface wiring.
   - Cocos mobile safe-area component and scene wiring contract.

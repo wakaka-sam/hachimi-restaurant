@@ -152,6 +152,7 @@ Current verification commands:
 
 - Full repository verification: `npm run verify`.
 - Cocos project metadata and scene contract: `npm run verify:cocos-project`.
+- Cocos pure business simulation: `npm run verify:cocos-simulation`.
 - Cocos/shared gameplay rule drift: `npm run verify:rules`.
 - Cocos TypeScript source: `npm run typecheck:cocos`.
 - Texture policy and runtime no-drawing rule: `npm run verify:textures`.
