@@ -69,7 +69,7 @@ Create a portrait scene in Cocos Creator and attach:
 
 The scene should provide 5 table slot nodes. `TableSlotView` renders slots above the current `tableCapacity` with the locked table texture and disables touch input until the player's table capacity grows.
 
-The business screen should provide at least 4 `waitingCustomerSprites`. The gameplay rules cap the visible waiting queue at 4 customers so every waiting customer can be represented by a texture sprite.
+The business screen should provide at least 4 `waitingCustomerSprites` and 4 matching `waitingCustomerLabels`. The gameplay rules cap the visible waiting queue at 4 customers so every waiting customer can be represented by a texture sprite and a visible patience countdown.
 
 Wire the navigation buttons to the controller properties instead of relying only on manually configured inspector callbacks:
 

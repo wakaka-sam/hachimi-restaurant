@@ -60,11 +60,15 @@
   "minimumSpriteArrayLengths": {
     "waitingCustomerSprites": 4
   },
+  "minimumLabelArrayLengths": {
+    "waitingCustomerLabels": 4
+  },
   "componentProperties": {
     "HachimiRestaurantGame": [
       "guideTaskHeaderLabel",
       "dailyTaskHeaderLabel",
       "growthTaskHeaderLabel",
+      "waitingCustomerLabels",
       "texturedPanels"
     ],
     "TexturedPanelView": [
@@ -159,7 +163,8 @@
     "guideLabel",
     "guideTaskHeaderLabel",
     "dailyTaskHeaderLabel",
-    "growthTaskHeaderLabel"
+    "growthTaskHeaderLabel",
+    "waitingCustomerLabels"
   ],
   "sprites": [
     "restaurantBackgroundSprite",

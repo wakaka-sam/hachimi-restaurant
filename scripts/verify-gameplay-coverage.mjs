@@ -89,6 +89,7 @@ addCheck('cocos table countdown labels', 'client/cocos/assets/scripts/components
 addCheck('cocos business simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['seatCustomer', 'handleTablePressed', 'collectFirstReadyPay', 'getSummary']);
 addCheck('cocos initial customer wave', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['initialCustomerCount', 'spawnCustomer', 'spawnIntervalSeconds']);
 addCheck('cocos waiting queue cap', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['CONSTANTS.maxWaitingCustomers', 'this.waiting.length']);
+addCheck('cocos waiting queue countdown labels', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['waitingCustomerLabels', 'customer.patience', 'Math.ceil(customer.patience)']);
 addCheck('cocos max session customer cap', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['canSpawnMoreCustomers', 'CONSTANTS.maxCustomersPerSession']);
 addCheck('cocos floor movement tuning', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['getMovementAdjustedDuration', 'moveSpeedMultiplier']);
 addCheck('cocos normal customer type', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ["customerType: 'normal'", 'customerTypes']);
@@ -111,6 +112,7 @@ addCheck('cocos scene wiring part upgrade fields', 'client/cocos/scene-wiring.js
 addCheck('cocos scene wiring textured panels', 'client/cocos/scene-wiring.json', ['TexturedPanelView', 'texturedPanels', 'texturedPanelRoles', 'panelTexture']);
 addCheck('cocos scene wiring task section headers', 'client/cocos/scene-wiring.json', ['taskSections', 'guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel']);
 addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json', ['componentProperties', 'TaskItemView', 'typeLabel']);
+addCheck('cocos scene wiring waiting queue countdown labels', 'client/cocos/scene-wiring.json', ['waitingCustomerLabels', 'minimumLabelArrayLengths']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
 addCheck('platforms documented implementation source of truth', 'docs/platforms.md', ['Implementation source of truth', 'Product behavior must be implemented in `client/cocos/` first', 'without separate gameplay forks']);
@@ -276,6 +278,14 @@ if (!sceneWiring.sprites?.includes('restaurantBackgroundSprite')) {
 
 if ((sceneWiring.minimumSpriteArrayLengths?.waitingCustomerSprites || 0) < 4) {
   fail('Cocos scene wiring manifest needs at least 4 waitingCustomerSprites');
+}
+
+if ((sceneWiring.minimumLabelArrayLengths?.waitingCustomerLabels || 0) < 4) {
+  fail('Cocos scene wiring manifest needs at least 4 waitingCustomerLabels');
+}
+
+if (!sceneWiring.componentProperties?.HachimiRestaurantGame?.includes('waitingCustomerLabels')) {
+  fail('Cocos scene wiring HachimiRestaurantGame missing waitingCustomerLabels');
 }
 
 for (const button of ['startButton', 'mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']) {

@@ -134,6 +134,9 @@ export class HachimiRestaurantGame extends Component {
   @property([Sprite])
   waitingCustomerSprites: Sprite[] = [];
 
+  @property([Label])
+  waitingCustomerLabels: Label[] = [];
+
   @property([PartStatusView])
   partStatusViews: PartStatusView[] = [];
 
@@ -418,6 +421,11 @@ export class HachimiRestaurantGame extends Component {
       if (customer && textures.animals.length > 0) {
         sprite.spriteFrame = textures.animals[customer.animalIndex % textures.animals.length];
       }
+    });
+    this.waitingCustomerLabels.forEach((label, index) => {
+      const customer = simulation.waiting[index];
+      label.node.active = Boolean(customer);
+      label.string = customer ? `${Math.max(0, Math.ceil(customer.patience))}s` : '';
     });
     if (this.cashierSprite) {
       this.cashierSprite.spriteFrame = textures.cashier;

@@ -162,6 +162,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared rules now expose `maxWaitingCustomers = 4`.
   - Cocos and Web debug simulations pause natural customer spawning when the visible waiting queue is full.
   - Cocos scene wiring now requires at least 4 `waitingCustomerSprites` so every waiting customer has a texture-backed visual slot.
+  - Cocos scene wiring also requires 4 `waitingCustomerLabels` so each waiting customer shows a patience countdown.
 - Added max-session customer cap enforcement:
   - Cocos and Web debug simulations stop natural customer spawning at 18 customers per business session.
   - Shared rule tests verify 18 customers is accepted and 19 customers is rejected.
@@ -240,6 +241,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos MVP screen navigation wiring.
   - Web and Cocos locked table slot texture wiring.
   - Web and Cocos waiting queue cap wiring.
+  - Cocos waiting queue patience countdown label wiring.
   - Web and Cocos max-session customer spawning cap.
   - Production Web static root guard that prevents the debug harness from being used in production.
   - Cocos texture-backed panel/card surface wiring.
