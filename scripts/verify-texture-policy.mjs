@@ -12,7 +12,7 @@ const runtimeFiles = (await Promise.all(runtimeRoots.map((root) => listRuntimeFi
 
 const textureDir = 'client/assets/textures';
 const cocosTextureDir = 'client/cocos/assets/textures';
-const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:|\.grayscale\b|grayscale\s*=/i;
+const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:|\.grayscale\b|grayscale\s*=|opacity\s*:/i;
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 let failed = false;
 
@@ -26,6 +26,7 @@ for (const file of runtimeFiles) {
   if (forbiddenRuntimePattern.test(source)) {
     fail(`${file} contains runtime drawing tokens.`);
   }
+  validateCssTextureBackgrounds(file, source);
 
   for (const match of source.matchAll(/\/textures\/[A-Za-z0-9._-]+\.png/g)) {
     const assetPath = join(textureDir, match[0].replace('/textures/', ''));
@@ -90,4 +91,25 @@ async function listRuntimeFiles(directory) {
     }
   }
   return files;
+}
+
+function validateCssTextureBackgrounds(file, source) {
+  if (extname(file) !== '.css') {
+    return;
+  }
+
+  const lines = source.split('\n');
+  lines.forEach((line, index) => {
+    const match = line.match(/\bbackground(?:-color)?\s*:\s*([^;]+);/i);
+    if (!match) {
+      return;
+    }
+
+    const value = match[1].trim().toLowerCase();
+    if (value === 'transparent' || value === 'none' || value.startsWith('url(')) {
+      return;
+    }
+
+    fail(`${file}:${index + 1} uses a non-texture CSS background value: ${match[1].trim()}`);
+  });
 }

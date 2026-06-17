@@ -86,10 +86,23 @@ test('runtime client sources do not use drawing or filter effects for art', asyn
     'client/web/main.js',
     'client/web/styles.css'
   ];
-  const forbidden = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:/i;
+  const forbidden = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:|opacity\s*:/i;
 
   for (const file of files) {
     const source = await readFile(file, 'utf8');
     assert.doesNotMatch(source, forbidden, `${file} contains a forbidden runtime drawing token`);
+  }
+
+  const css = await readFile('client/web/styles.css', 'utf8');
+  for (const [index, line] of css.split('\n').entries()) {
+    const match = line.match(/\bbackground(?:-color)?\s*:\s*([^;]+);/i);
+    if (!match) {
+      continue;
+    }
+    const value = match[1].trim().toLowerCase();
+    assert.ok(
+      value === 'transparent' || value === 'none' || value.startsWith('url('),
+      `client/web/styles.css:${index + 1} uses non-texture background ${match[1].trim()}`
+    );
   }
 });

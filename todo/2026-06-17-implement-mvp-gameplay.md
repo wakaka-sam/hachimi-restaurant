@@ -181,6 +181,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Added `icon-star-empty.png` for empty star states.
   - Web and Cocos now switch between filled and empty star textures instead of runtime grayscale/filter effects.
   - Texture verification now forbids gradient, shadow, filter, and grayscale drawing/effect tokens in runtime sources.
+- Tightened Web texture-background policy:
+  - Removed the remaining CSS color background and opacity-based locked-table effect from the debug harness.
+  - Texture verification now rejects non-transparent, non-texture CSS `background` and `background-color` declarations in runtime CSS.
 - Wired floor movement tuning into client simulations:
   - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
   - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
@@ -236,6 +239,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos mobile safe-area component and scene wiring contract.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
+  - Runtime CSS backgrounds limited to transparent values or PNG texture references.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.
