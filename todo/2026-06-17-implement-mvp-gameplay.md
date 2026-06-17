@@ -132,6 +132,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared rules now expose `maxWaitingCustomers = 4`.
   - Cocos and Web debug simulations pause natural customer spawning when the visible waiting queue is full.
   - Cocos scene wiring now requires at least 4 `waitingCustomerSprites` so every waiting customer has a texture-backed visual slot.
+- Added texture-backed Cocos button contract:
+  - `TexturedButtonView` applies `button.png` and `button-disabled.png` to button background sprites based on interactable state.
+  - `HachimiRestaurantGame` refreshes textured buttons after screen, business, upgrade, and task state changes.
+  - Scene wiring now requires enough `TexturedButtonView` instances for fixed controls, part upgrade buttons, and all MVP task claim buttons.
 
 ## Remaining Work
 
@@ -167,6 +171,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos MVP screen navigation wiring.
   - Web and Cocos locked table slot texture wiring.
   - Web and Cocos waiting queue cap wiring.
+  - Cocos texture-backed button wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.
   - Cocos guide label wiring.

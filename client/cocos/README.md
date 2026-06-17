@@ -52,6 +52,7 @@ Create a portrait scene in Cocos Creator and attach:
 - `PartStatusView` to each main-screen part status node.
 - `PartUpgradeView` to each upgrade card node.
 - `TaskItemView` to each task row node. The current MVP task list has 13 backend tasks, so the scene needs at least 13 task row instances unless a later virtualized list component replaces the fixed rows.
+- `TexturedButtonView` to every button that should use `button.png` and `button-disabled.png` as its visual background.
 
 The scene should provide 5 table slot nodes. `TableSlotView` renders slots above the current `tableCapacity` with the locked table texture and disables touch input until the player's table capacity grows.
 
@@ -64,6 +65,8 @@ Wire the navigation buttons to the controller properties instead of relying only
 - `taskNavButton`
 - `resultMainButton`
 - `resultUpgradeButton`
+
+The first scene pass should provide at least 28 `TexturedButtonView` instances: 10 fixed screen/control buttons, 5 part-upgrade buttons, and 13 task claim buttons. If task rows become virtualized later, update `scene-wiring.json` and the verification rule in the same task.
 
 Then wire the serialized properties in the inspector.
 

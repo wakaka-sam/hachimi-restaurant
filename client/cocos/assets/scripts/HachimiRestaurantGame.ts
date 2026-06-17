@@ -6,6 +6,7 @@ import { PartStatusView } from './components/PartStatusView';
 import { PartUpgradeView } from './components/PartUpgradeView';
 import { TableSlotView } from './components/TableSlotView';
 import { TaskItemView } from './components/TaskItemView';
+import { TexturedButtonView } from './components/TexturedButtonView';
 import { TextureCatalog } from './components/TextureCatalog';
 
 const { ccclass, property } = _decorator;
@@ -122,6 +123,9 @@ export class HachimiRestaurantGame extends Component {
   @property([TaskItemView])
   taskViews: TaskItemView[] = [];
 
+  @property([TexturedButtonView])
+  texturedButtons: TexturedButtonView[] = [];
+
   private api!: ApiClient;
   private profile: ProfileState | null = null;
   private simulation: BusinessSimulation | null = null;
@@ -159,6 +163,7 @@ export class HachimiRestaurantGame extends Component {
     }
     this.simulation.update(deltaTime);
     this.renderBusiness();
+    this.renderTexturedButtons();
     if (this.simulation.finished) {
       void this.finishBusiness();
     }
@@ -309,6 +314,7 @@ export class HachimiRestaurantGame extends Component {
     this.renderUpgrade();
     this.renderTasks();
     this.renderResult();
+    this.renderTexturedButtons();
   }
 
   private renderHeader(): void {
@@ -428,6 +434,13 @@ export class HachimiRestaurantGame extends Component {
       `获得金币 ${this.settlement.rewardCoins}\n`
       + `表现倍率 ${this.settlement.performanceFactor.toFixed(2)}x\n`
       + `期望收入 ${this.settlement.expectedRevenue}`;
+  }
+
+  private renderTexturedButtons(): void {
+    if (!this.textures) {
+      return;
+    }
+    this.texturedButtons.forEach((view) => view.render(this.textures!));
   }
 
   private setMessage(message: string): void {

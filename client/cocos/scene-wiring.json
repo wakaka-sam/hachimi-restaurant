@@ -19,13 +19,15 @@
     "TableSlotView",
     "PartStatusView",
     "PartUpgradeView",
-    "TaskItemView"
+    "TaskItemView",
+    "TexturedButtonView"
   ],
   "minimumInstances": {
     "TableSlotView": 5,
     "PartStatusView": 5,
     "PartUpgradeView": 5,
-    "TaskItemView": 13
+    "TaskItemView": 13,
+    "TexturedButtonView": 28
   },
   "minimumSpriteArrayLengths": {
     "waitingCustomerSprites": 4
