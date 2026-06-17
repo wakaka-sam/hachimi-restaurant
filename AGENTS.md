@@ -148,11 +148,16 @@ Every completed task must record verification.
 
 If verification commands are not available yet, state that directly in the `done/` record and explain what should be added later.
 
-Current placeholders:
+Current verification commands:
 
-- Client verification: TBD after the Cocos project is created.
-- Server verification: TBD after the Node.js project is created.
-- Documentation-only verification: review the rendered Markdown or inspect the changed Markdown files.
+- Full repository verification: `npm run verify`.
+- Cocos project metadata and scene contract: `npm run verify:cocos-project`.
+- Cocos/shared gameplay rule drift: `npm run verify:rules`.
+- Cocos TypeScript source: `npm run typecheck:cocos`.
+- Texture policy and runtime no-drawing rule: `npm run verify:textures`.
+- Backend tests: `npm test`.
+
+Cocos Creator editor scene binding and target builds still require a local Cocos Creator installation. Until then, record source-level verification and the missing editor/build verification explicitly.
 
 Do not claim a change is safe without saying what was checked.
 
@@ -193,7 +198,7 @@ Before production deployment, server configuration changes, data deletion, or ir
 
 Current version status:
 
-- Cocos version: TBD.
-- Node.js version: TBD.
+- Cocos version: 3.8.x.
+- Node.js version: >=20.
 - WeChat Mini Game SDK/tooling: TBD.
 - Douyin Mini Game SDK/tooling: TBD.

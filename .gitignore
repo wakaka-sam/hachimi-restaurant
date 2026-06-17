@@ -5,6 +5,12 @@ vendor/
 # Build output
 dist/
 build/
+client/cocos/build/
+
+# Cocos Creator generated local state
+client/cocos/library/
+client/cocos/temp/
+client/cocos/local/
 
 # Environment and local files
 .env

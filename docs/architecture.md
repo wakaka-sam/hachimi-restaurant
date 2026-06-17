@@ -33,6 +33,8 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `client/cocos/assets/scripts/core/GameRules.ts` mirrors the subset of shared constants and labels needed by the Cocos runtime. `npm run verify:rules` compares that mirror against `shared/game-rules.mjs`; update both files together when gameplay constants change.
 
+`npm run verify:cocos-project` validates the Cocos project metadata before the editor is available: Cocos Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
+
 ## Data Authority
 
 The backend is authoritative for:
@@ -64,6 +66,7 @@ For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` refer
 ```bash
 npm run generate:textures
 npm run sync:cocos-textures
+npm run verify:cocos-project
 npm run typecheck:cocos
 npm run verify
 npm test

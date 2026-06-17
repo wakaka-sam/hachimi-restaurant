@@ -257,6 +257,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened texture asset verification:
   - `npm run verify:textures` now enforces expected dimensions for every runtime PNG texture.
   - The texture policy rejects unexpected PNG files without an explicit dimension contract, preventing accidental placeholder art from silently entering Web or Cocos.
+- Tightened Cocos project structure verification:
+  - Added `npm run verify:cocos-project` to check Cocos Creator 3.8.x metadata, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
+  - Full `npm run verify` now runs the Cocos project metadata check before rule drift, gameplay coverage, typecheck, and backend tests.
+  - `.gitignore` now explicitly excludes Cocos Creator generated `build`, `library`, `temp`, and `local` directories.
 
 ## Remaining Work
 
@@ -269,7 +273,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 47 Node tests, 154 gameplay coverage checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 154 gameplay coverage checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -338,4 +342,5 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos task row count covers all MVP task definitions.
   - Cocos guide label wiring.
   - Required PNG texture presence in both Web and Cocos asset trees.
+- Cocos project metadata verification checks Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
 - Cocos TypeScript source compiles under `client/cocos/tsconfig.json`.
