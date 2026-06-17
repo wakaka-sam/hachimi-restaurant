@@ -73,14 +73,18 @@ export class TableSlotView extends Component {
       return waitingCount > 0 ? '点我入座' : '空桌';
     }
     if (customer.phase === 'seated') {
-      return '等上菜';
+      return `等上菜 ${this.formatSeconds(customer.phaseTime)}`;
     }
     if (customer.phase === 'readyFood') {
-      return '点我上菜';
+      return `点我上菜 ${this.formatSeconds(customer.patience)}`;
     }
     if (customer.phase === 'eating') {
-      return '用餐中';
+      return `用餐中 ${this.formatSeconds(customer.phaseTime)}`;
     }
-    return '点我收银';
+    return `点我收银 ${this.formatSeconds(customer.patience)}`;
+  }
+
+  private formatSeconds(seconds: number): string {
+    return `${Math.max(0, Math.ceil(seconds))}s`;
   }
 }

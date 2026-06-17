@@ -43,6 +43,7 @@ addCheck('web 2x speed support', 'client/web/main.js', ["state.speedMode === '1x
 addCheck('web blocks manual early settlement', 'client/web/main.js', ["disabled: !game.finished"]);
 addCheck('web resumed session remaining time', 'client/web/main.js', ['session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
 addCheck('web click service chain', 'client/web/main.js', ['seatCustomer', "customer.phase = 'eating'", 'collectCustomer']);
+addCheck('web table countdown labels', 'client/web/main.js', ['formatSeconds', 'customer.phaseTime', 'customer.patience']);
 addCheck('web initial customer wave', 'client/web/main.js', ['tuning.initialCustomerCount', 'spawnCustomer']);
 addCheck('web waiting queue cap', 'client/web/main.js', ['CONSTANTS.maxWaitingCustomers', 'game.waiting.length']);
 addCheck('web floor movement tuning', 'client/web/main.js', ['getMovementAdjustedDuration', 'moveSpeedMultiplier']);
@@ -65,6 +66,7 @@ addCheck('cocos restaurant visual stages', 'client/cocos/assets/scripts/HachimiR
 addCheck('cocos business feedback labels', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['satisfactionLabel', 'feedbackLabel', 'satisfactionPercent', 'lastFeedback']);
 addCheck('cocos main part status views', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['PartStatusView', 'partStatusViews', 'renderPartStatus']);
 addCheck('cocos locked table slots', 'client/cocos/assets/scripts/components/TableSlotView.ts', ['tableLocked', 'unlocked', '未解锁']);
+addCheck('cocos table countdown labels', 'client/cocos/assets/scripts/components/TableSlotView.ts', ['formatSeconds', 'customer.phaseTime', 'customer.patience']);
 addCheck('cocos business simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['seatCustomer', 'handleTablePressed', 'collectFirstReadyPay', 'getSummary']);
 addCheck('cocos initial customer wave', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['initialCustomerCount', 'spawnCustomer', 'spawnIntervalSeconds']);
 addCheck('cocos waiting queue cap', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['CONSTANTS.maxWaitingCustomers', 'this.waiting.length']);
@@ -83,6 +85,7 @@ addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['Ther
 addCheck('product documented locked table slots', 'docs/product.md', ['场景预留 5 个桌位', '未解锁桌位显示锁定贴图']);
 addCheck('product documented initial customer wave', 'docs/product.md', ['开场先进入 2 位初始顾客']);
 addCheck('product documented waiting queue cap', 'docs/product.md', ['等待队列最多显示 4 位顾客']);
+addCheck('product documented table countdown feedback', 'docs/product.md', ['餐桌状态需要显示阶段剩余时间或耐心倒计时']);
 
 for (const check of checks) {
   let source = '';

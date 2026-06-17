@@ -140,6 +140,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
   - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
   - API docs now list `moveSpeedMultiplier` in `profile.tuning`.
+- Added table-state countdown feedback:
+  - Cocos and Web debug table labels now show remaining phase time or patience for seated, ready-food, eating, and ready-pay states.
+  - Product docs now require table state countdowns so players can judge service and cashier priority.
 
 ## Remaining Work
 
@@ -176,6 +179,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos locked table slot texture wiring.
   - Web and Cocos waiting queue cap wiring.
   - Web and Cocos floor movement/turnover tuning.
+  - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.
