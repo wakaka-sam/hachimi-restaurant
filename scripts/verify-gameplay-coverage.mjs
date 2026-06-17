@@ -71,7 +71,7 @@ addCheck('shared normal performance upgrade cost test', 'server/test/game-rules.
 addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs', ['speed mode does not change reward', "speedMode: '1x'", "speedMode: '2x'", 'performanceFactor']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
 addCheck('shared max-star part effect text', 'shared/game-rules.mjs', ['getPartEffectDescription', '已满星', '等待整体升级餐厅']);
-addCheck('shared max-star part effect tests', 'server/test/game-rules.test.mjs', ['part effect descriptions expose max-star state', '收银机已满星，等待整体升级餐厅']);
+addCheck('shared max-star part effect tests', 'server/test/game-rules.test.mjs', ['part effect descriptions expose max-star state', 'for (const part of PARTS)', '等待整体升级餐厅']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
 addCheck('shared task type labels', 'shared/game-rules.mjs', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('shared task reward fields', 'shared/game-rules.mjs', ['TASK_REWARD_FIELDS', 'resolveRewardAmount', 'getTaskRewardSummary']);

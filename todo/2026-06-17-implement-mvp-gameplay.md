@@ -196,6 +196,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Static coverage rejects recommendation copy in the free-upgrade UI.
   - Shared part-effect text now returns a max-star state instead of another next-star line when a part reaches 5 stars.
   - Web maxed part cards show `已满星` instead of upgrade cost, and Cocos upgrade cards hide any star nodes beyond the five-star cap.
+  - The max-star part-effect check now covers all five parts, not only the cashier card.
 - Tightened star texture policy:
   - Added `icon-star-empty.png` for empty star states.
   - Web and Cocos now switch between filled and empty star textures instead of runtime grayscale/filter effects.

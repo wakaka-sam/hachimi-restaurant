@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {
   CONSTANTS,
   CUSTOMER_TYPES,
+  PART_LABELS,
+  PARTS,
   TASK_DEFINITIONS,
   TASK_REWARD_FIELDS,
   TASK_TYPE_LABELS,
@@ -103,12 +105,18 @@ test('initial handfeel tuning matches MVP business density targets', () => {
 test('part effect descriptions expose max-star state', () => {
   const player = createDefaultPlayer('part-effect-text', new Date('2026-06-17T00:00:00.000Z'));
 
-  player.parts.cashier = 4;
-  assert.match(getPartEffectDescription('cashier', player), /下一星/);
-  assert.match(getPartEffectDescription('cashier', player), /5 星/);
+  for (const part of PARTS) {
+    player.parts[part] = 4;
+    assert.match(getPartEffectDescription(part, player), /下一星/);
+    assert.match(getPartEffectDescription(part, player), /5 星/);
 
-  player.parts.cashier = 5;
-  assert.equal(getPartEffectDescription('cashier', player), '收银机已满星，等待整体升级餐厅');
+    player.parts[part] = 5;
+    assert.equal(
+      getPartEffectDescription(part, player),
+      `${PART_LABELS[part]}已满星，等待整体升级餐厅`
+    );
+    player.parts[part] = 0;
+  }
 });
 
 test('session summary validation enforces the 18 customer cap', () => {
