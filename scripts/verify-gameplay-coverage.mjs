@@ -64,6 +64,7 @@ addCheck('server configurable Web static root', 'server/src/server.mjs', ['resol
 addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "screen === 'business'", "screen === 'upgrade'", "screen === 'tasks'"]);
 addCheck('web 2x speed support', 'client/web/main.js', ["state.speedMode === '1x' ? '2x' : '1x'", "speedMode: state.speedMode", 'toggleBusinessSpeed', "game.speedMode === '1x' ? '2x' : '1x'"]);
 addCheck('web blocks manual early settlement', 'client/web/main.js', ["disabled: !game.finished"]);
+addCheck('web preserves completed session on not-ready settlement', 'client/web/main.js', ['ApiRequestError', 'SESSION_NOT_READY', 'remainingRealSeconds', '结算准备中', 'handleSessionNotReady']);
 addCheck('web resumed session remaining time', 'client/web/main.js', ['session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
 addCheck('web local session snapshot recovery', 'client/web/main.js', ['LOCAL_SESSION_SNAPSHOT_KEY', 'finishStoredCompletedSession', 'saveGameSnapshot', 'loadGameSnapshot', 'getSummaryFromSnapshot']);
 addCheck('web stamina recovery display', 'client/web/main.js', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext', 'secondsUntilFull']);
@@ -92,6 +93,7 @@ addCheck('cocos textured panel refresh', 'client/cocos/assets/scripts/HachimiRes
 addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideLabel', 'getGuideMessage', '开始营业', '完成上菜', '领取引导任务奖励']);
 addCheck('cocos in-session speed toggle', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['toggleSpeed', 'simulation.toggleSpeedMode', 'simulation.speedMode']);
 addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable = simulation.finished']);
+addCheck('cocos preserves completed session on not-ready settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['ApiRequestError', 'SESSION_NOT_READY', 'remainingRealSeconds', '结算准备中', 'handleSessionNotReady']);
 addCheck('cocos resumed session remaining time', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
 addCheck('cocos local session snapshot recovery', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['LOCAL_SESSION_SNAPSHOT_KEY', 'finishStoredCompletedSession', 'saveSessionSnapshot', 'loadSessionSnapshot', 'getSummaryFromSnapshot']);
 addCheck('cocos stamina recovery display', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext', 'secondsUntilFull']);
@@ -153,6 +155,7 @@ addCheck('product documented business feedback scope', 'docs/product.md', ['服�
 addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);
 addCheck('api documented overall task coin budget', 'docs/api.md', ['Overall task coin reward budget', '20% and 30%', 'first 20-session growth-cycle']);
 addCheck('api documented response envelope', 'docs/api.md', ['Response Envelope', 'ok: true', 'ok: false', 'POST /api/session/finish', 'SESSION_NOT_READY']);
+addCheck('api documented not-ready settlement recovery', 'docs/api.md', ['remainingRealSeconds', 'preserve the completed local summary snapshot', 'retry settlement after the wait']);
 addCheck('api documented customer type totals', 'docs/api.md', ['customer type totals', 'customersServed + customersLost', 'normal']);
 addCheck('api documented summary duration validation', 'docs/api.md', ['durationSeconds', '90 seconds of game time', 'anti-early-settlement']);
 addCheck('api documented summary numeric bounds', 'docs/api.md', ['non-negative integers', 'averageSatisfaction', 'maxCombo']);

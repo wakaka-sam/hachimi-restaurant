@@ -50,6 +50,22 @@ const state = {
 
 const app = document.querySelector('#app');
 
+class ApiRequestError extends Error {
+  constructor(payload) {
+    super(payload.error?.message || payload.error?.code || '请求失败');
+    this.name = 'ApiRequestError';
+    this.code = payload.error?.code || 'REQUEST_FAILED';
+    this.minimumRealSeconds = numberOrNull(payload.error?.minimumRealSeconds);
+    this.elapsedRealSeconds = numberOrNull(payload.error?.elapsedRealSeconds);
+    this.remainingRealSeconds = numberOrNull(payload.error?.remainingRealSeconds);
+    this.session = payload.session || null;
+  }
+}
+
+function numberOrNull(value) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
 loadProfile();
 
 async function api(path, options = {}) {
@@ -64,8 +80,7 @@ async function api(path, options = {}) {
   });
   const payload = await response.json();
   if (!response.ok || !payload.ok) {
-    const message = payload.error?.message || payload.error?.code || '请求失败';
-    throw new Error(message);
+    throw new ApiRequestError(payload);
   }
   return payload;
 }
@@ -737,11 +752,28 @@ async function finishBusiness() {
     clearGameSnapshot(game.session.sessionId);
     render();
   } catch (error) {
+    if (handleSessionNotReady(error, game)) {
+      return;
+    }
     state.message = error.message;
     state.screen = 'main';
     state.game = null;
     await loadProfile();
   }
+}
+
+function handleSessionNotReady(error, game) {
+  if (!(error instanceof ApiRequestError) || error.code !== 'SESSION_NOT_READY') {
+    return false;
+  }
+  const remainingSeconds = Math.max(1, Math.ceil(error.remainingRealSeconds ?? 1));
+  game.finished = true;
+  state.game = game;
+  state.screen = 'business';
+  state.message = `结算准备中，还需等待 ${remainingSeconds}s`;
+  saveGameSnapshot(game);
+  render();
+  return true;
 }
 
 function clearGameLoop() {

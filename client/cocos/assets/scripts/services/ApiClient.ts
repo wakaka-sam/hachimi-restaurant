@@ -10,12 +10,33 @@ export interface ApiResponse<T> {
   error?: {
     code: string;
     message: string;
+    minimumRealSeconds?: number;
+    elapsedRealSeconds?: number;
+    remainingRealSeconds?: number;
   };
   profile?: ProfileState;
   session?: BusinessSession;
   settlement?: SettlementState;
   claimedTask?: unknown;
   resumed?: boolean;
+}
+
+export class ApiRequestError extends Error {
+  readonly code: string;
+  readonly minimumRealSeconds: number | null;
+  readonly elapsedRealSeconds: number | null;
+  readonly remainingRealSeconds: number | null;
+  readonly session: BusinessSession | null;
+
+  constructor(payload: ApiResponse<unknown>) {
+    super(payload.error?.message || payload.error?.code || 'Request failed.');
+    this.name = 'ApiRequestError';
+    this.code = payload.error?.code || 'REQUEST_FAILED';
+    this.minimumRealSeconds = numberOrNull(payload.error?.minimumRealSeconds);
+    this.elapsedRealSeconds = numberOrNull(payload.error?.elapsedRealSeconds);
+    this.remainingRealSeconds = numberOrNull(payload.error?.remainingRealSeconds);
+    this.session = payload.session || null;
+  }
 }
 
 export class ApiClient {
@@ -107,8 +128,12 @@ export class ApiClient {
     });
     const payload = response.payload;
     if (!response.ok || !payload.ok) {
-      throw new Error(payload.error?.message || payload.error?.code || 'Request failed.');
+      throw new ApiRequestError(payload);
     }
     return payload as T;
   }
+}
+
+function numberOrNull(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
 }

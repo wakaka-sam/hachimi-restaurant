@@ -11,7 +11,7 @@ import {
   TASK_TYPE_LABELS,
   TaskType
 } from './core/GameRules';
-import { ApiClient } from './services/ApiClient';
+import { ApiClient, ApiRequestError } from './services/ApiClient';
 import { PartStatusView } from './components/PartStatusView';
 import { PartUpgradeView } from './components/PartUpgradeView';
 import { TableSlotView } from './components/TableSlotView';
@@ -279,11 +279,30 @@ export class HachimiRestaurantGame extends Component {
       this.setScreen('result');
       this.renderAll();
     } catch (error) {
+      if (this.handleSessionNotReady(error)) {
+        return;
+      }
       this.setMessage(this.formatError(error));
       await this.loadProfile();
     } finally {
       this.finishing = false;
     }
+  }
+
+  private handleSessionNotReady(error: unknown): boolean {
+    if (!(error instanceof ApiRequestError) || error.code !== 'SESSION_NOT_READY') {
+      return false;
+    }
+    const remainingSeconds = Math.max(1, Math.ceil(error.remainingRealSeconds ?? 1));
+    this.finishing = false;
+    if (this.simulation) {
+      this.simulation.finished = true;
+      this.saveSessionSnapshot();
+    }
+    this.setMessage(`结算准备中，还需等待 ${remainingSeconds}s`);
+    this.setScreen('business');
+    this.renderAll();
+    return true;
   }
 
   private async upgradePart(part: PartKey): Promise<void> {

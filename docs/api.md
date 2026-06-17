@@ -113,6 +113,7 @@ error:
 ```
 
 `SESSION_NOT_READY` also returns the current serialized `session` and timing fields so clients can show remaining wait time instead of treating the response as a fatal failure.
+Clients should preserve the completed local summary snapshot when this happens, keep the player on the business/result recovery path, display `remainingRealSeconds`, and retry settlement after the wait instead of discarding the session.
 
 ### `GET /api/player/profile`
 

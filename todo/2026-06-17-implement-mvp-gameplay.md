@@ -236,6 +236,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened backend file-backed persistence:
   - `GameStore.save()` writes to a temp file and renames it into place so state files are not partially written.
   - Store tests prove players and active sessions survive reload from the configured data file.
+- Improved early-settlement recovery UX:
+  - Cocos and Web clients now preserve the completed local session snapshot when the backend returns `SESSION_NOT_READY`.
+  - Clients show the backend-provided remaining wait time and keep the player on the business recovery path for retry.
 
 ## Remaining Work
 
@@ -248,7 +251,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 44 Node tests, 139 gameplay coverage checks, and stricter static texture policy checks.
+- Current automated coverage: 44 Node tests, 142 gameplay coverage checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend file-backed player/session persistence across store reloads.
@@ -265,6 +268,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
   - Backend early-settlement rejection.
+  - Web and Cocos not-ready settlement recovery without discarding completed local summaries.
   - Backend rejection of non-90-second session summaries.
   - Backend auto-settlement for expired active sessions.
   - Backend settlement of expired manual finishes with a valid completed summary.
