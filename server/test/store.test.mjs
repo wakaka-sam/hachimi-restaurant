@@ -41,3 +41,51 @@ test('GameStore persists players and sessions across reloads', async (t) => {
   const leftovers = (await readdir(dataDir)).filter((file) => file.includes('.tmp-'));
   assert.deepEqual(leftovers, []);
 });
+
+test('GameStore serializes overlapping file saves', async (t) => {
+  const dataDir = await mkdtemp(join(tmpdir(), 'hachimi-store-'));
+  const dataFile = join(dataDir, 'game-state.json');
+  t.after(async () => {
+    await rm(dataDir, { recursive: true, force: true });
+  });
+
+  const now = new Date('2026-06-17T00:00:00.000Z');
+  const store = await new GameStore({ filePath: dataFile }).load();
+  const player = store.getPlayer('queued-player', now);
+  player.coins = 100;
+
+  const calls = [];
+  let releaseFirst;
+  let firstStartedResolve;
+  const firstStarted = new Promise((resolve) => {
+    firstStartedResolve = resolve;
+  });
+  const originalWrite = store.writeStateFile.bind(store);
+  store.writeStateFile = async () => {
+    calls.push('start');
+    if (calls.length === 1) {
+      firstStartedResolve();
+      await new Promise((resolve) => {
+        releaseFirst = resolve;
+      });
+    }
+    calls.push('write');
+    await originalWrite();
+  };
+
+  const firstSave = store.save();
+  await firstStarted;
+  player.coins = 200;
+  const secondSave = store.save();
+
+  await Promise.resolve();
+  assert.deepEqual(calls, ['start']);
+
+  releaseFirst();
+  await Promise.all([firstSave, secondSave]);
+
+  assert.deepEqual(calls, ['start', 'write', 'start', 'write']);
+
+  const reloaded = await new GameStore({ filePath: dataFile }).load();
+  assert.equal(reloaded.getPlayer('queued-player', now).coins, 200);
+});

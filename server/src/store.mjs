@@ -6,6 +6,7 @@ import { createDefaultPlayer, normalizePlayer } from '../../shared/game-rules.mj
 export class GameStore {
   constructor({ filePath = null, seed = null } = {}) {
     this.filePath = filePath;
+    this.saveQueue = Promise.resolve();
     this.state = seed || {
       players: {},
       sessions: {}
@@ -34,6 +35,14 @@ export class GameStore {
     if (!this.filePath) {
       return;
     }
+    const operation = this.saveQueue
+      .catch(() => {})
+      .then(() => this.writeStateFile());
+    this.saveQueue = operation.catch(() => {});
+    await operation;
+  }
+
+  async writeStateFile() {
     await mkdir(dirname(this.filePath), { recursive: true });
     const payload = `${JSON.stringify(this.state, null, 2)}\n`;
     const tempPath = `${this.filePath}.tmp-${process.pid}-${randomUUID()}`;

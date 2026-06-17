@@ -236,6 +236,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened backend file-backed persistence:
   - `GameStore.save()` writes to a temp file and renames it into place so state files are not partially written.
   - Store tests prove players and active sessions survive reload from the configured data file.
+- Tightened concurrent backend persistence:
+  - `GameStore.save()` now serializes overlapping file writes through a save queue.
+  - Store tests prove a second save waits for an in-flight write and final reload keeps the latest player state.
 - Improved early-settlement recovery UX:
   - Cocos and Web clients now preserve the completed local session snapshot when the backend returns `SESSION_NOT_READY`.
   - Clients show the backend-provided remaining wait time and keep the player on the business recovery path for retry.
@@ -266,12 +269,13 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 46 Node tests, 153 gameplay coverage checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 154 gameplay coverage checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
   - Backend invalid/oversized JSON body errors.
   - Backend file-backed player/session persistence across store reloads.
+  - Backend serialized file-backed saves under overlapping requests.
   - Shared economy, stamina, and performance formulas.
   - Cocos mirrored gameplay constants and labels stay aligned with shared backend rules.
   - Completion score calculated against the 12-customer normal service target.

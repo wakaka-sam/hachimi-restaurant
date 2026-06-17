@@ -35,6 +35,7 @@ addCheck('backend daily task claim reset test', 'server/test/api.test.mjs', ['AP
 addCheck('backend active session remaining time', 'server/src/app.mjs', ['serializeBusinessSession', 'remainingSeconds', 'recoveryWindowSeconds']);
 addCheck('backend profile stamina recovery status', 'server/src/app.mjs', ['getStaminaRecovery', 'staminaRecovery']);
 addCheck('backend file-backed persistence test', 'server/test/store.test.mjs', ['persists players and sessions across reloads', 'persist-player', 'persist-session', '.tmp-']);
+addCheck('backend serialized store save test', 'server/test/store.test.mjs', ['serializes overlapping file saves', 'queued-player', 'writeStateFile', 'start', 'write']);
 addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_READY', 'getMinimumSettlementRealSeconds', 'minimumRealSeconds']);
 addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', ['settleExpiredSessions', 'getExpiredActiveSessions', 'createExpiredSummary']);
 addCheck('backend accepts valid expired completed summaries', 'server/test/api.test.mjs', ['expired completed session summary', 'rewardCoins, 130', 'customersServed, 12']);
