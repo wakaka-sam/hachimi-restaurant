@@ -116,6 +116,7 @@ export const CONSTANTS = {
   staminaMax: 60,
   sessionStaminaCost: 10,
   sessionDurationSeconds: 90,
+  maxSpeedMultiplier: 2,
   maxCustomersPerSession: 18
 } as const;
 

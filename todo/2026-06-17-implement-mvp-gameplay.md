@@ -96,6 +96,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend active session responses include elapsed/remaining game seconds and recovery window.
   - 2x sessions use a shorter real-time active window while preserving the 2-minute recovery window.
   - Cocos and Web debug harness resume active sessions from remaining time instead of restarting at 90 seconds.
+- Added early-settlement protection:
+  - Backend rejects valid-looking settlements before the minimum real time for a 90-second 2x session has elapsed.
+  - Cocos and Web debug harness disable manual settlement while the local营业 countdown is still running.
+  - API docs now include `SESSION_NOT_READY`.
 
 ## Remaining Work
 
@@ -108,13 +112,15 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 17 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 18 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
+  - Backend early-settlement rejection.
   - Web core screens and service chain.
+  - Web and Cocos manual early-settlement blocking.
   - Web and Cocos resumed session remaining-time handling.
   - Web and Cocos in-session 1x/2x speed switching.
   - Web first-run guide highlights.

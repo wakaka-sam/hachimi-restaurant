@@ -312,6 +312,9 @@ export class HachimiRestaurantGame extends Component {
     }
     if (this.timerLabel) this.timerLabel.string = `剩余 ${Math.ceil(simulation.timeLeft)}s`;
     if (this.speedLabel) this.speedLabel.string = simulation.speedMode;
+    if (this.finishButton) {
+      this.finishButton.interactable = simulation.finished && !this.finishing;
+    }
     if (this.businessStatsLabel) {
       this.businessStatsLabel.string =
         `服务 ${simulation.customersServed} / 离开 ${simulation.customersLost} / 连击 ${simulation.combo}`;

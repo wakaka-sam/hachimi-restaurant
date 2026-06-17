@@ -33,8 +33,14 @@ async function request(baseUrl, path, options = {}) {
   };
 }
 
+function makeSessionReady(store, sessionId, elapsedSeconds = 46) {
+  const session = store.getSession(sessionId);
+  session.startedAt = new Date(Date.now() - elapsedSeconds * 1000).toISOString();
+  return session;
+}
+
 test('API supports business session settlement and part upgrade', async (t) => {
-  const { app, baseUrl } = await startTestServer();
+  const { app, store, baseUrl } = await startTestServer();
   t.after(() => app.close());
 
   const profile = await request(baseUrl, '/api/player/profile');
@@ -50,6 +56,7 @@ test('API supports business session settlement and part upgrade', async (t) => {
   assert.equal(start.status, 200);
   assert.equal(start.body.session.speedMode, '2x');
   assert.equal(start.body.profile.player.stamina, 50);
+  makeSessionReady(store, start.body.session.sessionId);
 
   const finish = await request(baseUrl, '/api/session/finish', {
     method: 'POST',
@@ -122,7 +129,7 @@ test('API supports full part cycle and restaurant upgrade without income regress
 });
 
 test('API supports guide task claim and follow-up task claim', async (t) => {
-  const { app, baseUrl } = await startTestServer();
+  const { app, store, baseUrl } = await startTestServer();
   t.after(() => app.close());
 
   const start = await request(baseUrl, '/api/session/start', {
@@ -130,6 +137,7 @@ test('API supports guide task claim and follow-up task claim', async (t) => {
     body: {}
   });
   assert.equal(start.status, 200);
+  makeSessionReady(store, start.body.session.sessionId);
 
   const finish = await request(baseUrl, '/api/session/finish', {
     method: 'POST',
@@ -170,7 +178,7 @@ test('API supports guide task claim and follow-up task claim', async (t) => {
 });
 
 test('API prevents double settlement of a business session', async (t) => {
-  const { app, baseUrl } = await startTestServer();
+  const { app, store, baseUrl } = await startTestServer();
   t.after(() => app.close());
 
   const start = await request(baseUrl, '/api/session/start', {
@@ -178,6 +186,7 @@ test('API prevents double settlement of a business session', async (t) => {
     body: {}
   });
   assert.equal(start.status, 200);
+  makeSessionReady(store, start.body.session.sessionId);
 
   const body = {
     sessionId: start.body.session.sessionId,
@@ -201,6 +210,36 @@ test('API prevents double settlement of a business session', async (t) => {
   });
   assert.equal(secondFinish.status, 400);
   assert.equal(secondFinish.body.error.code, 'SESSION_ALREADY_FINISHED');
+});
+
+test('API rejects settlement before minimum real session time has elapsed', async (t) => {
+  const { app, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: { speedMode: '2x' }
+  });
+  assert.equal(start.status, 200);
+
+  const finish = await request(baseUrl, '/api/session/finish', {
+    method: 'POST',
+    body: {
+      sessionId: start.body.session.sessionId,
+      summary: {
+        customersServed: 10,
+        customersLost: 0,
+        averageSatisfaction: 1,
+        maxCombo: 8,
+        durationSeconds: 90
+      }
+    }
+  });
+
+  assert.equal(finish.status, 400);
+  assert.equal(finish.body.error.code, 'SESSION_NOT_READY');
+  assert.equal(finish.body.error.minimumRealSeconds, 45);
+  assert.ok(finish.body.error.remainingRealSeconds > 0);
 });
 
 test('API resumes an active business session instead of charging stamina again', async (t) => {

@@ -134,11 +134,12 @@ Backend behavior:
 1. Verify the session belongs to the player.
 2. Verify the session is active and not already settled.
 3. Validate summary bounds, including a reasonable customer count cap.
-4. Recompute `expectedRevenue`.
-5. Compute `performanceFactor`.
-6. Compute final `rewardCoins`.
-7. Add coins and write the session record.
-8. Update task progress.
+4. Reject settlement before enough real time has elapsed for a valid 90-second game-time session. The current minimum is 45 real seconds because 2x speed is always available.
+5. Recompute `expectedRevenue`.
+6. Compute `performanceFactor`.
+7. Compute final `rewardCoins`.
+8. Add coins and write the session record.
+9. Update task progress.
 
 The backend must not trust a client-submitted final coin value.
 
@@ -232,6 +233,7 @@ INVALID_PART
 PART_ALREADY_MAXED
 RESTAURANT_NOT_READY
 SESSION_NOT_FOUND
+SESSION_NOT_READY
 SESSION_ALREADY_FINISHED
 SESSION_EXPIRED
 INVALID_SESSION_SUMMARY

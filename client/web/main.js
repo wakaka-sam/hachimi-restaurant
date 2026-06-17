@@ -379,7 +379,7 @@ function renderBusinessScreen() {
     h('div', { class: 'business-hud' },
       h('span', { class: 'timer-pill' }, `剩余 ${Math.ceil(game.timeLeft)}s`),
       textureButton(game.speedMode === '1x' ? '1 倍速' : '2 倍速', toggleBusinessSpeed, { className: 'compact' }),
-      textureButton('结束结算', finishBusiness, { className: 'compact' })
+      textureButton('结束结算', finishBusiness, { className: 'compact', disabled: !game.finished })
     ),
     guide ? h('div', { class: 'guide-cue business-guide' }, guide.message) : null,
     game.feedback ? h('div', { class: 'business-feedback' }, game.feedback) : null,

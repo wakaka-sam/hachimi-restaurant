@@ -216,6 +216,14 @@ function serializeBusinessSession(session, now = new Date()) {
   };
 }
 
+function getMinimumSettlementRealSeconds() {
+  return Math.ceil(CONSTANTS.sessionDurationSeconds / CONSTANTS.maxSpeedMultiplier);
+}
+
+function getSessionElapsedRealSeconds(session, now = new Date()) {
+  return Math.max(0, (new Date(now).getTime() - new Date(session.startedAt).getTime()) / 1000);
+}
+
 async function startSession(response, store, playerId, body, now) {
   const player = store.getPlayer(playerId, now);
   refreshStamina(player, now);
@@ -304,6 +312,22 @@ async function finishSession(response, store, playerId, body, now) {
     const validation = validateSessionSummary({ ...(body.summary || body), speedMode: session.speedMode });
     if (!validation.ok) {
       sendError(response, 400, 'INVALID_SESSION_SUMMARY', validation.errors.join(', '));
+      return;
+    }
+    const elapsedRealSeconds = getSessionElapsedRealSeconds(session, now);
+    const minimumRealSeconds = getMinimumSettlementRealSeconds();
+    if (elapsedRealSeconds < minimumRealSeconds) {
+      sendJson(response, 400, {
+        ok: false,
+        error: {
+          code: 'SESSION_NOT_READY',
+          message: 'Business session cannot be settled before enough real time has elapsed.',
+          minimumRealSeconds,
+          elapsedRealSeconds: Math.floor(elapsedRealSeconds),
+          remainingRealSeconds: Math.ceil(minimumRealSeconds - elapsedRealSeconds)
+        },
+        session: serializeBusinessSession(session, now)
+      });
       return;
     }
     summary = validation.summary;

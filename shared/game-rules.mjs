@@ -18,6 +18,7 @@ export const CONSTANTS = {
   sessionStaminaCost: 10,
   sessionDurationSeconds: 90,
   sessionRecoveryWindowSeconds: 120,
+  maxSpeedMultiplier: 2,
   maxCustomersPerSession: 18
 };
 
