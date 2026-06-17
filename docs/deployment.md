@@ -19,7 +19,7 @@ WEB_STATIC_ROOT=/path/to/cocos-web-build
 
 For local backend/debug work, leaving `WEB_STATIC_ROOT` unset serves `client/web/`.
 
-In `NODE_ENV=production`, the server refuses to start unless `WEB_STATIC_ROOT` is set. This prevents the temporary `client/web/` debug harness from being deployed as the production Web game.
+In `NODE_ENV=production`, the server refuses to start unless `WEB_STATIC_ROOT` is set. It also rejects `WEB_STATIC_ROOT=client/web` or any path under `client/web`. This prevents the temporary debug harness from being deployed as the production Web game.
 
 `WEB_STATIC_ROOT` must never point to `client/web` in production. It should point only to the Cocos Web build output generated from the shared `client/cocos/` project.
 

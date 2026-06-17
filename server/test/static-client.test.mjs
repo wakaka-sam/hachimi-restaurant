@@ -67,6 +67,14 @@ test('production server config requires a Cocos Web static root', () => {
     () => resolveServerConfig({ NODE_ENV: 'production' }, rootDir),
     /WEB_STATIC_ROOT must point to Cocos Web build output/
   );
+  assert.throws(
+    () => resolveServerConfig({ NODE_ENV: 'production', WEB_STATIC_ROOT: 'client/web' }, rootDir),
+    /WEB_STATIC_ROOT must not point to client\/web/
+  );
+  assert.throws(
+    () => resolveServerConfig({ NODE_ENV: 'production', WEB_STATIC_ROOT: './client/web/build' }, rootDir),
+    /WEB_STATIC_ROOT must not point to client\/web/
+  );
 
   const config = resolveServerConfig({
     NODE_ENV: 'production',

@@ -40,7 +40,7 @@ addCheck('backend rejects mismatched customer type totals', 'server/test/api.tes
 addCheck('backend rejects non-90-second summaries', 'server/test/api.test.mjs', ['non-90-second duration', 'invalid_duration']);
 addCheck('backend rejects invalid summary numeric bounds', 'server/test/api.test.mjs', ['invalid numeric bounds', 'invalid_satisfaction']);
 addCheck('server production Cocos Web root guard', 'server/src/config.mjs', ['NODE_ENV', 'production', 'WEB_STATIC_ROOT must point to Cocos Web build output']);
-addCheck('server production root guard test', 'server/test/static-client.test.mjs', ['production server config requires a Cocos Web static root', 'WEB_STATIC_ROOT must point to Cocos Web build output']);
+addCheck('server production root guard test', 'server/test/static-client.test.mjs', ['production server config requires a Cocos Web static root', 'WEB_STATIC_ROOT must point to Cocos Web build output', "WEB_STATIC_ROOT: 'client/web'", "WEB_STATIC_ROOT: './client/web/build'"]);
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
 addCheck('shared stamina recovery status', 'shared/game-rules.mjs', ['getStaminaRecovery', 'secondsUntilNext', 'secondsUntilFull', 'nextRecoveryAt']);
@@ -134,7 +134,7 @@ addCheck('cocos scene wiring source property validation', 'scripts/verify-gamepl
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
 addCheck('platforms documented implementation source of truth', 'docs/platforms.md', ['Implementation source of truth', 'Product behavior must be implemented in `client/cocos/` first', 'without separate gameplay forks']);
-addCheck('deployment documents production Web root guard', 'docs/deployment.md', ['NODE_ENV=production', 'server refuses to start unless `WEB_STATIC_ROOT` is set', 'must never point to `client/web`']);
+addCheck('deployment documents production Web root guard', 'docs/deployment.md', ['NODE_ENV=production', 'server refuses to start unless `WEB_STATIC_ROOT` is set', 'rejects `WEB_STATIC_ROOT=client/web`', 'must never point to `client/web`']);
 addCheck('web debug harness forbids production root', 'client/web/README.md', ['must never be used as `WEB_STATIC_ROOT` in production', 'Cocos Web build output']);
 addCheck('platforms documented api host resolution', 'docs/platforms.md', ['API Host Resolution', 'same-origin', 'https://animalapi.wakaka007.cn']);
 addCheck('platforms documented network adapter', 'docs/platforms.md', ['Network Adapter', 'fetch', 'XMLHttpRequest']);

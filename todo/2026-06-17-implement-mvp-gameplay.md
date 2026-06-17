@@ -227,6 +227,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened Cocos scene wiring contract:
   - Gameplay coverage now verifies that manifest-declared screen nodes, labels, sprites, buttons, component properties, and texture catalog fields are declared in the corresponding TypeScript source files.
   - This catches manifest/source drift before opening the project in Cocos Creator.
+- Tightened production Web static-root protection:
+  - Production config now rejects `WEB_STATIC_ROOT` values that point to `client/web` or any path under it.
+  - This prevents the temporary Web debug harness from being deployed in place of a Cocos Web build artifact.
 
 ## Remaining Work
 
@@ -274,6 +277,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos local active-session snapshot recovery before profile auto-cleanup.
   - Cocos resumable-session start button label wiring.
   - Web and Cocos in-session 1x/2x speed switching.
+  - Production `WEB_STATIC_ROOT` rejection when it points to the debug harness.
   - Cocos API host resolution for Web same-origin and non-browser mini-game targets.
   - Cocos API transport wrapper with `fetch` and `XMLHttpRequest` fallback.
   - Web first-run guide highlights.
