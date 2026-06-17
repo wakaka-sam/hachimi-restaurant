@@ -130,6 +130,7 @@ addCheck('cocos scene wiring textured panels', 'client/cocos/scene-wiring.json',
 addCheck('cocos scene wiring task section headers', 'client/cocos/scene-wiring.json', ['taskSections', 'guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel']);
 addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json', ['componentProperties', 'TaskItemView', 'typeLabel']);
 addCheck('cocos scene wiring waiting queue countdown labels', 'client/cocos/scene-wiring.json', ['waitingCustomerLabels', 'minimumLabelArrayLengths']);
+addCheck('cocos scene wiring source property validation', 'scripts/verify-gameplay-coverage.mjs', ['componentSourceFiles', 'assertSourceContainsProperties', 'sceneWiring.textureCatalog']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
 addCheck('platforms documented implementation source of truth', 'docs/platforms.md', ['Implementation source of truth', 'Product behavior must be implemented in `client/cocos/` first', 'without separate gameplay forks']);
@@ -178,6 +179,17 @@ for (const check of checks) {
 const textureFiles = (await readdir('client/assets/textures')).filter((file) => file.endsWith('.png')).sort();
 const cocosTextures = (await readdir('client/cocos/assets/textures')).filter((file) => file.endsWith('.png')).sort();
 const sceneWiring = JSON.parse(await readFile('client/cocos/scene-wiring.json', 'utf8'));
+const componentSourceFiles = {
+  HachimiRestaurantGame: 'client/cocos/assets/scripts/HachimiRestaurantGame.ts',
+  TextureCatalog: 'client/cocos/assets/scripts/components/TextureCatalog.ts',
+  TableSlotView: 'client/cocos/assets/scripts/components/TableSlotView.ts',
+  PartStatusView: 'client/cocos/assets/scripts/components/PartStatusView.ts',
+  PartUpgradeView: 'client/cocos/assets/scripts/components/PartUpgradeView.ts',
+  TaskItemView: 'client/cocos/assets/scripts/components/TaskItemView.ts',
+  TexturedButtonView: 'client/cocos/assets/scripts/components/TexturedButtonView.ts',
+  TexturedPanelView: 'client/cocos/assets/scripts/components/TexturedPanelView.ts',
+  MobileSafeAreaView: 'client/cocos/assets/scripts/components/MobileSafeAreaView.ts'
+};
 const requiredTextures = [
   'restaurant-bg.png',
   'restaurant-bg-stage-1.png',
@@ -233,6 +245,27 @@ for (const component of requiredComponents) {
   if (!sceneWiring.requiredComponents?.includes(component)) {
     fail(`Cocos scene wiring manifest missing component ${component}`);
   }
+  if (!componentSourceFiles[component]) {
+    fail(`Cocos scene wiring source validation missing source file mapping for ${component}`);
+  }
+}
+
+await assertSourceContainsProperties('HachimiRestaurantGame', [
+  'textures',
+  ...(sceneWiring.screens || []),
+  ...(sceneWiring.labels || []),
+  ...(sceneWiring.sprites || []),
+  ...(sceneWiring.buttons || []),
+  'tableSlots',
+  'partStatusViews',
+  'partViews',
+  'taskViews',
+  'texturedButtons',
+  'texturedPanels'
+]);
+await assertSourceContainsProperties('TextureCatalog', sceneWiring.textureCatalog || []);
+for (const [component, properties] of Object.entries(sceneWiring.componentProperties || {})) {
+  await assertSourceContainsProperties(component, properties);
 }
 
 for (const screen of ['mainScreen', 'businessScreen', 'upgradeScreen', 'taskScreen', 'resultScreen']) {
@@ -381,4 +414,27 @@ async function listFiles(directory) {
     }
   }
   return files;
+}
+
+async function assertSourceContainsProperties(component, properties) {
+  const file = componentSourceFiles[component];
+  if (!file) {
+    fail(`No Cocos source file mapping for ${component}`);
+    return;
+  }
+
+  let source = '';
+  try {
+    source = await readFile(file, 'utf8');
+  } catch (error) {
+    fail(`Cannot read ${component} source file ${file}: ${error.message}`);
+    return;
+  }
+
+  for (const property of properties) {
+    const declarationPattern = new RegExp(`(?:^|\\n)\\s*(?:public\\s+|protected\\s+|private\\s+|readonly\\s+)?${escapeRegExp(property)}\\s*(?::|=)`);
+    if (!declarationPattern.test(source)) {
+      fail(`Cocos scene wiring ${component}.${property} is not declared in ${file}`);
+    }
+  }
 }

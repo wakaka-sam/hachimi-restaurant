@@ -224,6 +224,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened Cocos texture-state policy:
   - Texture verification now rejects Cocos runtime opacity/tint tokens such as `UIOpacity`, `.opacity =`, `.color =`, and `new Color(...)` in gameplay scripts.
   - Cocos docs now require separate PNG textures for disabled, locked, empty, active, or highlighted visual states.
+- Tightened Cocos scene wiring contract:
+  - Gameplay coverage now verifies that manifest-declared screen nodes, labels, sprites, buttons, component properties, and texture catalog fields are declared in the corresponding TypeScript source files.
+  - This catches manifest/source drift before opening the project in Cocos Creator.
 
 ## Remaining Work
 
@@ -236,7 +239,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 43 Node tests, 137 gameplay coverage checks, and stricter static texture policy checks.
+- Current automated coverage: 43 Node tests, 138 gameplay coverage checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -259,6 +262,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend exposure of all guide, daily, and growth tasks.
   - Shared/Web/Cocos task type labels and grouping.
   - Cocos task section header wiring for guide, daily, and growth tasks.
+  - Cocos scene wiring manifest properties matching TypeScript source declarations.
   - Shared task reward field and daily reward budget constraints.
   - Shared overall task coin reward budget constraints.
   - API response envelope documentation for success, error, and `SESSION_NOT_READY` responses.
