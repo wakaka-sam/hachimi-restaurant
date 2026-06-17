@@ -17,6 +17,7 @@ import { PartUpgradeView } from './components/PartUpgradeView';
 import { TableSlotView } from './components/TableSlotView';
 import { TaskItemView } from './components/TaskItemView';
 import { TexturedButtonView } from './components/TexturedButtonView';
+import { TexturedPanelView } from './components/TexturedPanelView';
 import { TextureCatalog } from './components/TextureCatalog';
 
 const { ccclass, property } = _decorator;
@@ -144,6 +145,9 @@ export class HachimiRestaurantGame extends Component {
 
   @property([TexturedButtonView])
   texturedButtons: TexturedButtonView[] = [];
+
+  @property([TexturedPanelView])
+  texturedPanels: TexturedPanelView[] = [];
 
   private api!: ApiClient;
   private profile: ProfileState | null = null;
@@ -333,6 +337,7 @@ export class HachimiRestaurantGame extends Component {
     this.renderUpgrade();
     this.renderTasks();
     this.renderResult();
+    this.renderTexturedPanels();
     this.renderTexturedButtons();
   }
 
@@ -478,6 +483,13 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
     this.texturedButtons.forEach((view) => view.render(this.textures!));
+  }
+
+  private renderTexturedPanels(): void {
+    if (!this.textures) {
+      return;
+    }
+    this.texturedPanels.forEach((view) => view.render(this.textures!));
   }
 
   private setMessage(message: string): void {

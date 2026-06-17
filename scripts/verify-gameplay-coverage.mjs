@@ -75,6 +75,7 @@ addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'backg
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
 addCheck('cocos screen navigation buttons', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton', 'renderNavigation']);
 addCheck('cocos textured button refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedButtonView', 'texturedButtons', 'renderTexturedButtons']);
+addCheck('cocos textured panel refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedPanelView', 'texturedPanels', 'renderTexturedPanels']);
 addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideLabel', 'getGuideMessage', '开始营业', '完成上菜', '领取引导任务奖励']);
 addCheck('cocos in-session speed toggle', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['toggleSpeed', 'simulation.toggleSpeedMode', 'simulation.speedMode']);
 addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable = simulation.finished']);
@@ -101,11 +102,13 @@ addCheck('cocos part upgrade required details', 'client/cocos/assets/scripts/com
 addCheck('cocos task type label component', 'client/cocos/assets/scripts/components/TaskItemView.ts', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('cocos task section headers', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel', 'renderTaskSectionHeader', 'TASK_TYPES', 'TASK_TYPE_LABELS', '可领']);
 addCheck('cocos textured button component', 'client/cocos/assets/scripts/components/TexturedButtonView.ts', ['@ccclass', 'TexturedButtonView', 'buttonDisabled', 'backgroundSprite']);
+addCheck('cocos textured panel component', 'client/cocos/assets/scripts/components/TexturedPanelView.ts', ['@ccclass', 'TexturedPanelView', 'backgroundSprite', 'panelTexture', 'requireTexture']);
 addCheck('cocos mobile safe area component', 'client/cocos/assets/scripts/components/MobileSafeAreaView.ts', ['@ccclass', 'MobileSafeAreaView', 'SafeArea', 'Widget', 'ON_WINDOW_RESIZE', 'minTouchInset', 'safeArea.updateArea()', 'Math.max(widget.top']);
-addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView']);
+addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView', 'TexturedPanelView']);
 addCheck('cocos scene wiring safe area contract', 'client/cocos/scene-wiring.json', ['MobileSafeAreaView', 'mainSafeArea', 'businessSafeArea', 'SafeArea', 'Widget', 'minTouchInset']);
 addCheck('cocos scene wiring manifest navigation buttons', 'client/cocos/scene-wiring.json', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']);
 addCheck('cocos scene wiring part upgrade fields', 'client/cocos/scene-wiring.json', ['PartUpgradeView', 'costLabel', 'effectLabel', 'starSprites', 'buttonLabel']);
+addCheck('cocos scene wiring textured panels', 'client/cocos/scene-wiring.json', ['TexturedPanelView', 'texturedPanels', 'texturedPanelRoles', 'panelTexture']);
 addCheck('cocos scene wiring task section headers', 'client/cocos/scene-wiring.json', ['taskSections', 'guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel']);
 addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json', ['componentProperties', 'TaskItemView', 'typeLabel']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
@@ -193,6 +196,7 @@ const requiredComponents = [
   'PartUpgradeView',
   'TaskItemView',
   'TexturedButtonView',
+  'TexturedPanelView',
   'MobileSafeAreaView'
 ];
 for (const component of requiredComponents) {
@@ -221,6 +225,10 @@ if ((sceneWiring.minimumInstances?.PartUpgradeView || 0) < 5) {
 
 if ((sceneWiring.minimumInstances?.TexturedButtonView || 0) < 28) {
   fail('Cocos scene wiring manifest needs at least 28 TexturedButtonView instances');
+}
+
+if ((sceneWiring.minimumInstances?.TexturedPanelView || 0) < 27) {
+  fail('Cocos scene wiring manifest needs at least 27 TexturedPanelView instances');
 }
 
 if ((sceneWiring.minimumInstances?.MobileSafeAreaView || 0) < 5) {
@@ -279,6 +287,22 @@ for (const property of ['titleLabel', 'costLabel', 'effectLabel', 'starSprites',
   if (!sceneWiring.componentProperties?.PartUpgradeView?.includes(property)) {
     fail(`Cocos scene wiring PartUpgradeView missing ${property}`);
   }
+}
+
+for (const property of ['backgroundSprite', 'panelTexture']) {
+  if (!sceneWiring.componentProperties?.TexturedPanelView?.includes(property)) {
+    fail(`Cocos scene wiring TexturedPanelView missing ${property}`);
+  }
+}
+
+if (!sceneWiring.componentProperties?.HachimiRestaurantGame?.includes('texturedPanels')) {
+  fail('Cocos scene wiring HachimiRestaurantGame missing texturedPanels');
+}
+
+const texturedPanelRoleCount = Object.values(sceneWiring.texturedPanelRoles || {})
+  .reduce((sum, value) => sum + Number(value || 0), 0);
+if (texturedPanelRoleCount < 27) {
+  fail('Cocos scene wiring texturedPanelRoles must cover at least 27 panel/card surfaces');
 }
 
 for (const file of ['client/web/main.js', 'client/cocos/assets/scripts/components/PartUpgradeView.ts']) {

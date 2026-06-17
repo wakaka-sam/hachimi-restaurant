@@ -21,6 +21,7 @@
     "PartUpgradeView",
     "TaskItemView",
     "TexturedButtonView",
+    "TexturedPanelView",
     "MobileSafeAreaView"
   ],
   "minimumInstances": {
@@ -29,7 +30,17 @@
     "PartUpgradeView": 5,
     "TaskItemView": 13,
     "TexturedButtonView": 28,
+    "TexturedPanelView": 27,
     "MobileSafeAreaView": 5
+  },
+  "texturedPanelRoles": {
+    "topBarPanel": 1,
+    "messagePanel": 1,
+    "businessHudPanel": 1,
+    "mainPartStatusPanels": 5,
+    "partUpgradeCards": 5,
+    "taskRows": 13,
+    "resultPanel": 1
   },
   "safeArea": {
     "component": "MobileSafeAreaView",
@@ -53,7 +64,12 @@
     "HachimiRestaurantGame": [
       "guideTaskHeaderLabel",
       "dailyTaskHeaderLabel",
-      "growthTaskHeaderLabel"
+      "growthTaskHeaderLabel",
+      "texturedPanels"
+    ],
+    "TexturedPanelView": [
+      "backgroundSprite",
+      "panelTexture"
     ],
     "PartUpgradeView": [
       "titleLabel",

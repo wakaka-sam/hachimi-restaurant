@@ -62,6 +62,7 @@ Create a portrait scene in Cocos Creator and attach:
 - `PartUpgradeView` to each upgrade card node.
 - `TaskItemView` to each task row node. The current MVP task list has 13 backend tasks, so the scene needs at least 13 task row instances unless a later virtualized list component replaces the fixed rows.
 - `TexturedButtonView` to every button that should use `button.png` and `button-disabled.png` as its visual background.
+- `TexturedPanelView` to every panel or card background that should use `panel.png` or `card.png` as its visual surface.
 - `MobileSafeAreaView` to the top-level interaction container of each screen: main, business, upgrade, tasks, and result.
 
 `MobileSafeAreaView` adds or refreshes the Cocos `SafeArea` and `Widget` components at runtime. It keeps touch controls inside the safe area for notches and bottom gesture regions while allowing background sprites to continue filling the full portrait canvas.
@@ -81,6 +82,8 @@ Wire the navigation buttons to the controller properties instead of relying only
 The task screen should provide three section header labels bound to `guideTaskHeaderLabel`, `dailyTaskHeaderLabel`, and `growthTaskHeaderLabel`. `HachimiRestaurantGame` renders guide, daily, and growth section counts from the backend task states so the Cocos task screen clearly separates task types in addition to each row's `typeLabel`.
 
 The first scene pass should provide at least 28 `TexturedButtonView` instances: 10 fixed screen/control buttons, 5 part-upgrade buttons, and 13 task claim buttons. If task rows become virtualized later, update `scene-wiring.json` and the verification rule in the same task.
+
+The first scene pass should also provide at least 27 `TexturedPanelView` instances for the top bar, message panel, business HUD, five main part status panels, five part-upgrade cards, thirteen task rows, and the result panel. Use `panelTexture = "panel"` for broad containers and `panelTexture = "card"` for repeated cards.
 
 Each `PartUpgradeView` must wire `titleLabel`, `costLabel`, `effectLabel`, `starSprites`, `upgradeButton`, and `buttonLabel`. These fields carry the required upgrade-screen information: current star state, shared upgrade cost, insufficient coin shortage, next-star effect, and max-star state.
 

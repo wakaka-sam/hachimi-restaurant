@@ -169,6 +169,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `TexturedButtonView` applies `button.png` and `button-disabled.png` to button background sprites based on interactable state.
   - `HachimiRestaurantGame` refreshes textured buttons after screen, business, upgrade, and task state changes.
   - Scene wiring now requires enough `TexturedButtonView` instances for fixed controls, part upgrade buttons, and all MVP task claim buttons.
+- Added texture-backed Cocos panel contract:
+  - `TexturedPanelView` applies `panel.png` or `card.png` to panel/card background sprites.
+  - `HachimiRestaurantGame` refreshes all `texturedPanels` from the shared `TextureCatalog`.
+  - Scene wiring now requires at least 27 `TexturedPanelView` instances for top-level panels, part cards, task rows, and result panel surfaces.
 - Added Cocos mobile safe-area contract:
   - `MobileSafeAreaView` applies Cocos `SafeArea` and `Widget` layout to screen interaction roots.
   - Scene wiring now requires one safe-area root for each of the five MVP screens.
@@ -203,7 +207,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 29 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 32 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -236,6 +240,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos waiting queue cap wiring.
   - Web and Cocos max-session customer spawning cap.
   - Production Web static root guard that prevents the debug harness from being used in production.
+  - Cocos texture-backed panel/card surface wiring.
   - Cocos mobile safe-area component and scene wiring contract.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
