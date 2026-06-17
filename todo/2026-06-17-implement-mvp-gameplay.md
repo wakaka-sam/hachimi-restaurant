@@ -230,6 +230,12 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened production Web static-root protection:
   - Production config now rejects `WEB_STATIC_ROOT` values that point to `client/web` or any path under it.
   - This prevents the temporary Web debug harness from being deployed in place of a Cocos Web build artifact.
+- Reinforced the single Cocos client rule:
+  - Web, WeChat Mini Game, and Douyin Mini Game all compile from `client/cocos/`.
+  - The browser DOM client remains only a local verification harness, never a production Web fork.
+- Tightened backend file-backed persistence:
+  - `GameStore.save()` writes to a temp file and renames it into place so state files are not partially written.
+  - Store tests prove players and active sessions survive reload from the configured data file.
 
 ## Remaining Work
 
@@ -242,9 +248,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 43 Node tests, 138 gameplay coverage checks, and stricter static texture policy checks.
+- Current automated coverage: 44 Node tests, 139 gameplay coverage checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
+  - Backend file-backed player/session persistence across store reloads.
   - Shared economy, stamina, and performance formulas.
   - Completion score calculated against the 12-customer normal service target.
   - Normal business performance stays close to one upgrade cost.

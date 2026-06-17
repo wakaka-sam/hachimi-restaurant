@@ -11,7 +11,7 @@ Agents should read this file before making changes.
 - Project: Hachimi Restaurant.
 - Product type: cross-platform casual game.
 - Production client: Cocos Creator / Cocos Engine under `client/cocos/`.
-- Web, WeChat Mini Game, and Douyin Mini Game must be built from the same Cocos client codebase.
+- Web, WeChat Mini Game, and Douyin Mini Game must be built from the same Cocos client codebase; Web is the Cocos Web build output, not a separate browser client.
 - Server: Node.js backend under `server/`.
 - Short-term release target: Cocos Web build.
 - Long-term release targets: WeChat Mini Game and Douyin Mini Game.
@@ -99,7 +99,7 @@ Task records should explain why a change exists, not just what files changed.
 ## Client Guidelines
 
 - `client/cocos/` is the production Cocos client project root.
-- Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase. Do not create separate production clients for browser DOM, WeChat, or Douyin.
+- Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase. The Web client is compiled from Cocos as a Web build artifact; do not create separate production clients for browser DOM, WeChat, or Douyin.
 - `client/web/` may be used as a short-lived local verification harness for backend/API/gameplay rules, but it is not the shipping Web client.
 - In production, `WEB_STATIC_ROOT` must point to Cocos Web build output, not to `client/web/`.
 - Preserve Cocos project structure and editor metadata.

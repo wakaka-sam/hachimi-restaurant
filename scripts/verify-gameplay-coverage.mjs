@@ -32,6 +32,7 @@ addCheck('backend testable clock', 'server/src/app.mjs', ['nowProvider = () => n
 addCheck('backend daily task claim reset test', 'server/test/api.test.mjs', ['API daily task claims reset by backend date', 'TASK_ALREADY_CLAIMED', '2026-06-18:daily_sessions_3']);
 addCheck('backend active session remaining time', 'server/src/app.mjs', ['serializeBusinessSession', 'remainingSeconds', 'recoveryWindowSeconds']);
 addCheck('backend profile stamina recovery status', 'server/src/app.mjs', ['getStaminaRecovery', 'staminaRecovery']);
+addCheck('backend file-backed persistence test', 'server/test/store.test.mjs', ['persists players and sessions across reloads', 'persist-player', 'persist-session', '.tmp-']);
 addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_READY', 'getMinimumSettlementRealSeconds', 'minimumRealSeconds']);
 addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', ['settleExpiredSessions', 'getExpiredActiveSessions', 'createExpiredSummary']);
 addCheck('backend accepts valid expired completed summaries', 'server/test/api.test.mjs', ['expired completed session summary', 'rewardCoins, 130', 'customersServed, 12']);

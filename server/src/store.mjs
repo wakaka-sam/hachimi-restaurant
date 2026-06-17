@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { createDefaultPlayer, normalizePlayer } from '../../shared/game-rules.mjs';
 
@@ -34,7 +35,10 @@ export class GameStore {
       return;
     }
     await mkdir(dirname(this.filePath), { recursive: true });
-    await writeFile(this.filePath, `${JSON.stringify(this.state, null, 2)}\n`);
+    const payload = `${JSON.stringify(this.state, null, 2)}\n`;
+    const tempPath = `${this.filePath}.tmp-${process.pid}-${randomUUID()}`;
+    await writeFile(tempPath, payload);
+    await rename(tempPath, this.filePath);
   }
 
   getPlayer(playerId, now = new Date()) {
