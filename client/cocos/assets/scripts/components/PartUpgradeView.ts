@@ -52,8 +52,11 @@ export class PartUpgradeView extends Component {
       this.effectLabel.string = profile.partEffects[this.part] || '经营手感提升';
     }
     this.starSprites.forEach((sprite, index) => {
-      sprite.spriteFrame = textures.getStarFrame(index < star);
-      sprite.node.active = true;
+      const active = index < CONSTANTS.starsPerPart;
+      sprite.node.active = active;
+      if (active) {
+        sprite.spriteFrame = textures.getStarFrame(index < star);
+      }
     });
     if (this.upgradeButton) {
       this.upgradeButton.transition = Button.Transition.NONE;

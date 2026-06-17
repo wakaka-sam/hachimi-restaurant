@@ -368,7 +368,11 @@ export function getTuning(player) {
 
 export function getPartEffectDescription(part, player) {
   normalizePlayer(player);
-  const nextStar = Math.min(CONSTANTS.starsPerPart, player.parts[part] + 1);
+  const currentStar = PARTS.includes(part) ? player.parts[part] : 0;
+  if (currentStar >= CONSTANTS.starsPerPart) {
+    return `${PART_LABELS[part] || '部件'}已满星，等待整体升级餐厅`;
+  }
+  const nextStar = Math.min(CONSTANTS.starsPerPart, currentStar + 1);
   switch (part) {
     case 'cashier':
       return `下一星：收银窗口更宽，收银等待 +0.8 秒（${nextStar} 星）`;

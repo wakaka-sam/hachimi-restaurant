@@ -9,6 +9,7 @@ import {
   createDefaultPlayer,
   getEconomy,
   getEffectivePartStars,
+  getPartEffectDescription,
   getStaminaRecovery,
   getTaskClaimKey,
   getTaskRewardSummary,
@@ -97,6 +98,17 @@ test('initial handfeel tuning matches MVP business density targets', () => {
   assert.ok(tuning.prepDelaySeconds + tuning.eatingSeconds >= 18);
   assert.ok(tuning.prepDelaySeconds + tuning.eatingSeconds <= 25);
   assert.equal(CONSTANTS.maxCustomersPerSession, 18);
+});
+
+test('part effect descriptions expose max-star state', () => {
+  const player = createDefaultPlayer('part-effect-text', new Date('2026-06-17T00:00:00.000Z'));
+
+  player.parts.cashier = 4;
+  assert.match(getPartEffectDescription('cashier', player), /下一星/);
+  assert.match(getPartEffectDescription('cashier', player), /5 星/);
+
+  player.parts.cashier = 5;
+  assert.equal(getPartEffectDescription('cashier', player), '收银机已满星，等待整体升级餐厅');
 });
 
 test('session summary validation enforces the 18 customer cap', () => {

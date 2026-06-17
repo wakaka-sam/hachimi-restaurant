@@ -194,6 +194,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos upgrade views must show current star state, shared cost, insufficient coin shortage, next-star effect, and max-star state.
   - Cocos scene wiring now requires every `PartUpgradeView` to bind the labels, star sprites, and upgrade button that carry those states.
   - Static coverage rejects recommendation copy in the free-upgrade UI.
+  - Shared part-effect text now returns a max-star state instead of another next-star line when a part reaches 5 stars.
+  - Web maxed part cards show `已满星` instead of upgrade cost, and Cocos upgrade cards hide any star nodes beyond the five-star cap.
 - Tightened star texture policy:
   - Added `icon-star-empty.png` for empty star states.
   - Web and Cocos now switch between filled and empty star textures instead of runtime grayscale/filter effects.
@@ -364,6 +366,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos main controller executes profile, first-run guide focus, business, settlement recovery, upgrade, task, and snapshot recovery flows under a mocked runtime.
   - Cocos guide focus keys stay aligned between `scene-wiring.json`, `HachimiRestaurantGame`, and the executable controller flow.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
+  - Shared/Web/Cocos max-star upgrade cards show maxed state instead of misleading next-star/cost copy.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
   - Runtime CSS shape/effect styling such as `border-radius`, `animation`, `@keyframes`, and `scale()` is rejected for art surfaces.

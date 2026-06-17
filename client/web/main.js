@@ -855,18 +855,19 @@ function renderPartCard(part) {
   const { player, economy } = state.profile;
   const guide = getGuideStep();
   const star = player.parts[part];
-  const disabled = star >= CONSTANTS.starsPerPart || player.coins < economy.upgradeCost;
+  const maxed = star >= CONSTANTS.starsPerPart;
+  const disabled = maxed || player.coins < economy.upgradeCost;
   const shortage = Math.max(0, economy.upgradeCost - player.coins);
   return h('article', { class: 'part-card' },
     h('div', { class: 'part-card-header' },
       h('h3', { class: 'part-card-title' }, PART_LABELS[part]),
-      textureButton(star >= CONSTANTS.starsPerPart ? '满星' : '升级', () => upgradePart(part), {
+      textureButton(maxed ? '满星' : '升级', () => upgradePart(part), {
         disabled,
         className: `compact ${guide?.target === 'upgradePart' && !disabled ? 'guide-focus' : ''}`
       })
     ),
     renderStars(star),
-    h('p', { class: 'fine-print' }, `成本：${economy.upgradeCost}${shortage ? `，还差 ${shortage}` : ''}`),
+    h('p', { class: 'fine-print' }, maxed ? '已满星' : `成本：${economy.upgradeCost}${shortage ? `，还差 ${shortage}` : ''}`),
     h('p', { class: 'effect-text' }, getPartEffectDescription(part, player))
   );
 }

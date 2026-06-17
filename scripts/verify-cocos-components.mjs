@@ -255,7 +255,7 @@ function createProfile(overrides = {}) {
       table: '下一星：增加 1 个同时接待桌位',
       chair: '下一星：顾客耐心 +1.5 秒',
       floor: '下一星：移动与翻台更快',
-      wall: '下一星：顾客进入间隔缩短',
+      wall: '墙面已满星，等待整体升级餐厅',
       ...(overrides.partEffects || {})
     },
     tuning: {},
@@ -362,7 +362,7 @@ function verifyPartStatusView(PartStatusView, cc, textures) {
   view.render(createProfile(), textures);
 
   assert.equal(view.titleLabel.string, '餐桌');
-  assert.deepEqual(view.starSprites.map((item) => item.spriteFrame.name), [
+  assert.deepEqual(view.starSprites.map((item) => item.spriteFrame?.name), [
     'star-filled',
     'star-filled',
     'star-filled',
@@ -377,7 +377,7 @@ function verifyPartUpgradeView(PartUpgradeView, cc, textures) {
   view.titleLabel = label(cc);
   view.costLabel = label(cc);
   view.effectLabel = label(cc);
-  view.starSprites = Array.from({ length: 5 }, () => sprite(cc));
+  view.starSprites = Array.from({ length: 6 }, () => sprite(cc));
   view.upgradeButton = button(cc);
   view.buttonLabel = label(cc);
   let upgradedPart = '';
@@ -394,13 +394,15 @@ function verifyPartUpgradeView(PartUpgradeView, cc, textures) {
   assert.equal(view.upgradeButton.interactable, false);
   assert.equal(view.upgradeButton.transition, cc.Button.Transition.NONE);
   assert.equal(view.buttonLabel.string, '升级');
-  assert.deepEqual(view.starSprites.map((item) => item.spriteFrame.name), [
+  assert.deepEqual(view.starSprites.map((item) => item.spriteFrame?.name), [
     'star-filled',
     'star-filled',
     'star-empty',
     'star-empty',
-    'star-empty'
+    'star-empty',
+    undefined
   ]);
+  assert.deepEqual(view.starSprites.map((item) => item.node.active), [true, true, true, true, true, false]);
 
   view.render(createProfile({ player: { coins: 120 } }), textures);
   assert.equal(view.upgradeButton.interactable, true);
@@ -418,6 +420,7 @@ function verifyPartUpgradeView(PartUpgradeView, cc, textures) {
   maxed.upgradeButton.transition = cc.Button.Transition.SCALE;
   maxed.render(createProfile({ player: { coins: 10000 } }), textures);
   assert.equal(maxed.costLabel.string, '已满星');
+  assert.equal(maxed.effectLabel.string, '墙面已满星，等待整体升级餐厅');
   assert.equal(maxed.upgradeButton.interactable, false);
   assert.equal(maxed.upgradeButton.transition, cc.Button.Transition.NONE);
   assert.equal(maxed.buttonLabel.string, '满星');

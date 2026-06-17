@@ -70,6 +70,8 @@ addCheck('shared completion score normal target tests', 'server/test/game-rules.
 addCheck('shared normal performance upgrade cost test', 'server/test/game-rules.test.mjs', ['normal business performance stays close to one upgrade cost', 'upgradeCost * 1.05', '1.0075']);
 addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs', ['speed mode does not change reward', "speedMode: '1x'", "speedMode: '2x'", 'performanceFactor']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
+addCheck('shared max-star part effect text', 'shared/game-rules.mjs', ['getPartEffectDescription', '已满星', '等待整体升级餐厅']);
+addCheck('shared max-star part effect tests', 'server/test/game-rules.test.mjs', ['part effect descriptions expose max-star state', '收银机已满星，等待整体升级餐厅']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
 addCheck('shared task type labels', 'shared/game-rules.mjs', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('shared task reward fields', 'shared/game-rules.mjs', ['TASK_REWARD_FIELDS', 'resolveRewardAmount', 'getTaskRewardSummary']);
@@ -98,7 +100,7 @@ addCheck('web task claim', 'client/web/main.js', ['/api/tasks/claim', 'claimTask
 addCheck('web task type grouping', 'client/web/main.js', ['groupTasksByType', 'TASK_TYPE_LABELS', 'task-section']);
 addCheck('web first-run guide highlights', 'client/web/main.js', ['getGuideStep', 'startBusiness', 'seatCustomer', 'serveFood', 'collectPay', 'upgradePart', 'claimTask']);
 addCheck('web restaurant visual stages', 'client/web/main.js', ['restaurantBackgrounds', 'getRestaurantStageIndex', 'getRestaurantSceneAttrs', 'restaurant-bg-stage-3.png']);
-addCheck('web upgrade screen required details', 'client/web/main.js', ['renderPartCard', 'renderStars(star)', '成本：', '还差', 'getPartEffectDescription', "'满星'"]);
+addCheck('web upgrade screen required details', 'client/web/main.js', ['renderPartCard', 'renderStars(star)', '成本：', '还差', 'getPartEffectDescription', "'满星'", "'已满星'"]);
 addCheck('web star state textures', 'client/web/main.js', ['starEmpty', 'icon-star-empty.png', 'index < count ? textures.star : textures.starEmpty']);
 addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'background-image: url("/textures/card.png")', 'guide-focus.png']);
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
@@ -137,7 +139,7 @@ addCheck('cocos api transport wrapper', 'client/cocos/assets/scripts/services/Ap
 addCheck('cocos api transport fallback', 'client/cocos/assets/scripts/services/ApiTransport.ts', ['globalThis.fetch', 'XMLHttpRequest', 'requestJsonWithXhr']);
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'restaurantBackgrounds', 'getRestaurantBackground', 'tableEmpty', 'tableLocked', 'cashier', 'animals', 'starIcon', 'starIconEmpty', 'getStarFrame']);
 addCheck('cocos part status component', 'client/cocos/assets/scripts/components/PartStatusView.ts', ['@ccclass', 'PartStatusView', 'PART_LABELS', 'starSprites', 'getStarFrame']);
-addCheck('cocos part upgrade required details', 'client/cocos/assets/scripts/components/PartUpgradeView.ts', ['@ccclass', 'PartUpgradeView', 'costLabel', 'effectLabel', 'buttonLabel', '还差', '已满星', '满星', 'profile.partEffects', 'getStarFrame']);
+addCheck('cocos part upgrade required details', 'client/cocos/assets/scripts/components/PartUpgradeView.ts', ['@ccclass', 'PartUpgradeView', 'costLabel', 'effectLabel', 'buttonLabel', '还差', '已满星', '满星', 'profile.partEffects', 'getStarFrame', 'index < CONSTANTS.starsPerPart']);
 addCheck('cocos task type label component', 'client/cocos/assets/scripts/components/TaskItemView.ts', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('cocos task section headers', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideTaskHeaderLabel', 'dailyTaskHeaderLabel', 'growthTaskHeaderLabel', 'renderTaskSectionHeader', 'TASK_TYPES', 'TASK_TYPE_LABELS', '可领']);
 addCheck('cocos textured button component', 'client/cocos/assets/scripts/components/TexturedButtonView.ts', ['@ccclass', 'TexturedButtonView', 'buttonDisabled', 'backgroundSprite', 'Button.Transition.NONE']);
