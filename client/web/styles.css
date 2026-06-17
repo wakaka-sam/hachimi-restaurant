@@ -1,0 +1,377 @@
+:root {
+  color: #3a2a1f;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.35;
+  background: #f4d7a8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-image: url("/textures/restaurant-bg.png");
+  background-position: center top;
+  background-size: cover;
+  overscroll-behavior: none;
+}
+
+button {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(100vw, 460px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
+  position: relative;
+}
+
+.top-bar,
+.panel,
+.card,
+.result-panel {
+  background-image: url("/textures/panel.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.top-bar {
+  min-height: 116px;
+  padding: 16px 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.title-row,
+.stats-row,
+.nav-row,
+.business-hud,
+.part-card-header,
+.task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.game-title {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.level-pill,
+.stat-pill,
+.timer-pill,
+.message-pill {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 0;
+  background-image: url("/textures/card.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.stat-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.nav-row {
+  margin: 10px 0;
+}
+
+.texture-button {
+  min-height: 46px;
+  min-width: 92px;
+  padding: 10px 15px;
+  color: #3a2a1f;
+  border: 0;
+  background-color: transparent;
+  background-image: url("/textures/button.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.texture-button:disabled {
+  background-image: url("/textures/button-disabled.png");
+  color: #61584e;
+  cursor: default;
+}
+
+.texture-button.compact {
+  min-width: 74px;
+  min-height: 40px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+.texture-button.primary {
+  min-width: 168px;
+  min-height: 56px;
+  font-size: 1.05rem;
+}
+
+.scene {
+  position: relative;
+  min-height: 590px;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.restaurant-scene,
+.business-scene {
+  background-image: url("/textures/restaurant-bg.png");
+  background-size: cover;
+  background-position: center top;
+}
+
+.main-actions {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 18px;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.status-grid {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 12px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.part-chip {
+  min-height: 72px;
+  padding: 8px 4px;
+  text-align: center;
+  background-image: url("/textures/card.png");
+  background-size: 100% 100%;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 1px;
+  margin-top: 4px;
+}
+
+.star {
+  width: 13px;
+  height: 13px;
+  object-fit: contain;
+}
+
+.star.empty {
+  opacity: 0.22;
+  filter: grayscale(1);
+}
+
+.panel {
+  padding: 18px;
+  margin-top: 12px;
+}
+
+.upgrade-list,
+.task-list {
+  display: grid;
+  gap: 10px;
+}
+
+.part-card,
+.task-card,
+.result-panel {
+  background-image: url("/textures/card.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 15px;
+}
+
+.part-card-title,
+.task-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.fine-print,
+.effect-text,
+.progress-text {
+  margin: 6px 0 0;
+  font-size: 0.86rem;
+  color: #5b4535;
+}
+
+.business-hud {
+  position: sticky;
+  top: max(8px, env(safe-area-inset-top));
+  z-index: 5;
+  margin-bottom: 8px;
+}
+
+.table-zone {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 210px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.table-slot {
+  position: relative;
+  min-height: 142px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.table-slot img.table-texture {
+  width: 100%;
+  max-width: 190px;
+  display: block;
+  margin: 28px auto 0;
+  pointer-events: none;
+}
+
+.table-slot img.customer-on-table {
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.table-label {
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  transform: translateX(-50%);
+  min-width: 78px;
+  padding: 3px 6px;
+  background-image: url("/textures/card.png");
+  background-size: 100% 100%;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.cashier-button {
+  position: absolute;
+  right: 10px;
+  bottom: 124px;
+  width: 128px;
+  height: 112px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.cashier-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.waiting-row {
+  position: absolute;
+  left: 10px;
+  right: 148px;
+  bottom: 116px;
+  min-height: 96px;
+  display: flex;
+  align-items: end;
+  gap: 4px;
+}
+
+.waiting-customer {
+  width: 64px;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.waiting-customer img {
+  width: 58px;
+  height: 58px;
+  display: block;
+  object-fit: contain;
+}
+
+.business-log {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.business-log .stat-pill {
+  min-height: 42px;
+  padding: 5px 4px;
+  font-size: 0.78rem;
+}
+
+.result-panel {
+  margin-top: 24px;
+  min-height: 260px;
+}
+
+.result-panel h2 {
+  margin-top: 0;
+}
+
+.empty-state {
+  padding: 28px 18px;
+  text-align: center;
+  font-weight: 700;
+}
+
+@media (max-width: 380px) {
+  .app-shell {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .status-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .table-zone {
+    top: 240px;
+    gap: 6px;
+  }
+
+  .business-log {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

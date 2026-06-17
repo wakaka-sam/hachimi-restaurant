@@ -82,7 +82,9 @@ Rules:
 
 ## Endpoints
 
-### `GET /player/profile`
+All MVP endpoints are currently mounted under the `/api` prefix.
+
+### `GET /api/player/profile`
 
 Returns the current player state.
 
@@ -98,7 +100,7 @@ task status
 active session, if any
 ```
 
-### `POST /session/start`
+### `POST /api/session/start`
 
 Starts a business session.
 
@@ -110,7 +112,7 @@ Backend behavior:
 4. Create an active 90-second business session.
 5. Return session ID and current gameplay parameters.
 
-### `POST /session/finish`
+### `POST /api/session/finish`
 
 Finishes and settles a business session.
 
@@ -155,7 +157,7 @@ performanceFactor = clamp(
 rewardCoins = round(expectedRevenue * performanceFactor)
 ```
 
-### `POST /upgrade/part`
+### `POST /api/upgrade/part`
 
 Upgrades one restaurant part by 1 star.
 
@@ -178,7 +180,7 @@ Backend behavior:
 
 All upgradeable parts at the same `incomePower` use the same upgrade cost.
 
-### `POST /upgrade/restaurant`
+### `POST /api/upgrade/restaurant`
 
 Upgrades the whole restaurant when all five parts are 5 stars.
 
@@ -193,7 +195,7 @@ Backend behavior:
 
 Rewards related to restaurant upgrades are granted by the task system, not by this endpoint directly.
 
-### `POST /tasks/claim`
+### `POST /api/tasks/claim`
 
 Claims a task reward.
 

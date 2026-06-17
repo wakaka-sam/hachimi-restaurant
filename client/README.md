@@ -2,4 +2,23 @@
 
 Cocos Creator / Cocos Engine client project root.
 
-The Cocos project has not been created yet. Once it exists, record the Cocos version, design resolution, build targets, and verification commands here or in `docs/architecture.md`.
+## Current State
+
+Cocos Creator is not installed in the current execution environment, so the first playable implementation is a texture-based Web prototype under `client/web/`.
+
+The Web prototype exists to validate gameplay, backend integration, mobile-first layout, and PNG texture assets before the formal Cocos scene is created.
+
+## Asset Policy
+
+Runtime art and UI surfaces should use PNG textures from `client/assets/textures/`.
+
+Do not implement game art with runtime canvas/SVG drawing.
+
+## Future Cocos Migration
+
+Once Cocos Creator is available, create the formal Cocos project here and port/reuse:
+
+- Gameplay formulas from `shared/game-rules.mjs`.
+- API integration behavior from `client/web/main.js`.
+- PNG textures from `client/assets/textures/`.
+- Mobile layout requirements from `docs/product.md` and `AGENTS.md`.

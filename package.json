@@ -1,0 +1,14 @@
+{
+  "name": "hachimi-restaurant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:textures": "node scripts/generate-textures.mjs",
+    "start": "node server/src/server.mjs",
+    "test": "node --test server/test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
