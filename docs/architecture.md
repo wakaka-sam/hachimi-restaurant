@@ -21,6 +21,7 @@ client/cocos/               # Cocos Creator project skeleton and TypeScript comp
 client/assets/textures/     # PNG textures used by runtime art/UI surfaces
 scripts/generate-textures.mjs # Offline PNG texture generator
 scripts/sync-cocos-textures.mjs # Copies PNG textures into the Cocos assets tree
+client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 ```
 
 ## Data Authority
@@ -50,6 +51,7 @@ For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` refer
 ```bash
 npm run generate:textures
 npm run sync:cocos-textures
+npm run typecheck:cocos
 npm run verify
 npm test
 npm start

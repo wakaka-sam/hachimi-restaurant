@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "skipLibCheck": true,
+    "lib": [
+      "ES2020",
+      "DOM"
+    ],
+    "noEmit": true
+  },
+  "files": [
+    "../../node_modules/@cocos/creator-types/engine.d.ts"
+  ],
+  "include": [
+    "assets/scripts/**/*.ts"
+  ]
+}

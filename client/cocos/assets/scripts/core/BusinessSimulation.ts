@@ -29,14 +29,14 @@ export class BusinessSimulation {
   readonly tables: TableState[];
   readonly waiting: LocalCustomer[] = [];
   readonly speedMode: SpeedMode;
-  timeLeft = CONSTANTS.sessionDurationSeconds;
-  spawnCooldown = 1;
-  customersServed = 0;
-  customersLost = 0;
-  satisfactionSum = 0;
-  combo = 0;
-  maxCombo = 0;
-  nextCustomerId = 1;
+  timeLeft: number = CONSTANTS.sessionDurationSeconds;
+  spawnCooldown: number = 1;
+  customersServed: number = 0;
+  customersLost: number = 0;
+  satisfactionSum: number = 0;
+  combo: number = 0;
+  maxCombo: number = 0;
+  nextCustomerId: number = 1;
   finished = false;
 
   constructor(readonly tuning: TuningState, speedMode: SpeedMode) {

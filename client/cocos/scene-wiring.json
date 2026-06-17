@@ -1,0 +1,96 @@
+{
+  "scene": "LittleAnimalRestaurantMain",
+  "orientation": "portrait",
+  "designResolution": {
+    "width": 720,
+    "height": 1280
+  },
+  "rootComponent": "HachimiRestaurantGame",
+  "screens": [
+    "mainScreen",
+    "businessScreen",
+    "upgradeScreen",
+    "taskScreen",
+    "resultScreen"
+  ],
+  "requiredComponents": [
+    "HachimiRestaurantGame",
+    "TextureCatalog",
+    "TableSlotView",
+    "PartUpgradeView",
+    "TaskItemView"
+  ],
+  "minimumInstances": {
+    "TableSlotView": 5,
+    "PartUpgradeView": 5,
+    "TaskItemView": 8
+  },
+  "textureCatalog": [
+    "restaurantBackground",
+    "panel",
+    "card",
+    "button",
+    "buttonDisabled",
+    "tableEmpty",
+    "tableReady",
+    "tableFood",
+    "tablePay",
+    "cashier",
+    "animals",
+    "coinIcon",
+    "staminaIcon",
+    "starIcon"
+  ],
+  "textureFiles": [
+    "restaurant-bg.png",
+    "panel.png",
+    "card.png",
+    "button.png",
+    "button-disabled.png",
+    "table-empty.png",
+    "table-ready.png",
+    "table-food.png",
+    "table-pay.png",
+    "cashier.png",
+    "customer-cat.png",
+    "customer-dog.png",
+    "customer-rabbit.png",
+    "customer-bear.png",
+    "icon-coin.png",
+    "icon-stamina.png",
+    "icon-star.png"
+  ],
+  "labels": [
+    "coinLabel",
+    "staminaLabel",
+    "levelLabel",
+    "nextRevenueLabel",
+    "messageLabel",
+    "timerLabel",
+    "speedLabel",
+    "businessStatsLabel",
+    "resultLabel"
+  ],
+  "buttons": [
+    "startButton",
+    "speedButton",
+    "cashierButton",
+    "finishButton",
+    "restaurantUpgradeButton"
+  ],
+  "artPolicy": {
+    "allowed": [
+      "Sprite",
+      "SpriteFrame",
+      "Label",
+      "Button"
+    ],
+    "forbidden": [
+      "Graphics",
+      "canvas",
+      "SVG",
+      "drawImage",
+      "getContext"
+    ]
+  }
+}

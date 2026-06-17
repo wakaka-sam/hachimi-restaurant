@@ -38,6 +38,7 @@ addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurant
 addCheck('cocos business simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['seatCustomer', 'handleTablePressed', 'collectFirstReadyPay', 'getSummary']);
 addCheck('cocos api client endpoints', 'client/cocos/assets/scripts/services/ApiClient.ts', ['/api/player/profile', '/api/session/start', '/api/session/finish', '/api/upgrade/part', '/api/upgrade/restaurant', '/api/tasks/claim']);
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'tableEmpty', 'cashier', 'animals', 'starIcon']);
+addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartUpgradeView', 'TaskItemView']);
 
 for (const check of checks) {
   let source = '';
@@ -56,6 +57,7 @@ for (const check of checks) {
 
 const textureFiles = (await readdir('client/assets/textures')).filter((file) => file.endsWith('.png')).sort();
 const cocosTextures = (await readdir('client/cocos/assets/textures')).filter((file) => file.endsWith('.png')).sort();
+const sceneWiring = JSON.parse(await readFile('client/cocos/scene-wiring.json', 'utf8'));
 const requiredTextures = [
   'restaurant-bg.png',
   'panel.png',
@@ -82,6 +84,25 @@ for (const texture of requiredTextures) {
   }
   if (!cocosTextures.includes(texture)) {
     fail(`missing Cocos texture ${texture}`);
+  }
+}
+
+for (const texture of requiredTextures) {
+  if (!sceneWiring.textureFiles?.includes(texture)) {
+    fail(`Cocos scene wiring manifest does not include texture ${texture}`);
+  }
+}
+
+const requiredComponents = ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartUpgradeView', 'TaskItemView'];
+for (const component of requiredComponents) {
+  if (!sceneWiring.requiredComponents?.includes(component)) {
+    fail(`Cocos scene wiring manifest missing component ${component}`);
+  }
+}
+
+for (const screen of ['mainScreen', 'businessScreen', 'upgradeScreen', 'taskScreen', 'resultScreen']) {
+  if (!sceneWiring.screens?.includes(screen)) {
+    fail(`Cocos scene wiring manifest missing screen ${screen}`);
   }
 }
 

@@ -64,6 +64,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added `npm run verify:textures` to enforce the texture asset policy.
 - Added `npm run sync:cocos-textures` and `npm run verify:cocos`.
 - Added `npm run verify:gameplay` to check required endpoints, screens, Cocos components, and texture assets.
+- Added `npm run typecheck:cocos` using TypeScript and `@cocos/creator-types`.
+- Added `client/cocos/scene-wiring.json` to define the expected Cocos scene nodes, components, texture assignments, labels, and buttons.
 
 ## Remaining Work
 
@@ -82,3 +84,4 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web core screens and service chain.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Required PNG texture presence in both Web and Cocos asset trees.
+- Cocos TypeScript source compiles under `client/cocos/tsconfig.json`.

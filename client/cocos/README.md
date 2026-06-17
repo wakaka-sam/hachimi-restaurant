@@ -53,3 +53,11 @@ Create a portrait scene in Cocos Creator and attach:
 - `TaskItemView` to each task row node.
 
 Then wire the serialized properties in the inspector.
+
+The expected scene contract is recorded in:
+
+```text
+client/cocos/scene-wiring.json
+```
+
+`npm run verify:gameplay` checks that this manifest names the required Cocos components, screens, and PNG texture files.

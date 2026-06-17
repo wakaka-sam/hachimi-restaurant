@@ -6,14 +6,19 @@
   "scripts": {
     "generate:textures": "node scripts/generate-textures.mjs",
     "sync:cocos-textures": "node scripts/sync-cocos-textures.mjs",
+    "typecheck:cocos": "tsc -p client/cocos/tsconfig.json",
     "verify:cocos": "node scripts/verify-texture-policy.mjs --cocos",
     "verify:gameplay": "node scripts/verify-gameplay-coverage.mjs",
     "verify:textures": "node scripts/verify-texture-policy.mjs",
-    "verify": "npm run verify:textures && npm run verify:gameplay && npm test",
+    "verify": "npm run verify:textures && npm run verify:gameplay && npm run typecheck:cocos && npm test",
     "start": "node server/src/server.mjs",
     "test": "node --test server/test/*.test.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "@cocos/creator-types": "^3.8.7",
+    "typescript": "^6.0.3"
   }
 }
