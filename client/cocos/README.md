@@ -42,6 +42,14 @@ npm run sync:cocos-textures
 npm run verify:cocos
 ```
 
+## API Endpoint
+
+`HachimiRestaurantGame.apiBaseUrl` can be set in the Cocos inspector.
+
+- Leave it empty for a Cocos Web build served by the Node backend; API calls use the same origin.
+- Set it to `http://127.0.0.1:4173` when previewing from the Cocos editor against a local backend.
+- WeChat Mini Game, Douyin Mini Game, and other non-browser Cocos runtimes default to `https://animalapi.wakaka007.cn` when the inspector value is empty.
+
 ## Scene Wiring
 
 Create a portrait scene in Cocos Creator and attach:

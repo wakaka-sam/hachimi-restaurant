@@ -2,6 +2,8 @@ import { sys } from 'cc';
 import { BusinessSession, PartKey, ProfileState, SettlementState, SpeedMode } from '../core/GameRules';
 import { LocalBusinessSummary } from '../core/BusinessSimulation';
 
+export const PRODUCTION_API_BASE_URL = 'https://animalapi.wakaka007.cn';
+
 export interface ApiResponse<T> {
   ok: boolean;
   error?: {
@@ -17,8 +19,19 @@ export interface ApiResponse<T> {
 
 export class ApiClient {
   private playerId = '';
+  private readonly resolvedBaseUrl: string;
 
-  constructor(private readonly baseUrl = '') {}
+  constructor(baseUrl = '') {
+    this.resolvedBaseUrl = ApiClient.resolveBaseUrl(baseUrl);
+  }
+
+  static resolveBaseUrl(baseUrl = ''): string {
+    const trimmed = baseUrl.trim();
+    if (trimmed) {
+      return trimmed.replace(/\/+$/, '');
+    }
+    return sys.isBrowser ? '' : PRODUCTION_API_BASE_URL;
+  }
 
   getPlayerId(): string {
     if (!this.playerId) {
@@ -80,7 +93,7 @@ export class ApiClient {
   }
 
   private async request<T>(path: string, options: { method?: string; body?: unknown } = {}): Promise<T> {
-    const response = await fetch(`${this.baseUrl}${path}`, {
+    const response = await fetch(`${this.resolvedBaseUrl}${path}`, {
       method: options.method || 'GET',
       headers: {
         'content-type': 'application/json',

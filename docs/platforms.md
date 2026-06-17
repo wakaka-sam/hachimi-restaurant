@@ -16,6 +16,14 @@ There is one production client codebase: `client/cocos/`.
 
 Platform-specific behavior should be isolated behind adapters in the Cocos codebase when it appears, rather than branching gameplay logic per platform.
 
+## API Host Resolution
+
+The Cocos API client uses one endpoint resolution rule across targets:
+
+- If `HachimiRestaurantGame.apiBaseUrl` is set in the Cocos inspector, use that value.
+- If it is empty in a Cocos Web build, use same-origin `/api` routes. This supports serving the Cocos Web build from the Node backend with `WEB_STATIC_ROOT`.
+- If it is empty in non-browser Cocos runtimes such as WeChat Mini Game or Douyin Mini Game, use `https://animalapi.wakaka007.cn`.
+
 ## Notes
 
 Use this file for platform constraints, compatibility notes, SDK/tooling versions, and mobile UI considerations.

@@ -45,6 +45,8 @@ The backend is authoritative for:
 
 The client submits a gameplay summary at the end of a business session. The backend recomputes the trusted reward.
 
+The Cocos client keeps API access behind `ApiClient`. Empty `apiBaseUrl` means same-origin on Cocos Web builds and `https://animalapi.wakaka007.cn` on non-browser Cocos runtimes; explicit inspector values override this for local preview or staging.
+
 ## Runtime Art Rule
 
 Runtime art surfaces should use PNG texture assets from `client/assets/textures/`.

@@ -78,6 +78,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added matching guide label/message support to the Cocos controller and scene wiring contract.
 - Recorded that the production Web client must be a Cocos Web build output, sharing the same codebase as WeChat Mini Game and Douyin Mini Game.
 - Added `WEB_STATIC_ROOT` support so production deployment can serve Cocos Web build output instead of the debug harness.
+- Added Cocos API host resolution:
+  - Cocos Web builds use same-origin `/api` routes when `apiBaseUrl` is empty.
+  - WeChat Mini Game, Douyin Mini Game, and other non-browser Cocos runtimes default to `https://animalapi.wakaka007.cn`.
+  - The Cocos inspector can still override `apiBaseUrl` for local preview or staging.
 - Updated handfeel tuning so an overall restaurant upgrade preserves long-term gameplay feel after part stars reset.
 - Added three restaurant background stage textures so overall restaurant upgrades visibly improve the dining room:
   - Level 1 uses the starter restaurant.
@@ -195,6 +199,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos manual early-settlement blocking.
   - Web and Cocos resumed session remaining-time handling.
   - Web and Cocos in-session 1x/2x speed switching.
+  - Cocos API host resolution for Web same-origin and non-browser mini-game targets.
   - Web first-run guide highlights.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos restaurant visual stage wiring.
