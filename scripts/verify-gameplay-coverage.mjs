@@ -44,12 +44,13 @@ addCheck('server production root guard test', 'server/test/static-client.test.mj
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
 addCheck('shared stamina recovery status', 'shared/game-rules.mjs', ['getStaminaRecovery', 'secondsUntilNext', 'secondsUntilFull', 'nextRecoveryAt']);
-addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds', 'moveSpeedMultiplier']);
+addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'normalCustomersPerSession: 12', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds', 'moveSpeedMultiplier']);
 addCheck('shared max session customer cap tests', 'server/test/game-rules.test.mjs', ['session summary validation enforces the 18 customer cap', 'too_many_customers']);
 addCheck('shared customer type total validation tests', 'server/test/game-rules.test.mjs', ['customer type totals to match customers', 'customer_type_count_mismatch']);
 addCheck('shared 90-second duration validation tests', 'server/test/game-rules.test.mjs', ['documented 90 second duration', 'invalid_duration']);
 addCheck('shared summary numeric bounds validation tests', 'server/test/game-rules.test.mjs', ['invalid numeric bounds', 'invalid_customer_count', 'invalid_satisfaction', 'invalid_combo', 'invalid_customer_type_count']);
 addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.75', '1.3']);
+addCheck('shared completion score normal target tests', 'server/test/game-rules.test.mjs', ['normal service target', 'normalCustomersPerSession', 'performanceFactor < 1']);
 addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs', ['speed mode does not change reward', "speedMode: '1x'", "speedMode: '2x'", 'performanceFactor']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
 addCheck('shared customer type reservation', 'shared/game-rules.mjs', ['CUSTOMER_TYPES', 'normalizeCustomerTypes', 'customerTypes']);
@@ -151,6 +152,7 @@ addCheck('api documented customer type totals', 'docs/api.md', ['customer type t
 addCheck('api documented summary duration validation', 'docs/api.md', ['durationSeconds', '90 seconds of game time', 'anti-early-settlement']);
 addCheck('api documented summary numeric bounds', 'docs/api.md', ['non-negative integers', 'averageSatisfaction', 'maxCombo']);
 addCheck('api documented expired submitted summary settlement', 'docs/api.md', ['manually finishes an already expired active session', 'valid completed summary', 'minimum guaranteed fallback summary']);
+addCheck('api documented completion target', 'docs/api.md', ['completionScore = clamp(customersServed / 12', 'normal service target']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
 addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'validateCssTextureBackgrounds']);
 

@@ -209,6 +209,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend validation rejects `averageSatisfaction` outside 0 to 1.
   - Backend validation rejects negative or fractional `maxCombo`, plus invalid supported `customerTypes` counts.
   - API docs now explicitly list these numeric bounds.
+- Tightened performance scoring against the documented business-density target:
+  - Completion score now uses 12 completed customers as the normal 90-second service target.
+  - Low-activity summaries no longer earn full completion credit just because no customers left.
+  - API and product docs now spell out the completion-score target used by backend settlement.
 
 ## Remaining Work
 
@@ -221,10 +225,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 40 Node tests, 131 gameplay coverage checks, and static texture policy checks.
+- Current automated coverage: 41 Node tests, 133 gameplay coverage checks, and static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
+  - Completion score calculated against the 12-customer normal service target.
   - Backend stamina recovery status plus client next-stamina and full-recovery countdown display.
   - Speed-neutral 1x/2x reward calculation.
   - Shared营业密度 tuning.

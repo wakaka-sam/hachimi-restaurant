@@ -143,7 +143,8 @@ export const CONSTANTS = {
   maxTableSlots: 5,
   initialCustomerCount: 2,
   maxWaitingCustomers: 4,
-  maxCustomersPerSession: 18
+  maxCustomersPerSession: 18,
+  normalCustomersPerSession: 12
 } as const;
 
 export function clamp(value: number, min: number, max: number): number {

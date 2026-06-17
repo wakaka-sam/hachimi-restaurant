@@ -14,6 +14,7 @@ import {
   getTaskRewardSummary,
   getTaskStatuses,
   getTuning,
+  calculatePerformance,
   calculateReward,
   normalizeSessionSummary,
   refreshStamina,
@@ -220,6 +221,29 @@ test('performance reward is clamped between 75 and 130 percent', () => {
     durationSeconds: CONSTANTS.sessionDurationSeconds
   });
   assert.equal(excellent.rewardCoins, 130);
+});
+
+test('completion score uses the normal service target instead of only loss ratio', () => {
+  const lowActivity = calculatePerformance({
+    customersServed: 1,
+    customersLost: 0,
+    averageSatisfaction: 1,
+    maxCombo: 1,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+
+  assert.equal(lowActivity.completionScore, 1 / CONSTANTS.normalCustomersPerSession);
+  assert.ok(lowActivity.performanceFactor < 1);
+
+  const normalActivity = calculatePerformance({
+    customersServed: CONSTANTS.normalCustomersPerSession,
+    customersLost: 0,
+    averageSatisfaction: 0.8,
+    maxCombo: 4,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+
+  assert.equal(normalActivity.completionScore, 1);
 });
 
 test('speed mode does not change reward for the same performance summary', () => {

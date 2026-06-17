@@ -22,7 +22,8 @@ export const CONSTANTS = {
   maxTableSlots: 5,
   initialCustomerCount: 2,
   maxWaitingCustomers: 4,
-  maxCustomersPerSession: 18
+  maxCustomersPerSession: 18,
+  normalCustomersPerSession: 12
 };
 
 export const DEFAULT_PARTS = Object.freeze({
@@ -482,8 +483,11 @@ function hasInvalidCustomerTypeCount(customerTypes = null) {
 
 export function calculatePerformance(summary = {}) {
   const normalized = normalizeSessionSummary(summary);
-  const total = normalized.customersServed + normalized.customersLost;
-  const completionScore = total > 0 ? normalized.customersServed / total : 0;
+  const completionScore = clamp(
+    normalized.customersServed / CONSTANTS.normalCustomersPerSession,
+    0,
+    1
+  );
   const satisfactionScore = normalized.averageSatisfaction;
   const comboScore = clamp(normalized.maxCombo / 8, 0, 1);
   const performanceFactor = clamp(

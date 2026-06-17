@@ -178,6 +178,8 @@ If `customerTypes` is submitted, each supported customer type count must be a no
 Performance formula:
 
 ```text
+completionScore = clamp(customersServed / 12, 0, 1)
+
 performanceFactor = clamp(
   0.75
   + completionScore * 0.35
@@ -189,6 +191,8 @@ performanceFactor = clamp(
 
 rewardCoins = round(expectedRevenue * performanceFactor)
 ```
+
+The normal service target is 12 completed customers per 90-second session. This prevents a very low-activity summary with no lost customers from receiving full completion credit.
 
 ### `POST /api/upgrade/part`
 
