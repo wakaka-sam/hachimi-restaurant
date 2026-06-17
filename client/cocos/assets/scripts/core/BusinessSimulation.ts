@@ -100,7 +100,7 @@ export class BusinessSimulation {
     }
     const customer = this.waiting.shift()!;
     customer.phase = 'seated';
-    customer.phaseTime = this.tuning.prepDelaySeconds;
+    customer.phaseTime = this.getMovementAdjustedDuration(this.tuning.prepDelaySeconds);
     table.customer = customer;
     this.setFeedback('安排入座');
   }
@@ -116,7 +116,7 @@ export class BusinessSimulation {
     }
     if (table.customer.phase === 'readyFood') {
       table.customer.phase = 'eating';
-      table.customer.phaseTime = this.tuning.eatingSeconds;
+      table.customer.phaseTime = this.getMovementAdjustedDuration(this.tuning.eatingSeconds);
       this.setFeedback('上菜完成');
       return;
     }
@@ -245,5 +245,9 @@ export class BusinessSimulation {
   private setFeedback(message: string): void {
     this.lastFeedback = message;
     this.feedbackTimeLeft = 2.2;
+  }
+
+  private getMovementAdjustedDuration(seconds: number): number {
+    return seconds / Math.max(1, this.tuning.moveSpeedMultiplier);
   }
 }

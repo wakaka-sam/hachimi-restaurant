@@ -136,6 +136,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `TexturedButtonView` applies `button.png` and `button-disabled.png` to button background sprites based on interactable state.
   - `HachimiRestaurantGame` refreshes textured buttons after screen, business, upgrade, and task state changes.
   - Scene wiring now requires enough `TexturedButtonView` instances for fixed controls, part upgrade buttons, and all MVP task claim buttons.
+- Wired floor movement tuning into client simulations:
+  - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
+  - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
+  - API docs now list `moveSpeedMultiplier` in `profile.tuning`.
 
 ## Remaining Work
 
@@ -171,6 +175,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos MVP screen navigation wiring.
   - Web and Cocos locked table slot texture wiring.
   - Web and Cocos waiting queue cap wiring.
+  - Web and Cocos floor movement/turnover tuning.
   - Cocos texture-backed button wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.

@@ -459,7 +459,7 @@ function handleTableClick(index) {
     seatCustomer(index);
   } else if (customer.phase === 'readyFood') {
     customer.phase = 'eating';
-    customer.phaseTime = game.tuning.eatingSeconds;
+    customer.phaseTime = getMovementAdjustedDuration(game.tuning.eatingSeconds);
     setBusinessFeedback('上菜完成');
   } else if (customer.phase === 'readyPay') {
     collectCustomer(index);
@@ -476,9 +476,13 @@ function seatCustomer(index) {
   game.tables[index] = {
     ...customer,
     phase: 'seated',
-    phaseTime: game.tuning.prepDelaySeconds
+    phaseTime: getMovementAdjustedDuration(game.tuning.prepDelaySeconds)
   };
   setBusinessFeedback('安排入座');
+}
+
+function getMovementAdjustedDuration(seconds) {
+  return seconds / Math.max(1, state.game?.tuning.moveSpeedMultiplier || 1);
 }
 
 function collectFirstReadyPay() {

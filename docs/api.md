@@ -101,6 +101,7 @@ tuning:
   initialCustomerCount
   patienceSeconds
   spawnIntervalSeconds
+  moveSpeedMultiplier
   cashierWindowSeconds
   prepDelaySeconds
   eatingSeconds
