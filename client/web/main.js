@@ -2,6 +2,7 @@ import {
   CONSTANTS,
   PARTS,
   PART_LABELS,
+  TASK_TYPE_LABELS,
   getPartEffectDescription
 } from '/shared/game-rules.mjs';
 
@@ -702,14 +703,28 @@ async function upgradeRestaurant() {
 function renderTaskScreen() {
   const tasks = state.profile.tasks;
   const guide = getGuideStep();
+  const groupedTasks = groupTasksByType(tasks);
   return h('section', { class: 'panel' },
     h('div', { class: 'title-row' },
       h('h2', {}, '任务'),
       h('span', { class: 'level-pill' }, '辅助奖励')
     ),
     guide ? h('div', { class: 'guide-cue' }, guide.message) : null,
-    h('div', { class: 'task-list' }, tasks.map(renderTaskCard))
+    h('div', { class: 'task-list' }, groupedTasks.map(({ type, label, items }) => h('section', { class: 'task-section' },
+      h('h3', { class: 'task-section-title' }, label),
+      items.map(renderTaskCard)
+    )))
   );
+}
+
+function groupTasksByType(tasks) {
+  return ['guide', 'daily', 'growth']
+    .map((type) => ({
+      type,
+      label: tasks.find((task) => task.type === type)?.typeLabel || TASK_TYPE_LABELS[type] || '任务',
+      items: tasks.filter((task) => task.type === type)
+    }))
+    .filter((group) => group.items.length > 0);
 }
 
 function renderTaskCard(task) {

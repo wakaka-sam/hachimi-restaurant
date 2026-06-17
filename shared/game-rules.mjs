@@ -35,6 +35,14 @@ export const DEFAULT_PARTS = Object.freeze({
 
 export const CUSTOMER_TYPES = ['normal'];
 
+export const TASK_TYPES = ['guide', 'daily', 'growth'];
+
+export const TASK_TYPE_LABELS = Object.freeze({
+  guide: '引导任务',
+  daily: '每日任务',
+  growth: '成长任务'
+});
+
 export const TASK_DEFINITIONS = Object.freeze([
   {
     id: 'guide_first_session',
@@ -532,6 +540,7 @@ export function getTaskStatuses(player, now = new Date()) {
     return {
       id: task.id,
       type: task.type,
+      typeLabel: TASK_TYPE_LABELS[task.type] || '任务',
       title: task.title,
       description: task.description,
       progress,

@@ -1,5 +1,5 @@
 import { _decorator, Button, Component, Label } from 'cc';
-import { TaskState } from '../core/GameRules';
+import { TASK_TYPE_LABELS, TaskState } from '../core/GameRules';
 
 const { ccclass, property } = _decorator;
 
@@ -7,6 +7,9 @@ const { ccclass, property } = _decorator;
 export class TaskItemView extends Component {
   @property(Label)
   titleLabel: Label | null = null;
+
+  @property(Label)
+  typeLabel: Label | null = null;
 
   @property(Label)
   descriptionLabel: Label | null = null;
@@ -35,6 +38,9 @@ export class TaskItemView extends Component {
     this.taskId = task.id;
     if (this.titleLabel) {
       this.titleLabel.string = task.title;
+    }
+    if (this.typeLabel) {
+      this.typeLabel.string = task.typeLabel || TASK_TYPE_LABELS[task.type] || '任务';
     }
     if (this.descriptionLabel) {
       this.descriptionLabel.string = task.description;

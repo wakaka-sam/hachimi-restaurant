@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { createApp } from '../src/app.mjs';
 import { GameStore } from '../src/store.mjs';
-import { TASK_DEFINITIONS } from '../../shared/game-rules.mjs';
+import { TASK_DEFINITIONS, TASK_TYPE_LABELS } from '../../shared/game-rules.mjs';
 
 async function startTestServer() {
   const store = await new GameStore().load();
@@ -192,10 +192,12 @@ test('API profile exposes all MVP guide, daily, and growth tasks', async (t) => 
     ['daily', 'growth', 'guide']
   );
   for (const definition of TASK_DEFINITIONS) {
+    const task = profile.body.profile.tasks.find((item) => item.id === definition.id);
     assert.ok(
-      profile.body.profile.tasks.some((task) => task.id === definition.id),
+      task,
       `missing task ${definition.id}`
     );
+    assert.equal(task.typeLabel, TASK_TYPE_LABELS[definition.type]);
   }
 });
 

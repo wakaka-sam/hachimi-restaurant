@@ -1,6 +1,7 @@
 export type PartKey = 'cashier' | 'table' | 'chair' | 'floor' | 'wall';
 export type SpeedMode = '1x' | '2x';
 export type CustomerType = 'normal';
+export type TaskType = 'guide' | 'daily' | 'growth';
 
 export interface PartStars {
   cashier: number;
@@ -51,7 +52,8 @@ export interface ProfileState {
 
 export interface TaskState {
   id: string;
-  type: string;
+  type: TaskType;
+  typeLabel?: string;
   title: string;
   description: string;
   progress: number;
@@ -113,6 +115,13 @@ export interface SettlementState {
 
 export const PARTS: PartKey[] = ['cashier', 'table', 'chair', 'floor', 'wall'];
 export const CUSTOMER_TYPES: CustomerType[] = ['normal'];
+export const TASK_TYPES: TaskType[] = ['guide', 'daily', 'growth'];
+
+export const TASK_TYPE_LABELS: Record<TaskType, string> = {
+  guide: '引导任务',
+  daily: '每日任务',
+  growth: '成长任务'
+};
 
 export const PART_LABELS: Record<PartKey, string> = {
   cashier: '收银机',

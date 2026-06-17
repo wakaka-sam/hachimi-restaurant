@@ -112,6 +112,8 @@ tuning:
   prepDelaySeconds
   eatingSeconds
 task status
+  type
+  typeLabel
 active session, if any
 ```
 
@@ -242,6 +244,7 @@ MVP reward types:
 - Stamina.
 
 Task rewards are an auxiliary progression layer and should not directly alter `incomePower`.
+Task status responses include `typeLabel` so the client can visibly separate guide, daily, and growth tasks without duplicating label text per platform.
 
 ## Error Conventions
 

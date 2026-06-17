@@ -3,10 +3,12 @@ import assert from 'node:assert/strict';
 import {
   CONSTANTS,
   CUSTOMER_TYPES,
+  TASK_TYPE_LABELS,
   createDefaultPlayer,
   getEconomy,
   getEffectivePartStars,
   getStaminaRecovery,
+  getTaskStatuses,
   getTuning,
   calculateReward,
   normalizeSessionSummary,
@@ -169,6 +171,21 @@ test('session summaries reserve normal customer type counts', () => {
     durationSeconds: CONSTANTS.sessionDurationSeconds
   });
   assert.deepEqual(explicit.customerTypes, { normal: 6 });
+});
+
+test('task statuses expose guide daily and growth labels', () => {
+  const player = createDefaultPlayer('task-label-test', new Date('2026-06-17T00:00:00.000Z'));
+  const statuses = getTaskStatuses(player, new Date('2026-06-17T00:00:00.000Z'));
+
+  assert.deepEqual(TASK_TYPE_LABELS, {
+    guide: '引导任务',
+    daily: '每日任务',
+    growth: '成长任务'
+  });
+  assert.deepEqual(
+    [...new Set(statuses.map((task) => task.typeLabel))].sort(),
+    ['引导任务', '成长任务', '每日任务'].sort()
+  );
 });
 
 test('stamina recovers by backend time and caps at 60', () => {

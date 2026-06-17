@@ -32,6 +32,17 @@
   "minimumSpriteArrayLengths": {
     "waitingCustomerSprites": 4
   },
+  "componentProperties": {
+    "TaskItemView": [
+      "typeLabel",
+      "titleLabel",
+      "descriptionLabel",
+      "progressLabel",
+      "rewardLabel",
+      "buttonLabel",
+      "claimButton"
+    ]
+  },
   "textureCatalog": [
     "restaurantBackground",
     "restaurantBackgrounds",
