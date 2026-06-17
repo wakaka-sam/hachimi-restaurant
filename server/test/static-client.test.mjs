@@ -60,6 +60,21 @@ test('backend can serve a configured Cocos Web static root', async (t) => {
   assert.equal(debugHarnessScript.status, 404);
 });
 
+test('backend health endpoint reports service and backend time', async (t) => {
+  const now = new Date('2026-06-17T12:00:00.000Z');
+  const { app, baseUrl } = await startTestServer({ nowProvider: () => now });
+  t.after(() => app.close());
+
+  const response = await fetch(`${baseUrl}/api/health`);
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.deepEqual(body, {
+    ok: true,
+    service: 'hachimi-restaurant',
+    now: '2026-06-17T12:00:00.000Z'
+  });
+});
+
 test('production server config requires a Cocos Web static root', () => {
   const rootDir = process.cwd();
 

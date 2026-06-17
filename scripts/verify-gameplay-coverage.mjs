@@ -28,6 +28,7 @@ addCheck('backend session finish endpoint', 'server/src/app.mjs', ['/api/session
 addCheck('backend part upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/part']);
 addCheck('backend restaurant upgrade endpoint', 'server/src/app.mjs', ['/api/upgrade/restaurant']);
 addCheck('backend task claim endpoint', 'server/src/app.mjs', ['/api/tasks/claim']);
+addCheck('backend health endpoint test', 'server/test/static-client.test.mjs', ['backend health endpoint reports service and backend time', '/api/health', 'hachimi-restaurant']);
 addCheck('backend testable clock', 'server/src/app.mjs', ['nowProvider = () => new Date()', 'const now = nowProvider()']);
 addCheck('backend daily task claim reset test', 'server/test/api.test.mjs', ['API daily task claims reset by backend date', 'TASK_ALREADY_CLAIMED', '2026-06-18:daily_sessions_3']);
 addCheck('backend active session remaining time', 'server/src/app.mjs', ['serializeBusinessSession', 'remainingSeconds', 'recoveryWindowSeconds']);
@@ -140,6 +141,8 @@ addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini 
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
 addCheck('platforms documented implementation source of truth', 'docs/platforms.md', ['Implementation source of truth', 'Product behavior must be implemented in `client/cocos/` first', 'without separate gameplay forks']);
 addCheck('deployment documents production Web root guard', 'docs/deployment.md', ['NODE_ENV=production', 'server refuses to start unless `WEB_STATIC_ROOT` is set', 'rejects `WEB_STATIC_ROOT=client/web`', 'must never point to `client/web`']);
+addCheck('deployment documents env and health checks', 'docs/deployment.md', ['Environment Variables', 'Health Check', 'GET /api/health', 'Rollback Notes', 'https://animalapi.wakaka007.cn/api/health']);
+addCheck('safe env example lists production variables', '.env.example', ['NODE_ENV=development', 'PORT=4173', 'GAME_DATA_FILE=server/data/game-state.json', 'WEB_STATIC_ROOT=']);
 addCheck('web debug harness forbids production root', 'client/web/README.md', ['must never be used as `WEB_STATIC_ROOT` in production', 'Cocos Web build output']);
 addCheck('platforms documented api host resolution', 'docs/platforms.md', ['API Host Resolution', 'same-origin', 'https://animalapi.wakaka007.cn']);
 addCheck('platforms documented network adapter', 'docs/platforms.md', ['Network Adapter', 'fetch', 'XMLHttpRequest']);

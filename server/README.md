@@ -27,3 +27,5 @@ Use `GAME_DATA_FILE=/path/to/file.json` to choose a different state file.
 
 - Node.js: >=20.
 - Production API domain target: `animalapi.wakaka007.cn`.
+- Safe runtime variable names are listed in `.env.example`.
+- Health check: `GET /api/health`.

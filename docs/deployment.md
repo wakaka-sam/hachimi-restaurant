@@ -23,6 +23,43 @@ In `NODE_ENV=production`, the server refuses to start unless `WEB_STATIC_ROOT` i
 
 `WEB_STATIC_ROOT` must never point to `client/web` in production. It should point only to the Cocos Web build output generated from the shared `client/cocos/` project.
 
+## Environment Variables
+
+Use `.env.example` as the safe variable list for agents and deployment scripts. Do not commit real `.env` files.
+
+| Variable | Required | Notes |
+|---|---|---|
+| `NODE_ENV` | Production yes | Set to `production` on gz server. |
+| `PORT` | No | Defaults to `4173`. |
+| `GAME_DATA_FILE` | Production yes | File-backed player/session state path. Put the real path outside Git-managed source. |
+| `WEB_STATIC_ROOT` | Production yes | Must point to Cocos Web build output, never `client/web`. |
+
+## Health Check
+
+The backend exposes:
+
+```text
+GET /api/health
+```
+
+Expected response:
+
+```json
+{
+  "ok": true,
+  "service": "hachimi-restaurant",
+  "now": "2026-06-17T12:00:00.000Z"
+}
+```
+
+Use `https://animalapi.wakaka007.cn/api/health` as the production smoke check after deploy, then verify the Cocos Web build can load and call `/api/player/profile`.
+
+## Rollback Notes
+
+- Keep the previous Cocos Web build output directory available until the new build is verified.
+- Keep the previous `GAME_DATA_FILE` backup before replacing server code or changing persistence paths.
+- Roll back by restoring the previous server revision and pointing `WEB_STATIC_ROOT` back to the previous Cocos Web build output.
+
 ## Notes
 
 Use this file for deployment, environment variables, health checks, and rollback notes. Do not store secrets here.

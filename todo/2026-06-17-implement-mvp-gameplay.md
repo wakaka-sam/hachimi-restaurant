@@ -240,6 +240,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos and Web clients now preserve the completed local session snapshot when the backend returns `SESSION_NOT_READY`.
   - Clients show the backend-provided remaining wait time and keep the player on the business recovery path for retry.
   - Cocos auto-settlement and the Web debug harness settlement button now throttle retry attempts until the backend-provided wait window has elapsed.
+- Tightened deployment readiness:
+  - Added `.env.example` with the safe runtime variable list for local and gz server deployment.
+  - Added a health endpoint regression test for `GET /api/health`.
+  - Deployment docs now include environment variables, health check, production smoke check, and rollback notes.
 
 ## Remaining Work
 
@@ -252,9 +256,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 44 Node tests, 144 gameplay coverage checks, and stricter static texture policy checks.
+- Current automated coverage: 45 Node tests, 147 gameplay coverage checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
+  - Backend health endpoint and deployment environment documentation.
   - Backend file-backed player/session persistence across store reloads.
   - Shared economy, stamina, and performance formulas.
   - Completion score calculated against the 12-customer normal service target.
