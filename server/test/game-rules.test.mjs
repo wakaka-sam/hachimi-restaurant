@@ -9,7 +9,8 @@ import {
   getTuning,
   calculateReward,
   normalizeSessionSummary,
-  refreshStamina
+  refreshStamina,
+  validateSessionSummary
 } from '../../shared/game-rules.mjs';
 
 test('incomePower model makes every upgrade worth 8 percent expected revenue growth', () => {
@@ -87,6 +88,27 @@ test('initial handfeel tuning matches MVP business density targets', () => {
   assert.ok(tuning.prepDelaySeconds + tuning.eatingSeconds >= 18);
   assert.ok(tuning.prepDelaySeconds + tuning.eatingSeconds <= 25);
   assert.equal(CONSTANTS.maxCustomersPerSession, 18);
+});
+
+test('session summary validation enforces the 18 customer cap', () => {
+  const capped = validateSessionSummary({
+    customersServed: 14,
+    customersLost: 4,
+    averageSatisfaction: 0.85,
+    maxCombo: 8,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+  assert.equal(capped.ok, true);
+
+  const overflow = validateSessionSummary({
+    customersServed: 15,
+    customersLost: 4,
+    averageSatisfaction: 0.85,
+    maxCombo: 8,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+  assert.equal(overflow.ok, false);
+  assert.deepEqual(overflow.errors, ['too_many_customers']);
 });
 
 test('performance reward is clamped between 75 and 130 percent', () => {

@@ -34,6 +34,7 @@ addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', [
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
 addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds', 'moveSpeedMultiplier']);
+addCheck('shared max session customer cap tests', 'server/test/game-rules.test.mjs', ['session summary validation enforces the 18 customer cap', 'too_many_customers']);
 addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.75', '1.3']);
 addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs', ['speed mode does not change reward', "speedMode: '1x'", "speedMode: '2x'", 'performanceFactor']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
@@ -47,6 +48,7 @@ addCheck('web click service chain', 'client/web/main.js', ['seatCustomer', "cust
 addCheck('web table countdown labels', 'client/web/main.js', ['formatSeconds', 'customer.phaseTime', 'customer.patience']);
 addCheck('web initial customer wave', 'client/web/main.js', ['tuning.initialCustomerCount', 'spawnCustomer']);
 addCheck('web waiting queue cap', 'client/web/main.js', ['CONSTANTS.maxWaitingCustomers', 'game.waiting.length']);
+addCheck('web max session customer cap', 'client/web/main.js', ['canSpawnMoreCustomers', 'CONSTANTS.maxCustomersPerSession']);
 addCheck('web floor movement tuning', 'client/web/main.js', ['getMovementAdjustedDuration', 'moveSpeedMultiplier']);
 addCheck('web locked table slots', 'client/web/main.js', ['table-locked.png', 'CONSTANTS.maxTableSlots', '未解锁']);
 addCheck('web normal customer type', 'client/web/main.js', ["customerType: 'normal'", 'customerTypes']);
@@ -71,6 +73,7 @@ addCheck('cocos table countdown labels', 'client/cocos/assets/scripts/components
 addCheck('cocos business simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['seatCustomer', 'handleTablePressed', 'collectFirstReadyPay', 'getSummary']);
 addCheck('cocos initial customer wave', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['initialCustomerCount', 'spawnCustomer', 'spawnIntervalSeconds']);
 addCheck('cocos waiting queue cap', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['CONSTANTS.maxWaitingCustomers', 'this.waiting.length']);
+addCheck('cocos max session customer cap', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['canSpawnMoreCustomers', 'CONSTANTS.maxCustomersPerSession']);
 addCheck('cocos floor movement tuning', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['getMovementAdjustedDuration', 'moveSpeedMultiplier']);
 addCheck('cocos normal customer type', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ["customerType: 'normal'", 'customerTypes']);
 addCheck('cocos simulation speed mode toggle', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['setSpeedMode', 'toggleSpeedMode', "speedMode === '1x' ? '2x' : '1x'"]);
@@ -87,6 +90,7 @@ addCheck('product documented locked table slots', 'docs/product.md', ['场景预
 addCheck('product documented initial customer wave', 'docs/product.md', ['开场先进入 2 位初始顾客']);
 addCheck('product documented waiting queue cap', 'docs/product.md', ['等待队列最多显示 4 位顾客']);
 addCheck('product documented table countdown feedback', 'docs/product.md', ['餐桌状态需要显示阶段剩余时间或耐心倒计时']);
+addCheck('product documented max session customer cap', 'docs/product.md', ['每局 18 位顾客上限', '后端不可结算']);
 
 for (const check of checks) {
   let source = '';

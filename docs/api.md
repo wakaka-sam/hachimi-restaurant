@@ -157,6 +157,8 @@ Backend behavior:
 
 The backend must not trust a client-submitted final coin value.
 
+MVP customer count cap: submitted `customersServed + customersLost` must not exceed 18. The Cocos client should also stop natural spawning at the same cap so valid local play remains settleable.
+
 Performance formula:
 
 ```text

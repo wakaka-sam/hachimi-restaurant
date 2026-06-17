@@ -294,6 +294,7 @@ function updateGame(delta) {
   if (
     game.spawnCooldown <= 0
     && game.waiting.length < CONSTANTS.maxWaitingCustomers
+    && canSpawnMoreCustomers()
     && crowdCount < game.tables.length + CONSTANTS.maxWaitingCustomers
   ) {
     spawnCustomer();
@@ -354,6 +355,9 @@ function updateGame(delta) {
 
 function spawnCustomer() {
   const game = state.game;
+  if (!canSpawnMoreCustomers(game)) {
+    return false;
+  }
   const animal = textures.animals[(game.nextCustomerId - 1) % textures.animals.length];
   game.waiting.push({
     id: game.nextCustomerId,
@@ -363,6 +367,11 @@ function spawnCustomer() {
     maxPatience: game.tuning.patienceSeconds
   });
   game.nextCustomerId += 1;
+  return true;
+}
+
+function canSpawnMoreCustomers(game = state.game) {
+  return Boolean(game) && game.nextCustomerId <= CONSTANTS.maxCustomersPerSession;
 }
 
 function removeWaitingCustomer(id) {

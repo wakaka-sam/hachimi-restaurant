@@ -79,6 +79,7 @@ export class BusinessSimulation {
     if (
       this.spawnCooldown <= 0
       && this.waiting.length < CONSTANTS.maxWaitingCustomers
+      && this.canSpawnMoreCustomers()
       && crowdCount < this.tables.length + CONSTANTS.maxWaitingCustomers
     ) {
       this.spawnCustomer();
@@ -155,7 +156,10 @@ export class BusinessSimulation {
     return Math.round(this.averageSatisfaction * 100);
   }
 
-  private spawnCustomer(): void {
+  private spawnCustomer(): boolean {
+    if (!this.canSpawnMoreCustomers()) {
+      return false;
+    }
     this.waiting.push({
       id: this.nextCustomerId,
       customerType: 'normal',
@@ -166,6 +170,11 @@ export class BusinessSimulation {
       phaseTime: this.tuning.patienceSeconds
     });
     this.nextCustomerId += 1;
+    return true;
+  }
+
+  private canSpawnMoreCustomers(): boolean {
+    return this.nextCustomerId <= CONSTANTS.maxCustomersPerSession;
   }
 
   private updateWaiting(delta: number): void {

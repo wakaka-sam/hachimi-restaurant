@@ -135,6 +135,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared rules now expose `maxWaitingCustomers = 4`.
   - Cocos and Web debug simulations pause natural customer spawning when the visible waiting queue is full.
   - Cocos scene wiring now requires at least 4 `waitingCustomerSprites` so every waiting customer has a texture-backed visual slot.
+- Added max-session customer cap enforcement:
+  - Cocos and Web debug simulations stop natural customer spawning at 18 customers per business session.
+  - Shared rule tests verify 18 customers is accepted and 19 customers is rejected.
+  - Product and API docs now state that the client cap protects normal play from producing backend-rejected summaries.
 - Added texture-backed Cocos button contract:
   - `TexturedButtonView` applies `button.png` and `button-disabled.png` to button background sprites based on interactable state.
   - `HachimiRestaurantGame` refreshes textured buttons after screen, business, upgrade, and task state changes.
@@ -158,12 +162,13 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 23 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 24 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
   - Speed-neutral 1x/2x reward calculation.
   - Shared营业密度 tuning.
+  - Shared max-session customer cap validation.
   - Shared normal customer type reservation.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
@@ -182,6 +187,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos MVP screen navigation wiring.
   - Web and Cocos locked table slot texture wiring.
   - Web and Cocos waiting queue cap wiring.
+  - Web and Cocos max-session customer spawning cap.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.
