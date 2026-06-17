@@ -116,6 +116,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend rejects valid-looking settlements before the minimum real time for a 90-second 2x session has elapsed.
   - Cocos and Web debug harness disable manual settlement while the local营业 countdown is still running.
   - API docs now include `SESSION_NOT_READY`.
+  - Backend summary validation also rejects non-90-second `durationSeconds` values.
 - Tightened MVP task screen coverage:
   - Cocos scene wiring now requires enough `TaskItemView` rows for all 13 MVP guide/daily/growth tasks.
   - API tests verify every task definition is exposed in the player profile.
@@ -225,6 +226,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
   - Backend early-settlement rejection.
+  - Backend rejection of non-90-second session summaries.
   - Backend auto-settlement for expired active sessions.
   - Backend exposure of all guide, daily, and growth tasks.
   - Shared/Web/Cocos task type labels and grouping.

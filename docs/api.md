@@ -169,6 +169,8 @@ MVP customer count cap: submitted `customersServed + customersLost` must not exc
 
 If `customerTypes` is submitted, the sum of all supported customer type counts must equal `customersServed + customersLost`. If it is omitted, the backend treats all customers as `normal` for MVP.
 
+`durationSeconds` must be the documented 90 seconds of game time. The backend validates this separately from the real-time anti-early-settlement gate.
+
 Performance formula:
 
 ```text

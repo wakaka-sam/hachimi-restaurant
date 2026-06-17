@@ -152,6 +152,37 @@ test('session summary validation requires customer type totals to match customer
   assert.deepEqual(mismatch.errors, ['customer_type_count_mismatch']);
 });
 
+test('session summary validation requires the documented 90 second duration', () => {
+  const valid = validateSessionSummary({
+    customersServed: 10,
+    customersLost: 0,
+    averageSatisfaction: 0.9,
+    maxCombo: 6,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+  assert.equal(valid.ok, true);
+
+  const short = validateSessionSummary({
+    customersServed: 10,
+    customersLost: 0,
+    averageSatisfaction: 0.9,
+    maxCombo: 6,
+    durationSeconds: 45
+  });
+  assert.equal(short.ok, false);
+  assert.deepEqual(short.errors, ['invalid_duration']);
+
+  const long = validateSessionSummary({
+    customersServed: 10,
+    customersLost: 0,
+    averageSatisfaction: 0.9,
+    maxCombo: 6,
+    durationSeconds: 120
+  });
+  assert.equal(long.ok, false);
+  assert.deepEqual(long.errors, ['invalid_duration']);
+});
+
 test('performance reward is clamped between 75 and 130 percent', () => {
   const player = createDefaultPlayer('reward-test', new Date('2026-06-17T00:00:00.000Z'));
 

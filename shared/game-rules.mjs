@@ -417,6 +417,7 @@ export function normalizeCustomerTypes(customerTypes = {}, fallbackTotal = 0) {
 export function validateSessionSummary(summary = {}) {
   const normalized = normalizeSessionSummary(summary);
   const totalCustomers = normalized.customersServed + normalized.customersLost;
+  const submittedDuration = Number(summary.durationSeconds ?? 0);
   const customerTypeTotal = Object.values(normalized.customerTypes)
     .reduce((sum, count) => sum + count, 0);
   const errors = [];
@@ -430,7 +431,7 @@ export function validateSessionSummary(summary = {}) {
   if (normalized.maxCombo > normalized.customersServed) {
     errors.push('combo_exceeds_served');
   }
-  if (normalized.durationSeconds < 1 && totalCustomers > 0) {
+  if (submittedDuration !== CONSTANTS.sessionDurationSeconds) {
     errors.push('invalid_duration');
   }
 
