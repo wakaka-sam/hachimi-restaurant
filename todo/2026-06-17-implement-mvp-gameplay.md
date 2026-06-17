@@ -110,6 +110,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Closed expired-session settlement:
   - Profile and session start now auto-settle expired active sessions at the minimum guaranteed reward.
   - Expired sessions no longer disappear from the active-session view without awarding their documented minimum settlement.
+- Added Cocos main-screen part status wiring:
+  - `PartStatusView` renders the five part names and star states on the restaurant main screen.
+  - `HachimiRestaurantGame` now binds and refreshes the main-screen part status views separately from the upgrade-card views.
+  - Scene wiring and static coverage require five main-screen part status instances.
 
 ## Remaining Work
 
@@ -139,6 +143,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web first-run guide highlights.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos restaurant visual stage wiring.
+  - Cocos main-screen five-part star status wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.
   - Cocos guide label wiring.

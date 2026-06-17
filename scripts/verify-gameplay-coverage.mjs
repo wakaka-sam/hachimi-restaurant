@@ -56,13 +56,15 @@ addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/Ha
 addCheck('cocos resumed session remaining time', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
 addCheck('cocos restaurant visual stages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['restaurantBackgroundSprite', 'renderRestaurantBackground', 'getRestaurantBackground']);
 addCheck('cocos business feedback labels', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['satisfactionLabel', 'feedbackLabel', 'satisfactionPercent', 'lastFeedback']);
+addCheck('cocos main part status views', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['PartStatusView', 'partStatusViews', 'renderPartStatus']);
 addCheck('cocos business simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['seatCustomer', 'handleTablePressed', 'collectFirstReadyPay', 'getSummary']);
 addCheck('cocos normal customer type', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ["customerType: 'normal'", 'customerTypes']);
 addCheck('cocos simulation speed mode toggle', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['setSpeedMode', 'toggleSpeedMode', "speedMode === '1x' ? '2x' : '1x'"]);
 addCheck('cocos business feedback simulation', 'client/cocos/assets/scripts/core/BusinessSimulation.ts', ['lastFeedback', 'feedbackTimeLeft', 'averageSatisfaction', '收银成功 满意', '顾客离开，连击中断']);
 addCheck('cocos api client endpoints', 'client/cocos/assets/scripts/services/ApiClient.ts', ['/api/player/profile', '/api/session/start', '/api/session/finish', '/api/upgrade/part', '/api/upgrade/restaurant', '/api/tasks/claim']);
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'restaurantBackgrounds', 'getRestaurantBackground', 'tableEmpty', 'cashier', 'animals', 'starIcon']);
-addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartUpgradeView', 'TaskItemView']);
+addCheck('cocos part status component', 'client/cocos/assets/scripts/components/PartStatusView.ts', ['@ccclass', 'PartStatusView', 'PART_LABELS', 'starSprites', 'starIcon']);
+addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
 
@@ -122,7 +124,7 @@ for (const texture of requiredTextures) {
   }
 }
 
-const requiredComponents = ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartUpgradeView', 'TaskItemView'];
+const requiredComponents = ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView'];
 for (const component of requiredComponents) {
   if (!sceneWiring.requiredComponents?.includes(component)) {
     fail(`Cocos scene wiring manifest missing component ${component}`);
@@ -137,6 +139,10 @@ for (const screen of ['mainScreen', 'businessScreen', 'upgradeScreen', 'taskScre
 
 if ((sceneWiring.minimumInstances?.TaskItemView || 0) < TASK_DEFINITIONS.length) {
   fail(`Cocos scene wiring manifest needs at least ${TASK_DEFINITIONS.length} TaskItemView rows`);
+}
+
+if ((sceneWiring.minimumInstances?.PartStatusView || 0) < 5) {
+  fail('Cocos scene wiring manifest needs at least 5 PartStatusView rows');
 }
 
 for (const label of ['guideLabel', 'satisfactionLabel', 'feedbackLabel']) {

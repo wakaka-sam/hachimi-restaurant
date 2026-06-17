@@ -2,6 +2,7 @@ import { _decorator, Button, Component, Label, Node, Sprite } from 'cc';
 import { BusinessSimulation } from './core/BusinessSimulation';
 import { CONSTANTS, PARTS, PartKey, ProfileState, SettlementState, SpeedMode } from './core/GameRules';
 import { ApiClient } from './services/ApiClient';
+import { PartStatusView } from './components/PartStatusView';
 import { PartUpgradeView } from './components/PartUpgradeView';
 import { TableSlotView } from './components/TableSlotView';
 import { TaskItemView } from './components/TaskItemView';
@@ -97,6 +98,9 @@ export class HachimiRestaurantGame extends Component {
   @property([Sprite])
   waitingCustomerSprites: Sprite[] = [];
 
+  @property([PartStatusView])
+  partStatusViews: PartStatusView[] = [];
+
   @property([PartUpgradeView])
   partViews: PartUpgradeView[] = [];
 
@@ -120,6 +124,7 @@ export class HachimiRestaurantGame extends Component {
     this.finishButton?.node.on(Button.EventType.CLICK, this.finishBusiness, this);
     this.restaurantUpgradeButton?.node.on(Button.EventType.CLICK, this.upgradeRestaurant, this);
     this.tableSlots.forEach((slot, index) => slot.bind(index, this.handleTablePressed.bind(this)));
+    this.partStatusViews.forEach((view, index) => view.bind(PARTS[index]));
     this.partViews.forEach((view, index) => view.bind(PARTS[index], this.upgradePart.bind(this)));
     this.taskViews.forEach((view) => view.bind(this.claimTask.bind(this)));
   }
@@ -275,6 +280,7 @@ export class HachimiRestaurantGame extends Component {
     this.renderRestaurantBackground();
     this.renderHeader();
     this.renderGuide();
+    this.renderPartStatus();
     this.renderBusiness();
     this.renderUpgrade();
     this.renderTasks();
@@ -302,6 +308,13 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
     this.restaurantBackgroundSprite.spriteFrame = this.textures.getRestaurantBackground(this.profile.player.restaurantLevel);
+  }
+
+  private renderPartStatus(): void {
+    if (!this.profile || !this.textures) {
+      return;
+    }
+    this.partStatusViews.forEach((view) => view.render(this.profile!, this.textures!));
   }
 
   private renderBusiness(): void {

@@ -17,11 +17,13 @@
     "HachimiRestaurantGame",
     "TextureCatalog",
     "TableSlotView",
+    "PartStatusView",
     "PartUpgradeView",
     "TaskItemView"
   ],
   "minimumInstances": {
     "TableSlotView": 5,
+    "PartStatusView": 5,
     "PartUpgradeView": 5,
     "TaskItemView": 13
   },
