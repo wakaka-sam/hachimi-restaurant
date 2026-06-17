@@ -151,6 +151,7 @@ If verification commands are not available yet, state that directly in the `done
 Current verification commands:
 
 - Full repository verification: `npm run verify`.
+- Cocos API client transport and host resolution: `npm run verify:cocos-api`.
 - Cocos project metadata and scene contract: `npm run verify:cocos-project`.
 - Cocos pure business simulation: `npm run verify:cocos-simulation`.
 - Cocos/shared gameplay rule drift: `npm run verify:rules`.

@@ -44,6 +44,7 @@ Run from repo root:
 
 ```bash
 npm run verify:cocos-project
+npm run verify:cocos-api
 npm run verify:cocos-simulation
 npm run sync:cocos-textures
 npm run verify:cocos
@@ -107,4 +108,5 @@ client/cocos/scene-wiring.json
 
 `npm run verify:gameplay` checks that this manifest names the required Cocos components, screens, and PNG texture files.
 `npm run verify:cocos-project` checks that the Cocos project metadata, portrait design resolution, scene contract, and generated-directory ignore rules stay aligned.
+`npm run verify:cocos-api` executes the Cocos API client with a mocked `cc.sys` runtime and verifies Web same-origin calls, non-browser production host resolution, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` error handling.
 `npm run verify:cocos-simulation` executes the pure Cocos business simulation outside the editor and verifies the click service chain, 2x speed, waiting queue cap, 18-customer cap, and snapshot restore behavior.

@@ -265,6 +265,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `npm run verify:cocos-simulation` transpiles `client/cocos/assets/scripts/core/GameRules.ts` and `BusinessSimulation.ts` outside the editor.
   - The verifier executes the click service chain, 2x game-time scaling, waiting queue cap, 18-customer session cap, and local snapshot restore.
   - Full `npm run verify` now runs this Cocos simulation gate before gameplay coverage, typecheck, and backend tests.
+- Added executable Cocos API client verification:
+  - `npm run verify:cocos-api` runs the Cocos API service with a mocked `cc.sys` runtime.
+  - The verifier checks Web same-origin API calls, non-browser production host resolution, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` recovery fields.
+  - Full `npm run verify` and `npm run verify:cocos` now include the Cocos API client gate.
 
 ## Remaining Work
 
@@ -277,7 +281,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 47 Node tests, 156 gameplay coverage checks, executable Cocos simulation checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 158 gameplay coverage checks, executable Cocos API and simulation checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -321,6 +325,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Production `WEB_STATIC_ROOT` rejection when it points to the debug harness.
   - Cocos API host resolution for Web same-origin and non-browser mini-game targets.
   - Cocos API transport wrapper with `fetch` and `XMLHttpRequest` fallback.
+  - Cocos API client executable host resolution, player id persistence, transport, and `SESSION_NOT_READY` error fields.
   - Web first-run guide highlights.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos explicit service success, customer leaving, combo, and cashier success feedback copy.

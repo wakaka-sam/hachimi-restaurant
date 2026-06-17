@@ -35,6 +35,8 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `npm run verify:cocos-project` validates the Cocos project metadata before the editor is available: Cocos Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
 
+`npm run verify:cocos-api` executes the Cocos API client against a mocked `cc.sys` runtime. It verifies same-origin Web requests, `https://animalapi.wakaka007.cn` fallback for non-browser targets, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` recovery fields.
+
 `npm run verify:cocos-simulation` transpiles the pure Cocos gameplay rule/simulation files and executes the business loop outside the editor. It verifies the click service chain, 2x game-time scaling, waiting queue cap, 18-customer session cap, and local snapshot restore.
 
 ## Data Authority
@@ -69,6 +71,7 @@ For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` refer
 npm run generate:textures
 npm run sync:cocos-textures
 npm run verify:cocos-project
+npm run verify:cocos-api
 npm run verify:cocos-simulation
 npm run typecheck:cocos
 npm run verify
