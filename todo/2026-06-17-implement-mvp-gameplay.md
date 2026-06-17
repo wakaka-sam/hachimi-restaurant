@@ -144,6 +144,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Closed expired-session settlement:
   - Profile and session start now auto-settle expired active sessions at the minimum guaranteed reward.
   - Expired sessions no longer disappear from the active-session view without awarding their documented minimum settlement.
+  - Manual finish of an expired active session now accepts a valid completed summary and settles from that summary instead of always falling back to the minimum reward.
 - Added Cocos main-screen part status wiring:
   - `PartStatusView` renders the five part names and star states on the restaurant main screen.
   - `HachimiRestaurantGame` now binds and refreshes the main-screen part status views separately from the upgrade-card views.
@@ -218,7 +219,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 38 Node tests, 124 gameplay coverage checks, and static texture policy checks.
+- Current automated coverage: 39 Node tests, 126 gameplay coverage checks, and static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -234,6 +235,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend early-settlement rejection.
   - Backend rejection of non-90-second session summaries.
   - Backend auto-settlement for expired active sessions.
+  - Backend settlement of expired manual finishes with a valid completed summary.
   - Backend exposure of all guide, daily, and growth tasks.
   - Shared/Web/Cocos task type labels and grouping.
   - Cocos task section header wiring for guide, daily, and growth tasks.

@@ -31,6 +31,16 @@ const MIME_TYPES = {
   '.md': 'text/markdown; charset=utf-8'
 };
 
+const SESSION_SUMMARY_FIELDS = [
+  'customersServed',
+  'customersLost',
+  'averageSatisfaction',
+  'maxCombo',
+  'durationSeconds',
+  'customerTypes',
+  'clientVersion'
+];
+
 export function createApp({
   store,
   rootDir = process.cwd(),
@@ -307,11 +317,21 @@ async function finishSession(response, store, playerId, body, now) {
   }
 
   const expired = new Date(session.expiresAt).getTime() < now.getTime();
+  const submittedSummary = getSubmittedSessionSummary(body);
   let summary;
   if (expired) {
-    summary = createExpiredSummary(session, body);
+    if (submittedSummary) {
+      const validation = validateSessionSummary({ ...submittedSummary, speedMode: session.speedMode });
+      if (!validation.ok) {
+        sendError(response, 400, 'INVALID_SESSION_SUMMARY', validation.errors.join(', '));
+        return;
+      }
+      summary = validation.summary;
+    } else {
+      summary = createExpiredSummary(session, body);
+    }
   } else {
-    const validation = validateSessionSummary({ ...(body.summary || body), speedMode: session.speedMode });
+    const validation = validateSessionSummary({ ...(submittedSummary || body), speedMode: session.speedMode });
     if (!validation.ok) {
       sendError(response, 400, 'INVALID_SESSION_SUMMARY', validation.errors.join(', '));
       return;
@@ -345,6 +365,16 @@ async function finishSession(response, store, playerId, body, now) {
     settlement,
     profile: serializeProfile(player, store, now)
   });
+}
+
+function getSubmittedSessionSummary(body = {}) {
+  if (body.summary && typeof body.summary === 'object') {
+    return body.summary;
+  }
+  if (SESSION_SUMMARY_FIELDS.some((field) => Object.hasOwn(body, field))) {
+    return body;
+  }
+  return null;
 }
 
 async function settleExpiredSessions(store, player, now) {

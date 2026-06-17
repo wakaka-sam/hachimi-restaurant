@@ -34,6 +34,7 @@ addCheck('backend active session remaining time', 'server/src/app.mjs', ['serial
 addCheck('backend profile stamina recovery status', 'server/src/app.mjs', ['getStaminaRecovery', 'staminaRecovery']);
 addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_READY', 'getMinimumSettlementRealSeconds', 'minimumRealSeconds']);
 addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', ['settleExpiredSessions', 'getExpiredActiveSessions', 'createExpiredSummary']);
+addCheck('backend accepts valid expired completed summaries', 'server/test/api.test.mjs', ['expired completed session summary', 'rewardCoins, 130', 'customersServed, 12']);
 addCheck('backend rejects mismatched customer type totals', 'server/test/api.test.mjs', ['mismatched customer type totals', 'customer_type_count_mismatch']);
 addCheck('backend rejects non-90-second summaries', 'server/test/api.test.mjs', ['non-90-second duration', 'invalid_duration']);
 addCheck('backend rejects invalid summary numeric bounds', 'server/test/api.test.mjs', ['invalid numeric bounds', 'invalid_satisfaction']);
@@ -144,6 +145,7 @@ addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward
 addCheck('api documented customer type totals', 'docs/api.md', ['customer type totals', 'customersServed + customersLost', 'normal']);
 addCheck('api documented summary duration validation', 'docs/api.md', ['durationSeconds', '90 seconds of game time', 'anti-early-settlement']);
 addCheck('api documented summary numeric bounds', 'docs/api.md', ['non-negative integers', 'averageSatisfaction', 'maxCombo']);
+addCheck('api documented expired submitted summary settlement', 'docs/api.md', ['manually finishes an already expired active session', 'valid completed summary', 'minimum guaranteed fallback summary']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
 addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'validateCssTextureBackgrounds']);
 

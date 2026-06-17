@@ -117,7 +117,7 @@ task status
 active session, if any
 ```
 
-If the player has active sessions past their recovery window, the backend settles them before returning the profile. MVP expired settlement uses the minimum guaranteed reward.
+If the player has active sessions past their recovery window, the backend settles them before returning the profile. MVP expired settlement during profile loading uses the minimum guaranteed reward because there is no newly submitted completed summary.
 
 ### `POST /api/session/start`
 
@@ -164,6 +164,8 @@ Backend behavior:
 9. Update task progress.
 
 The backend must not trust a client-submitted final coin value.
+
+If a client manually finishes an already expired active session and submits a valid completed summary, the backend may settle using that summary and mark the session as `expired`. If no summary is submitted, profile/start cleanup uses the minimum guaranteed fallback summary.
 
 MVP customer count cap: submitted `customersServed + customersLost` must not exceed 18. The Cocos client should also stop natural spawning at the same cap so valid local play remains settleable.
 
