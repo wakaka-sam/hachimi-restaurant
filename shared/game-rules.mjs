@@ -417,11 +417,36 @@ export function normalizeCustomerTypes(customerTypes = {}, fallbackTotal = 0) {
 export function validateSessionSummary(summary = {}) {
   const normalized = normalizeSessionSummary(summary);
   const totalCustomers = normalized.customersServed + normalized.customersLost;
+  const submittedCustomersServed = Number(summary.customersServed ?? 0);
+  const submittedCustomersLost = Number(summary.customersLost ?? 0);
+  const submittedAverageSatisfaction = Number(summary.averageSatisfaction ?? 0);
+  const submittedMaxCombo = Number(summary.maxCombo ?? 0);
   const submittedDuration = Number(summary.durationSeconds ?? 0);
   const customerTypeTotal = Object.values(normalized.customerTypes)
     .reduce((sum, count) => sum + count, 0);
   const errors = [];
 
+  if (
+    !Number.isInteger(submittedCustomersServed)
+    || !Number.isInteger(submittedCustomersLost)
+    || submittedCustomersServed < 0
+    || submittedCustomersLost < 0
+  ) {
+    errors.push('invalid_customer_count');
+  }
+  if (
+    !Number.isFinite(submittedAverageSatisfaction)
+    || submittedAverageSatisfaction < 0
+    || submittedAverageSatisfaction > 1
+  ) {
+    errors.push('invalid_satisfaction');
+  }
+  if (!Number.isInteger(submittedMaxCombo) || submittedMaxCombo < 0) {
+    errors.push('invalid_combo');
+  }
+  if (hasInvalidCustomerTypeCount(summary.customerTypes)) {
+    errors.push('invalid_customer_type_count');
+  }
   if (totalCustomers > CONSTANTS.maxCustomersPerSession) {
     errors.push('too_many_customers');
   }
@@ -440,6 +465,19 @@ export function validateSessionSummary(summary = {}) {
     errors,
     summary: normalized
   };
+}
+
+function hasInvalidCustomerTypeCount(customerTypes = null) {
+  if (!customerTypes || typeof customerTypes !== 'object') {
+    return false;
+  }
+  return Object.entries(customerTypes).some(([type, count]) => {
+    if (!CUSTOMER_TYPES.includes(type)) {
+      return false;
+    }
+    const submittedCount = Number(count ?? 0);
+    return !Number.isInteger(submittedCount) || submittedCount < 0;
+  });
 }
 
 export function calculatePerformance(summary = {}) {

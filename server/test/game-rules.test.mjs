@@ -183,6 +183,23 @@ test('session summary validation requires the documented 90 second duration', ()
   assert.deepEqual(long.errors, ['invalid_duration']);
 });
 
+test('session summary validation rejects invalid numeric bounds', () => {
+  const invalid = validateSessionSummary({
+    customersServed: -1,
+    customersLost: 2.5,
+    averageSatisfaction: 1.2,
+    maxCombo: -3,
+    durationSeconds: CONSTANTS.sessionDurationSeconds,
+    customerTypes: { normal: -1 }
+  });
+
+  assert.equal(invalid.ok, false);
+  assert.ok(invalid.errors.includes('invalid_customer_count'));
+  assert.ok(invalid.errors.includes('invalid_satisfaction'));
+  assert.ok(invalid.errors.includes('invalid_combo'));
+  assert.ok(invalid.errors.includes('invalid_customer_type_count'));
+});
+
 test('performance reward is clamped between 75 and 130 percent', () => {
   const player = createDefaultPlayer('reward-test', new Date('2026-06-17T00:00:00.000Z'));
 

@@ -548,3 +548,32 @@ test('API rejects session summaries with non-90-second duration', async (t) => {
   assert.equal(finish.body.error.code, 'INVALID_SESSION_SUMMARY');
   assert.match(finish.body.error.message, /invalid_duration/);
 });
+
+test('API rejects session summaries with invalid numeric bounds', async (t) => {
+  const { app, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: {}
+  });
+  assert.equal(start.status, 200);
+
+  const finish = await request(baseUrl, '/api/session/finish', {
+    method: 'POST',
+    body: {
+      sessionId: start.body.session.sessionId,
+      summary: {
+        customersServed: 7,
+        customersLost: 2,
+        averageSatisfaction: 2,
+        maxCombo: 4,
+        durationSeconds: 90
+      }
+    }
+  });
+
+  assert.equal(finish.status, 400);
+  assert.equal(finish.body.error.code, 'INVALID_SESSION_SUMMARY');
+  assert.match(finish.body.error.message, /invalid_satisfaction/);
+});

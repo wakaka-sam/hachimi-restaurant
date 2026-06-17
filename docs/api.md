@@ -167,7 +167,9 @@ The backend must not trust a client-submitted final coin value.
 
 MVP customer count cap: submitted `customersServed + customersLost` must not exceed 18. The Cocos client should also stop natural spawning at the same cap so valid local play remains settleable.
 
-If `customerTypes` is submitted, the sum of all supported customer type counts must equal `customersServed + customersLost`. If it is omitted, the backend treats all customers as `normal` for MVP.
+`customersServed` and `customersLost` must be non-negative integers. `averageSatisfaction` must be a number from 0 to 1. `maxCombo` must be a non-negative integer and must not exceed `customersServed`.
+
+If `customerTypes` is submitted, each supported customer type count must be a non-negative integer, and the sum of all supported customer type counts must equal `customersServed + customersLost`. If it is omitted, the backend treats all customers as `normal` for MVP.
 
 `durationSeconds` must be the documented 90 seconds of game time. The backend validates this separately from the real-time anti-early-settlement gate.
 

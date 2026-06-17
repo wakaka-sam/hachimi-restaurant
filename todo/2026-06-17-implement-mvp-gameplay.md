@@ -201,6 +201,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added table-state countdown feedback:
   - Cocos and Web debug table labels now show remaining phase time or patience for seated, ready-food, eating, and ready-pay states.
   - Product docs now require table state countdowns so players can judge service and cashier priority.
+- Tightened backend session-summary numeric validation:
+  - `validateSessionSummary` now rejects negative or fractional customer counts before normalization.
+  - Backend validation rejects `averageSatisfaction` outside 0 to 1.
+  - Backend validation rejects negative or fractional `maxCombo`, plus invalid supported `customerTypes` counts.
+  - API docs now explicitly list these numeric bounds.
 
 ## Remaining Work
 
@@ -213,7 +218,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 32 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 38 Node tests, 124 gameplay coverage checks, and static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -223,6 +228,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared max-session customer cap validation.
   - Shared normal customer type reservation.
   - Backend validation that customer type totals match total served plus lost customers.
+  - Backend validation of session-summary numeric bounds for customer counts, satisfaction, combo, and supported customer type counts.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
   - Backend early-settlement rejection.
