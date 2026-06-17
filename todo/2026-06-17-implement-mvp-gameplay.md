@@ -124,6 +124,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Initial prep + eating flow is about 18 seconds, matching the documented 18 to 25 second single-customer flow.
   - Cocos and Web debug simulations both seed the initial customer wave from backend tuning.
   - Added rule tests for initial table capacity, initial customer count, spawn interval, flow length, and max session customer cap.
+- Added explicit Cocos screen navigation wiring:
+  - `HachimiRestaurantGame` now owns main, upgrade, task, result-to-main, and result-to-upgrade button properties.
+  - Navigation buttons are wired in `onLoad` and refresh screen state/guide messages when pressed.
+  - Scene wiring and static coverage require the navigation buttons so the four MVP screens remain reachable in the production Cocos client.
 
 ## Remaining Work
 
@@ -156,6 +160,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos restaurant visual stage wiring.
   - Cocos main-screen five-part star status wiring.
+  - Cocos MVP screen navigation wiring.
   - Web and Cocos locked table slot texture wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.

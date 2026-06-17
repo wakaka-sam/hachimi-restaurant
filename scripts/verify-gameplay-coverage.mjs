@@ -53,6 +53,7 @@ addCheck('web first-run guide highlights', 'client/web/main.js', ['getGuideStep'
 addCheck('web restaurant visual stages', 'client/web/main.js', ['restaurantBackgrounds', 'getRestaurantStageIndex', 'getRestaurantSceneAttrs', 'restaurant-bg-stage-3.png']);
 addCheck('web guide textured cue', 'client/web/styles.css', ['guide-cue', 'background-image: url("/textures/card.png")', 'guide-focus']);
 addCheck('cocos main controller', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['@ccclass', 'startBusiness', 'finishBusiness', 'upgradePart', 'upgradeRestaurant', 'claimTask']);
+addCheck('cocos screen navigation buttons', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton', 'renderNavigation']);
 addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideLabel', 'getGuideMessage', '开始营业', '完成上菜', '领取引导任务奖励']);
 addCheck('cocos in-session speed toggle', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['toggleSpeed', 'simulation.toggleSpeedMode', 'simulation.speedMode']);
 addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable = simulation.finished']);
@@ -70,6 +71,7 @@ addCheck('cocos api client endpoints', 'client/cocos/assets/scripts/services/Api
 addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/components/TextureCatalog.ts', ['SpriteFrame', 'restaurantBackground', 'restaurantBackgrounds', 'getRestaurantBackground', 'tableEmpty', 'tableLocked', 'cashier', 'animals', 'starIcon']);
 addCheck('cocos part status component', 'client/cocos/assets/scripts/components/PartStatusView.ts', ['@ccclass', 'PartStatusView', 'PART_LABELS', 'starSprites', 'starIcon']);
 addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView']);
+addCheck('cocos scene wiring manifest navigation buttons', 'client/cocos/scene-wiring.json', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
 addCheck('product documented locked table slots', 'docs/product.md', ['场景预留 5 个桌位', '未解锁桌位显示锁定贴图']);
@@ -161,6 +163,12 @@ for (const label of ['guideLabel', 'satisfactionLabel', 'feedbackLabel']) {
 
 if (!sceneWiring.sprites?.includes('restaurantBackgroundSprite')) {
   fail('Cocos scene wiring manifest missing restaurantBackgroundSprite');
+}
+
+for (const button of ['startButton', 'mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']) {
+  if (!sceneWiring.buttons?.includes(button)) {
+    fail(`Cocos scene wiring manifest missing ${button}`);
+  }
 }
 
 const cocosScriptFiles = await listFiles('client/cocos/assets/scripts');

@@ -75,6 +75,21 @@ export class HachimiRestaurantGame extends Component {
   startButton: Button | null = null;
 
   @property(Button)
+  mainNavButton: Button | null = null;
+
+  @property(Button)
+  upgradeNavButton: Button | null = null;
+
+  @property(Button)
+  taskNavButton: Button | null = null;
+
+  @property(Button)
+  resultMainButton: Button | null = null;
+
+  @property(Button)
+  resultUpgradeButton: Button | null = null;
+
+  @property(Button)
   speedButton: Button | null = null;
 
   @property(Button)
@@ -119,6 +134,11 @@ export class HachimiRestaurantGame extends Component {
   onLoad(): void {
     this.api = new ApiClient(this.apiBaseUrl);
     this.startButton?.node.on(Button.EventType.CLICK, this.startBusiness, this);
+    this.mainNavButton?.node.on(Button.EventType.CLICK, this.showMain, this);
+    this.upgradeNavButton?.node.on(Button.EventType.CLICK, this.showUpgrade, this);
+    this.taskNavButton?.node.on(Button.EventType.CLICK, this.showTasks, this);
+    this.resultMainButton?.node.on(Button.EventType.CLICK, this.showMain, this);
+    this.resultUpgradeButton?.node.on(Button.EventType.CLICK, this.showUpgrade, this);
     this.speedButton?.node.on(Button.EventType.CLICK, this.toggleSpeed, this);
     this.cashierButton?.node.on(Button.EventType.CLICK, this.collectFirstReadyPay, this);
     this.finishButton?.node.on(Button.EventType.CLICK, this.finishBusiness, this);
@@ -146,14 +166,17 @@ export class HachimiRestaurantGame extends Component {
 
   showMain(): void {
     this.setScreen('main');
+    this.renderAll();
   }
 
   showUpgrade(): void {
     this.setScreen('upgrade');
+    this.renderAll();
   }
 
   showTasks(): void {
     this.setScreen('tasks');
+    this.renderAll();
   }
 
   private async loadProfile(): Promise<void> {
@@ -279,6 +302,7 @@ export class HachimiRestaurantGame extends Component {
   private renderAll(): void {
     this.renderRestaurantBackground();
     this.renderHeader();
+    this.renderNavigation();
     this.renderGuide();
     this.renderPartStatus();
     this.renderBusiness();
@@ -300,6 +324,19 @@ export class HachimiRestaurantGame extends Component {
       this.startButton.interactable = Boolean(
         this.profile.activeSession || this.profile.player.stamina >= CONSTANTS.sessionStaminaCost
       );
+    }
+  }
+
+  private renderNavigation(): void {
+    const lockedDuringBusiness = this.activeScreen === 'business';
+    if (this.mainNavButton) {
+      this.mainNavButton.interactable = !lockedDuringBusiness && this.activeScreen !== 'main';
+    }
+    if (this.upgradeNavButton) {
+      this.upgradeNavButton.interactable = !lockedDuringBusiness && this.activeScreen !== 'upgrade';
+    }
+    if (this.taskNavButton) {
+      this.taskNavButton.interactable = !lockedDuringBusiness && this.activeScreen !== 'tasks';
     }
   }
 

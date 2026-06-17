@@ -55,6 +55,14 @@ Create a portrait scene in Cocos Creator and attach:
 
 The scene should provide 5 table slot nodes. `TableSlotView` renders slots above the current `tableCapacity` with the locked table texture and disables touch input until the player's table capacity grows.
 
+Wire the navigation buttons to the controller properties instead of relying only on manually configured inspector callbacks:
+
+- `mainNavButton`
+- `upgradeNavButton`
+- `taskNavButton`
+- `resultMainButton`
+- `resultUpgradeButton`
+
 Then wire the serialized properties in the inspector.
 
 The expected scene contract is recorded in:

@@ -89,6 +89,11 @@
   ],
   "buttons": [
     "startButton",
+    "mainNavButton",
+    "upgradeNavButton",
+    "taskNavButton",
+    "resultMainButton",
+    "resultUpgradeButton",
     "speedButton",
     "cashierButton",
     "finishButton",
