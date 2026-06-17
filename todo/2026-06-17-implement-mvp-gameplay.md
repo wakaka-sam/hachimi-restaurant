@@ -56,10 +56,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Restaurant upgrade without income regression.
   - Guide task claims.
   - Double settlement prevention.
+  - Active session resume without double stamina charge.
+  - Insufficient stamina rejection.
+  - Expired session minimum settlement.
   - Static Web prototype and PNG texture serving.
   - Runtime client policy forbidding canvas/SVG art drawing.
 - Added `npm run verify:textures` to enforce the texture asset policy.
 - Added `npm run sync:cocos-textures` and `npm run verify:cocos`.
+- Added `npm run verify:gameplay` to check required endpoints, screens, Cocos components, and texture assets.
 
 ## Remaining Work
 
@@ -67,3 +71,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Wire the scene nodes to `HachimiRestaurantGame`, `TextureCatalog`, `TableSlotView`, `PartUpgradeView`, and `TaskItemView`.
 - Assign synced PNG files as `SpriteFrame` texture references in the editor.
 - Verify the Cocos build targets for Web first, then WeChat Mini Game and Douyin Mini Game.
+
+## Latest Verification
+
+- `npm run verify` passes.
+- Current automated coverage: 14 Node tests plus static texture and gameplay coverage checks.
+- Static gameplay coverage verifies:
+  - Backend MVP endpoints.
+  - Shared economy, stamina, and performance formulas.
+  - Web core screens and service chain.
+  - Cocos controller, simulation, API client, texture catalog, and view components.
+  - Required PNG texture presence in both Web and Cocos asset trees.

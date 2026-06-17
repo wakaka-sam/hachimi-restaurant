@@ -201,6 +201,78 @@ test('API prevents double settlement of a business session', async (t) => {
   assert.equal(secondFinish.body.error.code, 'SESSION_ALREADY_FINISHED');
 });
 
+test('API resumes an active business session instead of charging stamina again', async (t) => {
+  const { app, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const firstStart = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: { speedMode: '1x' }
+  });
+  assert.equal(firstStart.status, 200);
+  assert.equal(firstStart.body.profile.player.stamina, 50);
+
+  const secondStart = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: { speedMode: '2x' }
+  });
+  assert.equal(secondStart.status, 200);
+  assert.equal(secondStart.body.resumed, true);
+  assert.equal(secondStart.body.session.sessionId, firstStart.body.session.sessionId);
+  assert.equal(secondStart.body.profile.player.stamina, 50);
+  assert.equal(secondStart.body.session.speedMode, '1x');
+});
+
+test('API rejects session start when stamina is below 10', async (t) => {
+  const { app, store, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const player = store.getPlayer('api-test-player');
+  player.stamina = 9;
+  player.staminaUpdatedAt = new Date().toISOString();
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: {}
+  });
+
+  assert.equal(start.status, 400);
+  assert.equal(start.body.error.code, 'INSUFFICIENT_STAMINA');
+});
+
+test('API settles an expired session with minimum guaranteed reward', async (t) => {
+  const { app, store, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: {}
+  });
+  assert.equal(start.status, 200);
+
+  const session = store.getSession(start.body.session.sessionId);
+  session.expiresAt = '2000-01-01T00:00:00.000Z';
+
+  const finish = await request(baseUrl, '/api/session/finish', {
+    method: 'POST',
+    body: {
+      sessionId: session.sessionId,
+      summary: {
+        customersServed: 12,
+        customersLost: 0,
+        averageSatisfaction: 1,
+        maxCombo: 12,
+        durationSeconds: 90
+      }
+    }
+  });
+
+  assert.equal(finish.status, 200);
+  assert.equal(finish.body.session.status, 'expired');
+  assert.equal(finish.body.settlement.rewardCoins, 75);
+  assert.equal(finish.body.profile.player.coins, 75);
+});
+
 test('API rejects trusted client coin rewards and invalid session summaries', async (t) => {
   const { app, baseUrl } = await startTestServer();
   t.after(() => app.close());
