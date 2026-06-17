@@ -61,6 +61,9 @@ export class HachimiRestaurantGame extends Component {
   @property(Label)
   resultLabel: Label | null = null;
 
+  @property(Label)
+  guideLabel: Label | null = null;
+
   @property(Button)
   startButton: Button | null = null;
 
@@ -251,6 +254,7 @@ export class HachimiRestaurantGame extends Component {
 
   private renderAll(): void {
     this.renderHeader();
+    this.renderGuide();
     this.renderBusiness();
     this.renderUpgrade();
     this.renderTasks();
@@ -339,6 +343,56 @@ export class HachimiRestaurantGame extends Component {
     if (this.messageLabel) {
       this.messageLabel.string = message;
     }
+  }
+
+  private renderGuide(): void {
+    if (!this.guideLabel) {
+      return;
+    }
+    this.guideLabel.string = this.getGuideMessage();
+    this.guideLabel.node.active = this.guideLabel.string.length > 0;
+  }
+
+  private getGuideMessage(): string {
+    if (!this.profile) {
+      return '';
+    }
+    const stats = this.profile.player.stats || {};
+
+    if (stats.totalSessions === 0 && this.activeScreen === 'main') {
+      return '先开始营业，服务小动物赚第一笔金币。';
+    }
+
+    if (stats.totalSessions === 0 && this.activeScreen === 'business' && this.simulation) {
+      if (this.simulation.waiting.length > 0 && this.simulation.tables.some((table) => !table.customer)) {
+        return '点击空餐桌，让等待的小动物入座。';
+      }
+      if (this.simulation.tables.some((table) => table.customer?.phase === 'readyFood')) {
+        return '顾客准备好了，点击餐桌完成上菜。';
+      }
+      if (this.simulation.tables.some((table) => table.customer?.phase === 'readyPay')) {
+        return '顾客用餐结束，点击餐桌或收银机收钱。';
+      }
+      return '等待小动物进店，留意餐桌状态。';
+    }
+
+    if (stats.totalSessions > 0 && stats.totalPartUpgrades === 0) {
+      return this.activeScreen === 'upgrade'
+        ? '自由选择任意部件升级，下一次期望收入 +8%。'
+        : '营业结束后去升级任意一个餐厅部件。';
+    }
+
+    if (stats.totalPartUpgrades > 0 && stats.totalTasksClaimed === 0) {
+      const claimable = this.profile.tasks?.some((task) => task.completed && !task.claimed);
+      if (!claimable) {
+        return '';
+      }
+      return this.activeScreen === 'tasks'
+        ? '领取引导任务奖励，补充金币或体力。'
+        : '已有任务完成，去任务页领取奖励。';
+    }
+
+    return '';
   }
 
   private formatError(error: unknown): string {

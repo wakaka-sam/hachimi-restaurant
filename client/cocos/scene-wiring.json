@@ -69,7 +69,8 @@
     "timerLabel",
     "speedLabel",
     "businessStatsLabel",
-    "resultLabel"
+    "resultLabel",
+    "guideLabel"
   ],
   "buttons": [
     "startButton",

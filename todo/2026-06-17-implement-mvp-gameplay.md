@@ -66,6 +66,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added `npm run verify:gameplay` to check required endpoints, screens, Cocos components, and texture assets.
 - Added `npm run typecheck:cocos` using TypeScript and `@cocos/creator-types`.
 - Added `client/cocos/scene-wiring.json` to define the expected Cocos scene nodes, components, texture assignments, labels, and buttons.
+- Implemented first-run guide highlights in the Web prototype for:
+  - Start business.
+  - Seat customer.
+  - Serve food.
+  - Collect payment.
+  - Upgrade a part.
+  - Claim guide task reward.
+- Added matching guide label/message support to the Cocos controller and scene wiring contract.
 
 ## Remaining Work
 
@@ -82,6 +90,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
   - Web core screens and service chain.
+  - Web first-run guide highlights.
   - Cocos controller, simulation, API client, texture catalog, and view components.
+  - Cocos guide label wiring.
   - Required PNG texture presence in both Web and Cocos asset trees.
 - Cocos TypeScript source compiles under `client/cocos/tsconfig.json`.

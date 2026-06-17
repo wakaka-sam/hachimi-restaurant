@@ -127,8 +127,13 @@ function render() {
     app.append(h('div', { class: 'message-pill' }, state.message));
   }
 
+  const guide = getGuideStep();
+  if (guide && state.screen !== 'business') {
+    app.append(h('div', { class: 'guide-cue' }, guide.message));
+  }
+
   if (state.screen !== 'business') {
-    app.append(renderNavigation());
+    app.append(renderNavigation(guide));
   }
 
   if (state.screen === 'main') {
@@ -159,11 +164,15 @@ function renderTopBar() {
   );
 }
 
-function renderNavigation() {
+function renderNavigation(guide = null) {
   return h('nav', { class: 'nav-row' },
     textureButton('餐厅', () => setScreen('main'), { className: 'compact' }),
-    textureButton('升级', () => setScreen('upgrade'), { className: 'compact' }),
-    textureButton('任务', () => setScreen('tasks'), { className: 'compact' })
+    textureButton('升级', () => setScreen('upgrade'), {
+      className: `compact ${guide?.target === 'upgradeNav' ? 'guide-focus' : ''}`
+    }),
+    textureButton('任务', () => setScreen('tasks'), {
+      className: `compact ${guide?.target === 'taskNav' ? 'guide-focus' : ''}`
+    })
   );
 }
 
@@ -176,6 +185,7 @@ function setScreen(screen) {
 
 function renderMainScene() {
   const { player, activeSession } = state.profile;
+  const guide = getGuideStep();
   return h('section', { class: 'scene restaurant-scene' },
     h('div', { class: 'status-grid' }, PARTS.map((part) => h('div', { class: 'part-chip' },
       h('div', {}, PART_LABELS[part]),
@@ -188,7 +198,7 @@ function renderMainScene() {
           render();
         }, { className: 'compact' }),
         textureButton(activeSession ? '继续营业' : '开始营业', startBusiness, {
-          className: 'primary',
+          className: `primary ${guide?.target === 'startBusiness' ? 'guide-focus' : ''}`,
           disabled: player.stamina < CONSTANTS.sessionStaminaCost && !activeSession
         })
       ),
@@ -350,12 +360,14 @@ function renderBusinessScreen() {
     return h('section', { class: 'panel empty-state' }, '营业未开始');
   }
 
+  const guide = getGuideStep();
   return h('section', { class: 'scene business-scene' },
     h('div', { class: 'business-hud' },
       h('span', { class: 'timer-pill' }, `剩余 ${Math.ceil(game.timeLeft)}s`),
       h('span', { class: 'timer-pill' }, game.session.speedMode),
       textureButton('结束结算', finishBusiness, { className: 'compact' })
     ),
+    guide ? h('div', { class: 'guide-cue business-guide' }, guide.message) : null,
     h('div', { class: 'table-zone' }, game.tables.map((customer, index) => renderTable(customer, index))),
     h('div', { class: 'waiting-row' }, game.waiting.map((customer) => h('div', { class: 'waiting-customer' },
       h('img', { src: customer.animal, alt: '等待中的小动物' }),
@@ -376,7 +388,11 @@ function renderBusinessScreen() {
 function renderTable(customer, index) {
   const texture = customer ? textures.table[customer.phase] : textures.table.empty;
   const label = getTableLabel(customer);
-  return h('button', { class: 'table-slot', onclick: () => handleTableClick(index) },
+  const guide = getGuideStep();
+  const isGuideTarget = guide?.target === 'seatCustomer' && !customer && state.game.waiting.length > 0
+    || guide?.target === 'serveFood' && customer?.phase === 'readyFood'
+    || guide?.target === 'collectPay' && customer?.phase === 'readyPay';
+  return h('button', { class: `table-slot ${isGuideTarget ? 'guide-focus' : ''}`, onclick: () => handleTableClick(index) },
     customer ? h('img', { class: 'customer-on-table', src: customer.animal, alt: '用餐小动物' }) : null,
     h('img', { class: 'table-texture', src: texture, alt: label }),
     h('span', { class: 'table-label' }, label)
@@ -515,11 +531,13 @@ function renderResultScreen() {
 
 function renderUpgradeScreen() {
   const { player, economy, allPartsMaxed } = state.profile;
+  const guide = getGuideStep();
   return h('section', { class: 'panel' },
     h('div', { class: 'title-row' },
       h('h2', {}, '餐厅升级'),
       h('span', { class: 'level-pill' }, `统一成本 ${economy.upgradeCost}`)
     ),
+    guide ? h('div', { class: 'guide-cue' }, guide.message) : null,
     h('div', { class: 'upgrade-list' }, PARTS.map((part) => renderPartCard(part))),
     h('div', { class: 'part-card' },
       h('div', { class: 'part-card-header' },
@@ -538,6 +556,7 @@ function renderUpgradeScreen() {
 
 function renderPartCard(part) {
   const { player, economy } = state.profile;
+  const guide = getGuideStep();
   const star = player.parts[part];
   const disabled = star >= CONSTANTS.starsPerPart || player.coins < economy.upgradeCost;
   const shortage = Math.max(0, economy.upgradeCost - player.coins);
@@ -546,7 +565,7 @@ function renderPartCard(part) {
       h('h3', { class: 'part-card-title' }, PART_LABELS[part]),
       textureButton(star >= CONSTANTS.starsPerPart ? '满星' : '升级', () => upgradePart(part), {
         disabled,
-        className: 'compact'
+        className: `compact ${guide?.target === 'upgradePart' && !disabled ? 'guide-focus' : ''}`
       })
     ),
     renderStars(star),
@@ -584,22 +603,25 @@ async function upgradeRestaurant() {
 
 function renderTaskScreen() {
   const tasks = state.profile.tasks;
+  const guide = getGuideStep();
   return h('section', { class: 'panel' },
     h('div', { class: 'title-row' },
       h('h2', {}, '任务'),
       h('span', { class: 'level-pill' }, '辅助奖励')
     ),
+    guide ? h('div', { class: 'guide-cue' }, guide.message) : null,
     h('div', { class: 'task-list' }, tasks.map(renderTaskCard))
   );
 }
 
 function renderTaskCard(task) {
+  const guide = getGuideStep();
   return h('article', { class: 'task-card' },
     h('div', { class: 'task-header' },
       h('h3', { class: 'task-title' }, task.title),
       textureButton(task.claimed ? '已领取' : '领取', () => claimTask(task.id), {
         disabled: !task.completed || task.claimed,
-        className: 'compact'
+        className: `compact ${guide?.target === 'claimTask' && task.completed && !task.claimed ? 'guide-focus' : ''}`
       })
     ),
     h('p', { class: 'effect-text' }, task.description),
@@ -621,4 +643,53 @@ async function claimTask(taskId) {
     state.message = error.message;
     render();
   }
+}
+
+function getGuideStep() {
+  const profile = state.profile;
+  if (!profile) {
+    return null;
+  }
+  const stats = profile.player.stats || {};
+
+  if (stats.totalSessions === 0 && state.screen === 'main') {
+    return {
+      target: 'startBusiness',
+      message: '先开始营业，服务小动物赚第一笔金币。'
+    };
+  }
+
+  if (stats.totalSessions === 0 && state.screen === 'business' && state.game) {
+    const game = state.game;
+    if (game.waiting.length > 0 && game.tables.some((customer) => !customer)) {
+      return { target: 'seatCustomer', message: '点击空餐桌，让等待的小动物入座。' };
+    }
+    if (game.tables.some((customer) => customer?.phase === 'readyFood')) {
+      return { target: 'serveFood', message: '顾客准备好了，点击餐桌完成上菜。' };
+    }
+    if (game.tables.some((customer) => customer?.phase === 'readyPay')) {
+      return { target: 'collectPay', message: '顾客用餐结束，点击餐桌或收银机收钱。' };
+    }
+    return { target: 'waitCustomer', message: '等待小动物进店，留意餐桌状态。' };
+  }
+
+  if (stats.totalSessions > 0 && stats.totalPartUpgrades === 0) {
+    if (state.screen === 'upgrade') {
+      return { target: 'upgradePart', message: '自由选择任意部件升级，下一次期望收入 +8%。' };
+    }
+    return { target: 'upgradeNav', message: '营业结束后去升级任意一个餐厅部件。' };
+  }
+
+  if (stats.totalPartUpgrades > 0 && stats.totalTasksClaimed === 0) {
+    const claimable = profile.tasks?.some((task) => task.completed && !task.claimed);
+    if (!claimable) {
+      return null;
+    }
+    if (state.screen === 'tasks') {
+      return { target: 'claimTask', message: '领取引导任务奖励，补充金币或体力。' };
+    }
+    return { target: 'taskNav', message: '已有任务完成，去任务页领取奖励。' };
+  }
+
+  return null;
 }
