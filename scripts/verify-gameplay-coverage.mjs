@@ -47,11 +47,13 @@ addCheck('server production Cocos Web root guard', 'server/src/config.mjs', ['NO
 addCheck('server production root guard test', 'server/test/static-client.test.mjs', ['production server config requires a Cocos Web static root', 'WEB_STATIC_ROOT must point to Cocos Web build output', "WEB_STATIC_ROOT: 'client/web'", "WEB_STATIC_ROOT: './client/web/build'"]);
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
 addCheck('cocos shared rules verifier', 'scripts/verify-cocos-shared-rules.mjs', ['createSourceFile', 'CLIENT_CONSTANT_KEYS', 'PART_LABELS', 'TASK_TYPE_LABELS']);
-addCheck('cocos shared rules verification command', 'package.json', ['verify:rules', 'verify:cocos-project', 'verify:cocos-api', 'verify:cocos-simulation', 'verify:textures && npm run verify:cocos-project && npm run verify:rules && npm run verify:cocos-api && npm run verify:cocos-simulation']);
+addCheck('cocos shared rules verification command', 'package.json', ['verify:rules', 'verify:cocos-project', 'verify:cocos-api', 'verify:cocos-simulation', 'verify:cocos-components', 'verify:textures && npm run verify:cocos-project && npm run verify:rules && npm run verify:cocos-api && npm run verify:cocos-simulation && npm run verify:cocos-components']);
 addCheck('cocos api client verifier', 'scripts/verify-cocos-api-client.mjs', ['ApiClient', 'ApiRequestError', 'PRODUCTION_API_BASE_URL', 'XMLHttpRequest', 'SESSION_NOT_READY']);
 addCheck('cocos api client verification command', 'package.json', ['verify:cocos-api', 'verify:rules && npm run verify:cocos-api && npm run verify:cocos-simulation']);
 addCheck('cocos simulation verifier', 'scripts/verify-cocos-simulation.mjs', ['BusinessSimulation', 'handleTablePressed', 'collectFirstReadyPay', 'maxWaitingCustomers', 'maxCustomersPerSession', 'fromSnapshot']);
-addCheck('cocos simulation verification command', 'package.json', ['verify:cocos-simulation', 'verify:cocos-api && npm run verify:cocos-simulation && npm run verify:gameplay']);
+addCheck('cocos simulation verification command', 'package.json', ['verify:cocos-simulation', 'verify:cocos-api && npm run verify:cocos-simulation && npm run verify:cocos-components']);
+addCheck('cocos component verifier', 'scripts/verify-cocos-components.mjs', ['TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView', 'TexturedPanelView', 'MobileSafeAreaView']);
+addCheck('cocos component verification command', 'package.json', ['verify:cocos-components', 'verify:cocos-components && npm run verify:gameplay']);
 addCheck('architecture documents Cocos rule mirror', 'docs/architecture.md', ['verify:rules', 'client/cocos/assets/scripts/core/GameRules.ts', 'shared/game-rules.mjs']);
 addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60', 'sessionStaminaCost: 10', 'sessionDurationSeconds: 90']);
 addCheck('shared stamina recovery status', 'shared/game-rules.mjs', ['getStaminaRecovery', 'secondsUntilNext', 'secondsUntilFull', 'nextRecoveryAt']);

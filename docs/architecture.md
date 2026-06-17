@@ -39,6 +39,8 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `npm run verify:cocos-simulation` transpiles the pure Cocos gameplay rule/simulation files and executes the business loop outside the editor. It verifies the click service chain, 2x game-time scaling, waiting queue cap, 18-customer session cap, and local snapshot restore.
 
+`npm run verify:cocos-components` executes the texture-backed Cocos UI components outside the editor. It verifies table-state textures and labels, filled/empty star frames, upgrade-card cost and max states, task row claim states, textured button/panel frame switching, and mobile safe-area layout setup.
+
 ## Data Authority
 
 The backend is authoritative for:
@@ -73,6 +75,7 @@ npm run sync:cocos-textures
 npm run verify:cocos-project
 npm run verify:cocos-api
 npm run verify:cocos-simulation
+npm run verify:cocos-components
 npm run typecheck:cocos
 npm run verify
 npm test

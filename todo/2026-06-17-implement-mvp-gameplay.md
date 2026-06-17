@@ -269,6 +269,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `npm run verify:cocos-api` runs the Cocos API service with a mocked `cc.sys` runtime.
   - The verifier checks Web same-origin API calls, non-browser production host resolution, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` recovery fields.
   - Full `npm run verify` and `npm run verify:cocos` now include the Cocos API client gate.
+- Added executable Cocos UI component verification:
+  - `npm run verify:cocos-components` runs texture-backed Cocos UI components with a mocked `cc` runtime.
+  - The verifier checks table textures and countdown labels, filled/empty stars, upgrade-card costs and max states, task row claim states, textured button/panel frame switching, and mobile safe-area setup.
+  - Full `npm run verify` and `npm run verify:cocos` now include the Cocos component gate.
 
 ## Remaining Work
 
@@ -281,7 +285,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 47 Node tests, 158 gameplay coverage checks, executable Cocos API and simulation checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 160 gameplay coverage checks, executable Cocos API, simulation, and UI component checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -340,6 +344,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Production Web static root guard that prevents the debug harness from being used in production.
   - Cocos texture-backed panel/card surface wiring.
   - Cocos mobile safe-area component and scene wiring contract.
+  - Cocos texture-backed UI components render table states, upgrade states, task states, buttons, panels, and safe areas through executable checks.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
