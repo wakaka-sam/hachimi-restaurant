@@ -19,6 +19,7 @@ The repository also includes a Cocos Creator 3.x source skeleton under `client/c
 - Task rows.
 - Main game coordination.
 - Texture catalog wiring.
+- Texture-backed first-run guide focus routing.
 
 ## Asset Policy
 
@@ -36,3 +37,5 @@ Once Cocos Creator is available, open the formal Cocos project and wire the scen
 - Mobile layout requirements from `docs/product.md` and `AGENTS.md`.
 
 The Cocos source skeleton already implements these behaviors under `client/cocos/assets/scripts/`; the remaining editor work is to wire scene nodes, assign `SpriteFrame` texture properties, and build Web, WeChat Mini Game, and Douyin Mini Game from the same project.
+
+The first-run guide focus surfaces are also part of the Cocos scene contract. Wire `guideFocusNodes` and `guideFocusPanels` in the order documented in `client/cocos/README.md`.

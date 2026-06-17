@@ -30,7 +30,7 @@
     "PartUpgradeView": 5,
     "TaskItemView": 13,
     "TexturedButtonView": 28,
-    "TexturedPanelView": 27,
+    "TexturedPanelView": 35,
     "MobileSafeAreaView": 5
   },
   "texturedPanelRoles": {
@@ -40,7 +40,8 @@
     "mainPartStatusPanels": 5,
     "partUpgradeCards": 5,
     "taskRows": 13,
-    "resultPanel": 1
+    "resultPanel": 1,
+    "guideFocusPanels": 8
   },
   "safeArea": {
     "component": "MobileSafeAreaView",
@@ -70,7 +71,9 @@
       "growthTaskHeaderLabel",
       "startButtonLabel",
       "waitingCustomerLabels",
-      "texturedPanels"
+      "texturedPanels",
+      "guideFocusNodes",
+      "guideFocusPanels"
     ],
     "TexturedPanelView": [
       "backgroundSprite",
@@ -104,6 +107,21 @@
       "guideTaskHeaderLabel",
       "dailyTaskHeaderLabel",
       "growthTaskHeaderLabel"
+    ]
+  },
+  "guideFocus": {
+    "nodeArray": "guideFocusNodes",
+    "panelArray": "guideFocusPanels",
+    "panelTexture": "card",
+    "keys": [
+      "startBusiness",
+      "upgradeNav",
+      "taskNav",
+      "seatCustomer",
+      "serveFood",
+      "collectPay",
+      "upgradePart",
+      "claimTask"
     ]
   },
   "textureCatalog": [
@@ -203,6 +221,16 @@
       "textureSurfaces": [
         "topBarPanel",
         "messagePanel"
+      ],
+      "guideFocusKeys": [
+        "startBusiness",
+        "upgradeNav",
+        "taskNav",
+        "seatCustomer",
+        "serveFood",
+        "collectPay",
+        "upgradePart",
+        "claimTask"
       ]
     },
     "screens": {
@@ -223,10 +251,11 @@
         "componentInstances": {
           "PartStatusView": 5,
           "TexturedButtonView": 3,
-          "TexturedPanelView": 7
+          "TexturedPanelView": 10
         },
         "textureSurfaces": [
-          "mainPartStatusPanels"
+          "mainPartStatusPanels",
+          "guideFocusPanels"
         ]
       },
       "businessScreen": {
@@ -252,7 +281,7 @@
         "componentInstances": {
           "TableSlotView": 5,
           "TexturedButtonView": 3,
-          "TexturedPanelView": 1
+          "TexturedPanelView": 4
         },
         "minimumSpriteArrayLengths": {
           "waitingCustomerSprites": 4
@@ -261,7 +290,8 @@
           "waitingCustomerLabels": 4
         },
         "textureSurfaces": [
-          "businessHudPanel"
+          "businessHudPanel",
+          "guideFocusPanels"
         ]
       },
       "upgradeScreen": {
@@ -278,10 +308,11 @@
         "componentInstances": {
           "PartUpgradeView": 5,
           "TexturedButtonView": 6,
-          "TexturedPanelView": 5
+          "TexturedPanelView": 6
         },
         "textureSurfaces": [
-          "partUpgradeCards"
+          "partUpgradeCards",
+          "guideFocusPanels"
         ]
       },
       "taskScreen": {
@@ -289,7 +320,8 @@
         "labels": [
           "guideTaskHeaderLabel",
           "dailyTaskHeaderLabel",
-          "growthTaskHeaderLabel"
+          "growthTaskHeaderLabel",
+          "guideLabel"
         ],
         "buttons": [
           "mainNavButton",
@@ -299,10 +331,11 @@
         "componentInstances": {
           "TaskItemView": 13,
           "TexturedButtonView": 15,
-          "TexturedPanelView": 13
+          "TexturedPanelView": 14
         },
         "textureSurfaces": [
-          "taskRows"
+          "taskRows",
+          "guideFocusPanels"
         ]
       },
       "resultScreen": {

@@ -76,6 +76,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Upgrade a part.
   - Claim guide task reward.
 - Added matching guide label/message support to the Cocos controller and scene wiring contract.
+- Implemented texture-backed first-run guide focus routing in the Cocos controller:
+  - `HachimiRestaurantGame` now derives a `getGuideStep()` key and message for start business, upgrade navigation, task navigation, seating, serving, payment, part upgrade, and task claim.
+  - `guideFocusNodes` and `guideFocusPanels` are toggled in a fixed order so the Cocos scene can bind guide highlights without runtime drawing.
+  - `verify:cocos-controller` now checks guide focus transitions across profile load, business start, settlement, upgrade navigation, upgrade, task navigation, and task claim.
 - Recorded that the production Web client must be a Cocos Web build output, sharing the same codebase as WeChat Mini Game and Douyin Mini Game.
 - Added `WEB_STATIC_ROOT` support so production deployment can serve Cocos Web build output instead of the debug harness.
 - Added a production server guard so `NODE_ENV=production` refuses to start unless `WEB_STATIC_ROOT` points to Cocos Web build output.
@@ -181,7 +185,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Added texture-backed Cocos panel contract:
   - `TexturedPanelView` applies `panel.png` or `card.png` to panel/card background sprites.
   - `HachimiRestaurantGame` refreshes all `texturedPanels` from the shared `TextureCatalog`.
-  - Scene wiring now requires at least 27 `TexturedPanelView` instances for top-level panels, part cards, task rows, and result panel surfaces.
+  - Scene wiring now requires at least 35 `TexturedPanelView` instances for top-level panels, part cards, task rows, result panel surfaces, and guide focus panels.
 - Added Cocos mobile safe-area contract:
   - `MobileSafeAreaView` applies Cocos `SafeArea` and `Widget` layout to screen interaction roots.
   - Scene wiring now requires one safe-area root for each of the five MVP screens.
@@ -276,7 +280,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Full `npm run verify` and `npm run verify:cocos` now include the Cocos component gate.
 - Added executable Cocos main controller verification:
   - `npm run verify:cocos-controller` runs `HachimiRestaurantGame` with a mocked Cocos runtime and backend API.
-  - The verifier checks profile rendering, business start, 2x speed switching, successful settlement, `SESSION_NOT_READY` recovery, part/restaurant upgrades, task claims, and completed-session snapshot recovery on startup.
+  - The verifier checks profile rendering, first-run guide focus routing, business start, 2x speed switching, successful settlement, `SESSION_NOT_READY` recovery, part/restaurant upgrades, task claims, and completed-session snapshot recovery on startup.
   - Full `npm run verify` and `npm run verify:cocos` now include the Cocos controller gate.
 
 ## Remaining Work
@@ -290,7 +294,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 47 Node tests, 164 gameplay coverage checks, executable Cocos API, simulation, UI component, and main-controller checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
+- Current automated coverage: 47 Node tests, 166 gameplay coverage checks, executable Cocos API, simulation, UI component, and main-controller checks, Cocos project metadata checks, Cocos/shared rule drift checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Backend health endpoint and deployment environment documentation.
@@ -320,7 +324,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared/Web/Cocos task type labels and grouping.
   - Cocos task section header wiring for guide, daily, and growth tasks.
   - Cocos scene wiring manifest properties matching TypeScript source declarations.
-  - Cocos per-screen scene blueprint for safe areas, labels, buttons, sprites, component instances, and texture surfaces.
+  - Cocos per-screen scene blueprint for safe areas, labels, buttons, sprites, component instances, guide focus panels, and texture surfaces.
   - Shared task reward field and daily reward budget constraints.
   - Shared overall task coin reward budget constraints.
   - API response envelope documentation for success, error, and `SESSION_NOT_READY` responses.
@@ -336,7 +340,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos API host resolution for Web same-origin and non-browser mini-game targets.
   - Cocos API transport wrapper with `fetch` and `XMLHttpRequest` fallback.
   - Cocos API client executable host resolution, player id persistence, transport, and `SESSION_NOT_READY` error fields.
-  - Web first-run guide highlights.
+  - Web and Cocos first-run guide highlights.
   - Web and Cocos营业满意度/即时反馈 wiring.
   - Web and Cocos explicit service success, customer leaving, combo, and cashier success feedback copy.
   - Web and Cocos restaurant visual stage wiring.
@@ -351,7 +355,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos texture-backed panel/card surface wiring.
   - Cocos mobile safe-area component and scene wiring contract.
   - Cocos texture-backed UI components render table states, upgrade states, task states, buttons, panels, and safe areas through executable checks.
-  - Cocos main controller executes profile, business, settlement recovery, upgrade, task, and snapshot recovery flows under a mocked runtime.
+  - Cocos main controller executes profile, first-run guide focus, business, settlement recovery, upgrade, task, and snapshot recovery flows under a mocked runtime.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
@@ -362,7 +366,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Cocos texture-backed button wiring.
   - Cocos controller, simulation, API client, texture catalog, and view components.
   - Cocos task row count covers all MVP task definitions.
-  - Cocos guide label wiring.
+  - Cocos guide label and texture-backed focus wiring.
   - Required PNG texture presence in both Web and Cocos asset trees.
 - Cocos project metadata verification checks Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, and generated-directory ignore rules.
 - Cocos TypeScript source compiles under `client/cocos/tsconfig.json`.

@@ -43,6 +43,8 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `npm run verify:cocos-controller` executes the Cocos main scene controller outside the editor with a mocked backend API. It verifies profile rendering, screen navigation, business start, 2x speed switching, settlement success, `SESSION_NOT_READY` recovery, part/restaurant upgrades, task claims, and completed-session snapshot submission on startup.
 
+The Cocos first-run guide routes each guide step to a texture-backed focus surface. `HachimiRestaurantGame` drives the ordered `guideFocusNodes` and `guideFocusPanels` arrays, and `client/cocos/scene-wiring.json` records the expected focus keys so Web, WeChat Mini Game, and Douyin Mini Game builds keep the same tutorial flow.
+
 ## Data Authority
 
 The backend is authoritative for:
@@ -66,6 +68,8 @@ Runtime art surfaces should use PNG texture assets from `client/assets/textures/
 Do not introduce runtime canvas/SVG drawing for game art or UI surfaces unless a future task explicitly changes the asset policy.
 
 For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` references. Dynamic text may use `Label`. Do not use `Graphics`, custom drawing APIs, `UIOpacity`, or runtime color tinting for art states; create separate PNG textures for disabled, locked, empty, active, or highlighted states.
+
+Guide highlights count as runtime art states. They should be implemented through `TexturedPanelView` surfaces and assigned `SpriteFrame` textures, not by runtime drawing or visual effects.
 
 `npm run verify:textures` also enforces the fixed dimension contract for every runtime PNG. This prevents gameplay-critical art from being replaced by undersized placeholders that would pass a file-existence check but break Cocos/Web layout.
 

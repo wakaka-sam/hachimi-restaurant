@@ -23,6 +23,22 @@ import { TextureCatalog } from './components/TextureCatalog';
 const { ccclass, property } = _decorator;
 
 type ScreenKey = 'main' | 'business' | 'upgrade' | 'tasks' | 'result';
+const GUIDE_FOCUS_KEYS = [
+  'startBusiness',
+  'upgradeNav',
+  'taskNav',
+  'seatCustomer',
+  'serveFood',
+  'collectPay',
+  'upgradePart',
+  'claimTask'
+] as const;
+
+type GuideFocusKey = 'none' | (typeof GUIDE_FOCUS_KEYS)[number];
+type GuideStep = {
+  key: GuideFocusKey;
+  message: string;
+};
 
 const LOCAL_SESSION_SNAPSHOT_KEY = 'hachimi-active-session-snapshot';
 
@@ -157,6 +173,12 @@ export class HachimiRestaurantGame extends Component {
   @property([TexturedPanelView])
   texturedPanels: TexturedPanelView[] = [];
 
+  @property([Node])
+  guideFocusNodes: Node[] = [];
+
+  @property([TexturedPanelView])
+  guideFocusPanels: TexturedPanelView[] = [];
+
   private api!: ApiClient;
   private profile: ProfileState | null = null;
   private simulation: BusinessSimulation | null = null;
@@ -196,6 +218,7 @@ export class HachimiRestaurantGame extends Component {
     this.simulation.update(deltaTime);
     this.saveSessionSnapshot();
     this.renderBusiness();
+    this.renderGuide();
     this.renderTexturedButtons();
     if (this.simulation.finished && this.getSettlementRetryWaitSeconds() <= 0) {
       void this.finishBusiness();
@@ -363,12 +386,14 @@ export class HachimiRestaurantGame extends Component {
     this.simulation?.handleTablePressed(tableIndex);
     this.saveSessionSnapshot();
     this.renderBusiness();
+    this.renderGuide();
   }
 
   private collectFirstReadyPay(): void {
     this.simulation?.collectFirstReadyPay();
     this.saveSessionSnapshot();
     this.renderBusiness();
+    this.renderGuide();
   }
 
   private setScreen(screen: ScreenKey): void {
@@ -561,53 +586,76 @@ export class HachimiRestaurantGame extends Component {
   }
 
   private renderGuide(): void {
-    if (!this.guideLabel) {
-      return;
+    const guideStep = this.getGuideStep();
+    if (this.guideLabel) {
+      this.guideLabel.string = guideStep.message;
+      this.guideLabel.node.active = guideStep.message.length > 0;
     }
-    this.guideLabel.string = this.getGuideMessage();
-    this.guideLabel.node.active = this.guideLabel.string.length > 0;
+    this.renderGuideFocus(guideStep.key);
+  }
+
+  private renderGuideFocus(focusKey: GuideFocusKey): void {
+    this.guideFocusNodes.forEach((node, index) => {
+      if (node) {
+        node.active = GUIDE_FOCUS_KEYS[index] === focusKey;
+      }
+    });
+    this.guideFocusPanels.forEach((panel, index) => {
+      if (!panel) {
+        return;
+      }
+      const active = GUIDE_FOCUS_KEYS[index] === focusKey;
+      panel.node.active = active;
+      if (active && this.textures) {
+        panel.render(this.textures);
+      }
+    });
   }
 
   private getGuideMessage(): string {
+    return this.getGuideStep().message;
+  }
+
+  private getGuideStep(): GuideStep {
     if (!this.profile) {
-      return '';
+      return { key: 'none', message: '' };
     }
     const stats = this.profile.player.stats || {};
 
     if (stats.totalSessions === 0 && this.activeScreen === 'main') {
-      return '先开始营业，服务小动物赚第一笔金币。';
+      return { key: 'startBusiness', message: '先开始营业，服务小动物赚第一笔金币。' };
     }
 
     if (stats.totalSessions === 0 && this.activeScreen === 'business' && this.simulation) {
       if (this.simulation.waiting.length > 0 && this.simulation.tables.some((table) => !table.customer)) {
-        return '点击空餐桌，让等待的小动物入座。';
+        return { key: 'seatCustomer', message: '点击空餐桌，让等待的小动物入座。' };
       }
       if (this.simulation.tables.some((table) => table.customer?.phase === 'readyFood')) {
-        return '顾客准备好了，点击餐桌完成上菜。';
+        return { key: 'serveFood', message: '顾客准备好了，点击餐桌完成上菜。' };
       }
       if (this.simulation.tables.some((table) => table.customer?.phase === 'readyPay')) {
-        return '顾客用餐结束，点击餐桌或收银机收钱。';
+        return { key: 'collectPay', message: '顾客用餐结束，点击餐桌或收银机收钱。' };
       }
-      return '等待小动物进店，留意餐桌状态。';
+      return { key: 'none', message: '等待小动物进店，留意餐桌状态。' };
     }
 
     if (stats.totalSessions > 0 && stats.totalPartUpgrades === 0) {
       return this.activeScreen === 'upgrade'
-        ? '自由选择任意部件升级，下一次期望收入 +8%。'
-        : '营业结束后去升级任意一个餐厅部件。';
+        ? { key: 'upgradePart', message: '自由选择任意部件升级，下一次期望收入 +8%。' }
+        : { key: 'upgradeNav', message: '营业结束后去升级任意一个餐厅部件。' };
     }
 
     if (stats.totalPartUpgrades > 0 && stats.totalTasksClaimed === 0) {
       const claimable = this.profile.tasks?.some((task) => task.completed && !task.claimed);
       if (!claimable) {
-        return '';
+        return { key: 'none', message: '' };
       }
       return this.activeScreen === 'tasks'
-        ? '领取引导任务奖励，补充金币或体力。'
-        : '已有任务完成，去任务页领取奖励。';
+        ? { key: 'claimTask', message: '领取引导任务奖励，补充金币或体力。' }
+        : { key: 'taskNav', message: '已有任务完成，去任务页领取奖励。' };
     }
 
-    return '';
+    return { key: 'none', message: '' };
   }
 
   private async finishStoredCompletedSession(): Promise<void> {

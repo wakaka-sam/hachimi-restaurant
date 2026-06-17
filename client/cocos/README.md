@@ -92,9 +92,17 @@ Wire the start button text label to `startButtonLabel`. The controller renders `
 
 The task screen should provide three section header labels bound to `guideTaskHeaderLabel`, `dailyTaskHeaderLabel`, and `growthTaskHeaderLabel`. `HachimiRestaurantGame` renders guide, daily, and growth section counts from the backend task states so the Cocos task screen clearly separates task types in addition to each row's `typeLabel`.
 
+The first-run guide uses two ordered arrays: `guideFocusNodes` and `guideFocusPanels`. Both arrays must use this exact order:
+
+```text
+startBusiness, upgradeNav, taskNav, seatCustomer, serveFood, collectPay, upgradePart, claimTask
+```
+
+Each `guideFocusPanels` item should be a `TexturedPanelView` with `panelTexture = "card"` and a `SpriteFrame`-backed surface. The controller toggles the active focus node and panel from the current guide step; do not create guide highlights with runtime drawing, opacity, tinting, or CSS-like effects.
+
 The first scene pass should provide at least 28 `TexturedButtonView` instances: 10 fixed screen/control buttons, 5 part-upgrade buttons, and 13 task claim buttons. If task rows become virtualized later, update `scene-wiring.json` and the verification rule in the same task.
 
-The first scene pass should also provide at least 27 `TexturedPanelView` instances for the top bar, message panel, business HUD, five main part status panels, five part-upgrade cards, thirteen task rows, and the result panel. Use `panelTexture = "panel"` for broad containers and `panelTexture = "card"` for repeated cards.
+The first scene pass should also provide at least 35 `TexturedPanelView` instances for the top bar, message panel, business HUD, five main part status panels, five part-upgrade cards, thirteen task rows, the result panel, and eight guide focus panels. Use `panelTexture = "panel"` for broad containers and `panelTexture = "card"` for repeated cards and guide focus panels.
 
 Each `PartUpgradeView` must wire `titleLabel`, `costLabel`, `effectLabel`, `starSprites`, `upgradeButton`, and `buttonLabel`. These fields carry the required upgrade-screen information: current star state, shared upgrade cost, insufficient coin shortage, next-star effect, and max-star state.
 
@@ -115,4 +123,4 @@ The manifest includes a `sceneBlueprint` section that maps each core screen to i
 `npm run verify:cocos-api` executes the Cocos API client with a mocked `cc.sys` runtime and verifies Web same-origin calls, non-browser production host resolution, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` error handling.
 `npm run verify:cocos-simulation` executes the pure Cocos business simulation outside the editor and verifies the click service chain, 2x speed, waiting queue cap, 18-customer cap, and snapshot restore behavior.
 `npm run verify:cocos-components` executes the texture-backed Cocos UI components outside the editor and verifies table slot states, upgrade-card stars and costs, task rows, textured buttons, textured panels, and mobile safe-area behavior.
-`npm run verify:cocos-controller` executes `HachimiRestaurantGame` outside the editor with a mocked API and verifies profile rendering, business start, speed switching, settlement success, not-ready recovery, upgrades, task claims, and completed-session snapshot recovery.
+`npm run verify:cocos-controller` executes `HachimiRestaurantGame` outside the editor with a mocked API and verifies profile rendering, first-run guide focus routing, business start, speed switching, settlement success, not-ready recovery, upgrades, task claims, and completed-session snapshot recovery.

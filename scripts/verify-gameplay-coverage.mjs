@@ -106,6 +106,7 @@ addCheck('cocos resumable session start button label', 'client/cocos/assets/scri
 addCheck('cocos textured button refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedButtonView', 'texturedButtons', 'renderTexturedButtons']);
 addCheck('cocos textured panel refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedPanelView', 'texturedPanels', 'renderTexturedPanels']);
 addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideLabel', 'getGuideMessage', '开始营业', '完成上菜', '领取引导任务奖励']);
+addCheck('cocos first-run guide focus', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['GUIDE_FOCUS_KEYS', 'getGuideStep', 'renderGuideFocus', 'guideFocusNodes', 'guideFocusPanels', 'startBusiness', 'upgradeNav', 'taskNav', 'seatCustomer', 'serveFood', 'collectPay', 'upgradePart', 'claimTask']);
 addCheck('cocos in-session speed toggle', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['toggleSpeed', 'simulation.toggleSpeedMode', 'simulation.speedMode']);
 addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable', 'simulation.finished', '!this.finishing']);
 addCheck('cocos preserves completed session on not-ready settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['ApiRequestError', 'SESSION_NOT_READY', 'remainingRealSeconds', '结算准备中', 'handleSessionNotReady']);
@@ -151,6 +152,7 @@ addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json'
 addCheck('cocos scene wiring waiting queue countdown labels', 'client/cocos/scene-wiring.json', ['waitingCustomerLabels', 'minimumLabelArrayLengths']);
 addCheck('cocos scene blueprint manifest', 'client/cocos/scene-wiring.json', ['sceneBlueprint', 'mainScreen', 'businessScreen', 'upgradeScreen', 'taskScreen', 'resultScreen', 'componentInstances', 'textureSurfaces']);
 addCheck('cocos scene blueprint verification', 'scripts/verify-cocos-project.mjs', ['validateSceneBlueprint', 'componentTotals', 'validateTextureSurfaces', 'safeAreaNode']);
+addCheck('cocos scene wiring guide focus contract', 'client/cocos/scene-wiring.json', ['guideFocus', 'guideFocusNodes', 'guideFocusPanels', 'startBusiness', 'upgradeNav', 'taskNav', 'seatCustomer', 'serveFood', 'collectPay', 'upgradePart', 'claimTask']);
 addCheck('cocos scene wiring source property validation', 'scripts/verify-gameplay-coverage.mjs', ['componentSourceFiles', 'assertSourceContainsProperties', 'sceneWiring.textureCatalog']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
 addCheck('platforms documented Cocos build outputs', 'docs/platforms.md', ['There is one production client codebase', 'Cocos Web build artifact', 'temporary debug harness']);
@@ -316,8 +318,8 @@ if ((sceneWiring.minimumInstances?.TexturedButtonView || 0) < 28) {
   fail('Cocos scene wiring manifest needs at least 28 TexturedButtonView instances');
 }
 
-if ((sceneWiring.minimumInstances?.TexturedPanelView || 0) < 27) {
-  fail('Cocos scene wiring manifest needs at least 27 TexturedPanelView instances');
+if ((sceneWiring.minimumInstances?.TexturedPanelView || 0) < 35) {
+  fail('Cocos scene wiring manifest needs at least 35 TexturedPanelView instances');
 }
 
 if ((sceneWiring.minimumInstances?.MobileSafeAreaView || 0) < 5) {
@@ -406,8 +408,8 @@ if (!sceneWiring.componentProperties?.HachimiRestaurantGame?.includes('texturedP
 
 const texturedPanelRoleCount = Object.values(sceneWiring.texturedPanelRoles || {})
   .reduce((sum, value) => sum + Number(value || 0), 0);
-if (texturedPanelRoleCount < 27) {
-  fail('Cocos scene wiring texturedPanelRoles must cover at least 27 panel/card surfaces');
+if (texturedPanelRoleCount < 35) {
+  fail('Cocos scene wiring texturedPanelRoles must cover at least 35 panel/card surfaces');
 }
 
 for (const file of ['client/web/main.js', 'client/cocos/assets/scripts/components/PartUpgradeView.ts']) {

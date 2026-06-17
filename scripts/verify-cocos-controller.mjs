@@ -7,6 +7,16 @@ import ts from 'typescript';
 
 const sourceRoot = 'client/cocos/assets/scripts';
 const tempDir = await mkdtemp(join(tmpdir(), 'hachimi-cocos-controller-'));
+const GUIDE_FOCUS_KEYS = [
+  'startBusiness',
+  'upgradeNav',
+  'taskNav',
+  'seatCustomer',
+  'serveFood',
+  'collectPay',
+  'upgradePart',
+  'claimTask'
+];
 const scriptFiles = [
   'HachimiRestaurantGame.ts',
   'core/GameRules.ts',
@@ -40,7 +50,7 @@ try {
   await rm(tempDir, { recursive: true, force: true });
 }
 
-console.log('Cocos main controller verified: profile, business flow, settlement recovery, upgrades, tasks, and snapshot resume.');
+console.log('Cocos main controller verified: profile, guide focus, business flow, settlement recovery, upgrades, tasks, and snapshot resume.');
 
 async function writeCcStub() {
   await mkdir(join(tempDir, 'node_modules/cc'), { recursive: true });
@@ -161,6 +171,7 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(game.startButtonLabel.string, '开始营业');
   assert.equal(game.startButton.interactable, true);
   assert.match(game.guideLabel.string, /先开始营业/);
+  assertGuideFocus(game, 'startBusiness');
   assert.equal(game.restaurantBackgroundSprite.spriteFrame.name, 'restaurant-1');
 
   await game.startBusiness();
@@ -176,11 +187,34 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(game.tableSlots[4].renders.at(-1).unlocked, false);
   assert.equal(game.waitingCustomerSprites[0].node.active, true);
   assert.match(game.guideLabel.string, /点击空餐桌/);
+  assertGuideFocus(game, 'seatCustomer');
   assert.ok(cc.sys.localStorage.getItem('hachimi-active-session-snapshot'));
 
   game.handleTablePressed(0);
   assert.equal(game.tableSlots[0].renders.at(-1).customer.phase, 'seated');
-  assert.match(game.guideLabel.string, /点击空餐桌|等待小动物/);
+  assert.match(game.guideLabel.string, /点击空餐桌/);
+  assertGuideFocus(game, 'seatCustomer');
+
+  game.handleTablePressed(1);
+  assert.equal(game.tableSlots[1].renders.at(-1).customer.phase, 'seated');
+  assert.match(game.guideLabel.string, /等待小动物/);
+  assertGuideFocus(game, 'none');
+
+  game.simulation.tables[0].customer.phase = 'readyFood';
+  game.update(0);
+  assert.match(game.guideLabel.string, /完成上菜/);
+  assertGuideFocus(game, 'serveFood');
+
+  game.handleTablePressed(0);
+  assert.equal(game.tableSlots[0].renders.at(-1).customer.phase, 'eating');
+  game.simulation.tables[0].customer.phase = 'readyPay';
+  game.update(0);
+  assert.match(game.guideLabel.string, /收钱/);
+  assertGuideFocus(game, 'collectPay');
+
+  game.collectFirstReadyPay();
+  assert.equal(game.tableSlots[0].renders.at(-1).customer, null);
+  assertGuideFocus(game, 'none');
 
   game.toggleSpeed();
   assert.equal(game.speedLabel.string, '2x');
@@ -192,16 +226,23 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(game.resultScreen.active, true);
   assert.equal(game.businessScreen.active, false);
   assert.match(game.resultLabel.string, /获得金币 120/);
+  assertGuideFocus(game, 'upgradeNav');
   assert.equal(cc.sys.localStorage.getItem('hachimi-active-session-snapshot'), null);
 
+  game.showUpgrade();
+  assertGuideFocus(game, 'upgradePart');
   await game.upgradePart('cashier');
   assert.equal(api.calls.at(-1).method, 'upgradePart');
   assert.equal(game.messageLabel.string, '部件已升级');
+  assertGuideFocus(game, 'taskNav');
   assert.equal(game.partViews[0].renders.length > 0, true);
 
+  game.showTasks();
+  assertGuideFocus(game, 'claimTask');
   await game.claimTask('guide_first_session');
   assert.equal(api.calls.at(-1).method, 'claimTask');
   assert.equal(game.messageLabel.string, '任务奖励已领取');
+  assertGuideFocus(game, 'none');
 
   await game.upgradeRestaurant();
   assert.equal(api.calls.at(-1).method, 'upgradeRestaurant');
@@ -320,7 +361,21 @@ function createController(HachimiRestaurantGame, cc) {
   game.taskViews = Array.from({ length: 3 }, () => createViewSpy());
   game.texturedButtons = Array.from({ length: 2 }, () => createViewSpy());
   game.texturedPanels = Array.from({ length: 2 }, () => createViewSpy());
+  game.guideFocusNodes = Array.from({ length: GUIDE_FOCUS_KEYS.length }, () => new cc.Node());
+  game.guideFocusPanels = Array.from({ length: GUIDE_FOCUS_KEYS.length }, () => createViewSpy());
   return game;
+}
+
+function assertGuideFocus(game, expectedKey) {
+  const expected = expectedKey === 'none' ? [] : [expectedKey];
+  const activeNodeKeys = GUIDE_FOCUS_KEYS.filter((_, index) => game.guideFocusNodes[index]?.active);
+  const activePanelKeys = GUIDE_FOCUS_KEYS.filter((_, index) => game.guideFocusPanels[index]?.node.active);
+  assert.deepEqual(activeNodeKeys, expected);
+  assert.deepEqual(activePanelKeys, expected);
+  if (expectedKey !== 'none') {
+    const panel = game.guideFocusPanels[GUIDE_FOCUS_KEYS.indexOf(expectedKey)];
+    assert.equal(panel.renders.length > 0, true);
+  }
 }
 
 function createViewSpy() {

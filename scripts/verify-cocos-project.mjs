@@ -76,6 +76,7 @@ function validateSceneBlueprint(sceneWiring) {
   validateKnownValues('sceneBlueprint.shared.topBarLabels', blueprint.shared?.topBarLabels, sceneWiring.labels);
   validateKnownValues('sceneBlueprint.shared.navigationButtons', blueprint.shared?.navigationButtons, sceneWiring.buttons);
   validateTextureSurfaces('sceneBlueprint.shared.textureSurfaces', blueprint.shared?.textureSurfaces, sceneWiring);
+  validateGuideFocus(sceneWiring, blueprint);
 
   const blueprintScreens = blueprint.screens || {};
   for (const screen of sceneWiring.screens || []) {
@@ -124,6 +125,37 @@ function validateSceneBlueprint(sceneWiring) {
     if ((componentTotals[component] || 0) < (sceneWiring.minimumInstances?.[component] || 0)) {
       fail(`sceneBlueprint component total for ${component} is ${componentTotals[component] || 0}; expected at least ${sceneWiring.minimumInstances?.[component] || 0}.`);
     }
+  }
+}
+
+function validateGuideFocus(sceneWiring, blueprint) {
+  const guideFocus = sceneWiring.guideFocus;
+  const requiredKeys = [
+    'startBusiness',
+    'upgradeNav',
+    'taskNav',
+    'seatCustomer',
+    'serveFood',
+    'collectPay',
+    'upgradePart',
+    'claimTask'
+  ];
+  if (!guideFocus || typeof guideFocus !== 'object') {
+    fail('sceneWiring.guideFocus is required.');
+    return;
+  }
+  assertEqual('sceneWiring.guideFocus.nodeArray', guideFocus.nodeArray, 'guideFocusNodes');
+  assertEqual('sceneWiring.guideFocus.panelArray', guideFocus.panelArray, 'guideFocusPanels');
+  assertEqual('sceneWiring.guideFocus.panelTexture', guideFocus.panelTexture, 'card');
+  assertEqual('sceneBlueprint.shared.guideFocusKeys', (blueprint.shared?.guideFocusKeys || []).join(','), requiredKeys.join(','));
+  assertEqual('sceneWiring.guideFocus.keys', (guideFocus.keys || []).join(','), requiredKeys.join(','));
+  for (const property of ['guideFocusNodes', 'guideFocusPanels']) {
+    if (!sceneWiring.componentProperties?.HachimiRestaurantGame?.includes(property)) {
+      fail(`sceneWiring.componentProperties.HachimiRestaurantGame missing ${property}.`);
+    }
+  }
+  if ((sceneWiring.texturedPanelRoles?.guideFocusPanels || 0) < requiredKeys.length) {
+    fail(`sceneWiring.texturedPanelRoles.guideFocusPanels must be at least ${requiredKeys.length}.`);
   }
 }
 
