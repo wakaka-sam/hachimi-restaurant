@@ -1,0 +1,9 @@
+{
+  "name": "hachimi-restaurant-cocos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cocos Creator client skeleton for Hachimi Restaurant.",
+  "creator": {
+    "version": "3.8.x"
+  }
+}

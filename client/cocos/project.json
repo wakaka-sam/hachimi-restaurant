@@ -1,0 +1,13 @@
+{
+  "engine": "3.8.x",
+  "name": "hachimi-restaurant",
+  "uuid": "f62d4db6-c207-4a67-a383-3e112bf46b5b",
+  "version": "0.1.0",
+  "designResolution": {
+    "width": 720,
+    "height": 1280,
+    "fitWidth": true,
+    "fitHeight": false
+  },
+  "orientation": "portrait"
+}

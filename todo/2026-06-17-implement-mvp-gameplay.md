@@ -44,6 +44,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Implemented the Node.js backend MVP API in `server/src/`.
 - Implemented a texture-based Web playable prototype in `client/web/`.
 - Generated PNG texture assets under `client/assets/textures/`.
+- Added a Cocos Creator 3.x source skeleton under `client/cocos/`.
+- Added Cocos TypeScript components for API access, local business simulation, table slots, part upgrades, task rows, texture catalog wiring, and the main scene controller.
+- Synced the PNG textures into `client/cocos/assets/textures/`.
 - Added automated tests for:
   - 8% `incomePower` economy growth.
   - Stamina recovery.
@@ -56,10 +59,11 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Static Web prototype and PNG texture serving.
   - Runtime client policy forbidding canvas/SVG art drawing.
 - Added `npm run verify:textures` to enforce the texture asset policy.
+- Added `npm run sync:cocos-textures` and `npm run verify:cocos`.
 
 ## Remaining Work
 
-- Create the formal Cocos Creator project/scene once Cocos Creator is available.
-- Port the Web prototype interaction model into Cocos components.
-- Reuse `client/assets/textures/` as sprite textures in the Cocos scene.
+- Open the Cocos project in Cocos Creator once the editor is available.
+- Wire the scene nodes to `HachimiRestaurantGame`, `TextureCatalog`, `TableSlotView`, `PartUpgradeView`, and `TaskItemView`.
+- Assign synced PNG files as `SpriteFrame` texture references in the editor.
 - Verify the Cocos build targets for Web first, then WeChat Mini Game and Douyin Mini Game.

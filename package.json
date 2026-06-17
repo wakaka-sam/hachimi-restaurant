@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "generate:textures": "node scripts/generate-textures.mjs",
+    "sync:cocos-textures": "node scripts/sync-cocos-textures.mjs",
+    "verify:cocos": "node scripts/verify-texture-policy.mjs --cocos",
     "verify:textures": "node scripts/verify-texture-policy.mjs",
     "verify": "npm run verify:textures && npm test",
     "start": "node server/src/server.mjs",

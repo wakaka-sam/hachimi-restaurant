@@ -6,11 +6,20 @@ const runtimeFiles = [
   'client/web/main.js',
   'client/web/styles.css',
   'shared/game-rules.mjs',
-  'server/src/app.mjs'
+  'server/src/app.mjs',
+  'client/cocos/assets/scripts/HachimiRestaurantGame.ts',
+  'client/cocos/assets/scripts/core/BusinessSimulation.ts',
+  'client/cocos/assets/scripts/core/GameRules.ts',
+  'client/cocos/assets/scripts/services/ApiClient.ts',
+  'client/cocos/assets/scripts/components/PartUpgradeView.ts',
+  'client/cocos/assets/scripts/components/TableSlotView.ts',
+  'client/cocos/assets/scripts/components/TaskItemView.ts',
+  'client/cocos/assets/scripts/components/TextureCatalog.ts'
 ];
 
 const textureDir = 'client/assets/textures';
-const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas/i;
+const cocosTextureDir = 'client/cocos/assets/textures';
+const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b/i;
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 let failed = false;
 
@@ -41,14 +50,37 @@ if (textureFiles.length < 1) {
 }
 
 for (const file of textureFiles) {
-  const buffer = await readFile(join(textureDir, file));
+  const sourcePath = join(textureDir, file);
+  const buffer = await readFile(sourcePath);
   if (buffer.length < 32 || !buffer.subarray(0, 8).equals(pngSignature)) {
     fail(`${file} is not a valid PNG file.`);
   }
+
+  const cocosPath = join(cocosTextureDir, file);
+  try {
+    const cocosBuffer = await readFile(cocosPath);
+    if (!cocosBuffer.equals(buffer)) {
+      fail(`Cocos texture copy differs from source texture: ${file}`);
+    }
+  } catch {
+    fail(`Missing Cocos texture copy: ${file}`);
+  }
+}
+
+try {
+  const cocosFiles = (await readdir(cocosTextureDir)).filter((file) => file.endsWith('.png')).sort();
+  const sourceSet = new Set(textureFiles);
+  for (const file of cocosFiles) {
+    if (!sourceSet.has(file)) {
+      fail(`Unexpected Cocos texture without source counterpart: ${file}`);
+    }
+  }
+} catch {
+  fail(`Cocos texture directory is missing: ${cocosTextureDir}`);
 }
 
 if (failed) {
   process.exit(1);
 }
 
-console.log(`Texture policy verified: ${textureFiles.length} PNG textures, no runtime drawing tokens.`);
+console.log(`Texture policy verified: ${textureFiles.length} PNG textures, Cocos copies in sync, no runtime drawing tokens.`);
