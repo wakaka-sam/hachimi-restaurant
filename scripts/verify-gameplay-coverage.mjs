@@ -65,6 +65,7 @@ addCheck('web four core screens', 'client/web/main.js', ["screen === 'main'", "s
 addCheck('web 2x speed support', 'client/web/main.js', ["state.speedMode === '1x' ? '2x' : '1x'", "speedMode: state.speedMode", 'toggleBusinessSpeed', "game.speedMode === '1x' ? '2x' : '1x'"]);
 addCheck('web blocks manual early settlement', 'client/web/main.js', ["disabled: !game.finished"]);
 addCheck('web preserves completed session on not-ready settlement', 'client/web/main.js', ['ApiRequestError', 'SESSION_NOT_READY', 'remainingRealSeconds', '结算准备中', 'handleSessionNotReady']);
+addCheck('web throttles not-ready settlement retry', 'client/web/main.js', ['settlementRetryAtMs', 'getSettlementRetryWaitSeconds', 'window.setTimeout', 'Date.now() + remainingSeconds * 1000']);
 addCheck('web resumed session remaining time', 'client/web/main.js', ['session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
 addCheck('web local session snapshot recovery', 'client/web/main.js', ['LOCAL_SESSION_SNAPSHOT_KEY', 'finishStoredCompletedSession', 'saveGameSnapshot', 'loadGameSnapshot', 'getSummaryFromSnapshot']);
 addCheck('web stamina recovery display', 'client/web/main.js', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext', 'secondsUntilFull']);
@@ -92,8 +93,9 @@ addCheck('cocos textured button refresh', 'client/cocos/assets/scripts/HachimiRe
 addCheck('cocos textured panel refresh', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['TexturedPanelView', 'texturedPanels', 'renderTexturedPanels']);
 addCheck('cocos first-run guide messages', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['guideLabel', 'getGuideMessage', '开始营业', '完成上菜', '领取引导任务奖励']);
 addCheck('cocos in-session speed toggle', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['toggleSpeed', 'simulation.toggleSpeedMode', 'simulation.speedMode']);
-addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable = simulation.finished']);
+addCheck('cocos blocks manual early settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['finishButton.interactable', 'simulation.finished', '!this.finishing']);
 addCheck('cocos preserves completed session on not-ready settlement', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['ApiRequestError', 'SESSION_NOT_READY', 'remainingRealSeconds', '结算准备中', 'handleSessionNotReady']);
+addCheck('cocos throttles not-ready settlement retry', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['nextSettlementRetryAtMs', 'getSettlementRetryWaitSeconds', 'Date.now() + remainingSeconds * 1000']);
 addCheck('cocos resumed session remaining time', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['response.session.remainingSeconds ?? CONSTANTS.sessionDurationSeconds']);
 addCheck('cocos local session snapshot recovery', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['LOCAL_SESSION_SNAPSHOT_KEY', 'finishStoredCompletedSession', 'saveSessionSnapshot', 'loadSessionSnapshot', 'getSummaryFromSnapshot']);
 addCheck('cocos stamina recovery display', 'client/cocos/assets/scripts/HachimiRestaurantGame.ts', ['formatStaminaLabel', 'staminaRecovery', 'secondsUntilNext', 'secondsUntilFull']);

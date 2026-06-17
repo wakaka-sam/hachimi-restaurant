@@ -165,6 +165,7 @@ export class HachimiRestaurantGame extends Component {
   private settlement: SettlementState | null = null;
   private finishing = false;
   private activeSessionId = '';
+  private nextSettlementRetryAtMs = 0;
 
   onLoad(): void {
     this.api = new ApiClient(this.apiBaseUrl);
@@ -196,7 +197,7 @@ export class HachimiRestaurantGame extends Component {
     this.saveSessionSnapshot();
     this.renderBusiness();
     this.renderTexturedButtons();
-    if (this.simulation.finished) {
+    if (this.simulation.finished && this.getSettlementRetryWaitSeconds() <= 0) {
       void this.finishBusiness();
     }
   }
@@ -244,6 +245,7 @@ export class HachimiRestaurantGame extends Component {
         throw new Error('Missing session from backend.');
       }
       this.activeSessionId = response.session.sessionId;
+      this.nextSettlementRetryAtMs = 0;
       const snapshot = this.loadSessionSnapshot(response.session.sessionId);
       this.simulation = snapshot
         ? BusinessSimulation.fromSnapshot(response.profile.tuning, snapshot)
@@ -266,6 +268,15 @@ export class HachimiRestaurantGame extends Component {
     if (!this.simulation || this.finishing) {
       return;
     }
+    if (!this.simulation.finished) {
+      return;
+    }
+    const retryWaitSeconds = this.getSettlementRetryWaitSeconds();
+    if (retryWaitSeconds > 0) {
+      this.setMessage(`结算准备中，还需等待 ${retryWaitSeconds}s`);
+      this.renderAll();
+      return;
+    }
     this.finishing = true;
     try {
       const response = await this.api.finishSession(this.activeSessionId, this.simulation.getSummary());
@@ -276,6 +287,7 @@ export class HachimiRestaurantGame extends Component {
       this.simulation = null;
       this.clearSessionSnapshot(this.activeSessionId);
       this.activeSessionId = '';
+      this.nextSettlementRetryAtMs = 0;
       this.setScreen('result');
       this.renderAll();
     } catch (error) {
@@ -295,6 +307,7 @@ export class HachimiRestaurantGame extends Component {
     }
     const remainingSeconds = Math.max(1, Math.ceil(error.remainingRealSeconds ?? 1));
     this.finishing = false;
+    this.nextSettlementRetryAtMs = Date.now() + remainingSeconds * 1000;
     if (this.simulation) {
       this.simulation.finished = true;
       this.saveSessionSnapshot();
@@ -436,7 +449,8 @@ export class HachimiRestaurantGame extends Component {
     if (this.timerLabel) this.timerLabel.string = `剩余 ${Math.ceil(simulation.timeLeft)}s`;
     if (this.speedLabel) this.speedLabel.string = simulation.speedMode;
     if (this.finishButton) {
-      this.finishButton.interactable = simulation.finished && !this.finishing;
+      this.finishButton.interactable =
+        simulation.finished && !this.finishing && this.getSettlementRetryWaitSeconds() <= 0;
     }
     if (this.businessStatsLabel) {
       this.businessStatsLabel.string =
@@ -692,5 +706,12 @@ export class HachimiRestaurantGame extends Component {
       return `${Math.ceil(safeSeconds / 60)}m`;
     }
     return `${safeSeconds}s`;
+  }
+
+  private getSettlementRetryWaitSeconds(): number {
+    if (this.nextSettlementRetryAtMs <= 0) {
+      return 0;
+    }
+    return Math.max(0, Math.ceil((this.nextSettlementRetryAtMs - Date.now()) / 1000));
   }
 }

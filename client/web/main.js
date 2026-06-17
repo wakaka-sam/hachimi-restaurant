@@ -45,7 +45,8 @@ const state = {
   speedMode: '1x',
   result: null,
   game: null,
-  loopHandle: null
+  loopHandle: null,
+  settlementRetryAtMs: 0
 };
 
 const app = document.querySelector('#app');
@@ -278,6 +279,7 @@ async function startBusiness() {
 
 function startLocalGame(session) {
   clearGameLoop();
+  state.settlementRetryAtMs = 0;
   const tuning = state.profile.tuning;
   const snapshot = loadGameSnapshot(session.sessionId);
   state.game = snapshot
@@ -470,7 +472,10 @@ function renderBusinessScreen() {
     h('div', { class: 'business-hud' },
       h('span', { class: 'timer-pill' }, `剩余 ${Math.ceil(game.timeLeft)}s`),
       textureButton(game.speedMode === '1x' ? '1 倍速' : '2 倍速', toggleBusinessSpeed, { className: 'compact' }),
-      textureButton('结束结算', finishBusiness, { className: 'compact', disabled: !game.finished })
+      textureButton('结束结算', finishBusiness, {
+        className: 'compact',
+        disabled: !game.finished || getSettlementRetryWaitSeconds() > 0
+      })
     ),
     guide ? h('div', { class: 'guide-cue business-guide' }, guide.message) : null,
     game.feedback ? h('div', { class: 'business-feedback' }, game.feedback) : null,
@@ -719,7 +724,13 @@ function toggleBusinessSpeed() {
 
 async function finishBusiness() {
   const game = state.game;
-  if (!game || game.finished) {
+  if (!game || (!game.finished && game.timeLeft > 0)) {
+    return;
+  }
+  const retryWaitSeconds = getSettlementRetryWaitSeconds();
+  if (retryWaitSeconds > 0) {
+    state.message = `结算准备中，还需等待 ${retryWaitSeconds}s`;
+    render();
     return;
   }
   game.finished = true;
@@ -747,6 +758,7 @@ async function finishBusiness() {
     });
     state.profile = payload.profile;
     state.result = payload.settlement;
+    state.settlementRetryAtMs = 0;
     state.screen = 'result';
     state.game = null;
     clearGameSnapshot(game.session.sessionId);
@@ -767,13 +779,27 @@ function handleSessionNotReady(error, game) {
     return false;
   }
   const remainingSeconds = Math.max(1, Math.ceil(error.remainingRealSeconds ?? 1));
+  state.settlementRetryAtMs = Date.now() + remainingSeconds * 1000;
   game.finished = true;
   state.game = game;
   state.screen = 'business';
   state.message = `结算准备中，还需等待 ${remainingSeconds}s`;
   saveGameSnapshot(game);
+  window.setTimeout(() => {
+    if (state.game?.session?.sessionId === game.session.sessionId) {
+      state.message = '';
+      render();
+    }
+  }, remainingSeconds * 1000);
   render();
   return true;
+}
+
+function getSettlementRetryWaitSeconds() {
+  if (state.settlementRetryAtMs <= 0) {
+    return 0;
+  }
+  return Math.max(0, Math.ceil((state.settlementRetryAtMs - Date.now()) / 1000));
 }
 
 function clearGameLoop() {
