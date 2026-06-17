@@ -221,6 +221,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Tightened task reward budget verification:
   - Shared rule tests now enforce the overall MVP task coin budget against the first 20-session growth-cycle main-loop revenue.
   - Product and API docs now clarify that the 20% to 30% auxiliary strength target is the task coin budget, while stamina rewards keep separate caps.
+- Tightened Cocos texture-state policy:
+  - Texture verification now rejects Cocos runtime opacity/tint tokens such as `UIOpacity`, `.opacity =`, `.color =`, and `new Color(...)` in gameplay scripts.
+  - Cocos docs now require separate PNG textures for disabled, locked, empty, active, or highlighted visual states.
 
 ## Remaining Work
 
@@ -233,7 +236,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 43 Node tests, 137 gameplay coverage checks, and static texture policy checks.
+- Current automated coverage: 43 Node tests, 137 gameplay coverage checks, and stricter static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -285,6 +288,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos upgrade-screen detail coverage with no recommendation prompt.
   - Filled/empty star states backed by PNG textures instead of runtime grayscale/filter effects.
   - Runtime CSS backgrounds limited to transparent values or PNG texture references.
+  - Cocos art states cannot use runtime opacity or color tinting instead of PNG texture states.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.

@@ -13,6 +13,7 @@ const runtimeFiles = (await Promise.all(runtimeRoots.map((root) => listRuntimeFi
 const textureDir = 'client/assets/textures';
 const cocosTextureDir = 'client/cocos/assets/textures';
 const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|filter\s*:|\.grayscale\b|grayscale\s*=|opacity\s*:/i;
+const forbiddenCocosRuntimePattern = /\bUIOpacity\b|\.opacity\s*=|\.color\s*=|\bnew\s+Color\s*\(|[,{]\s*Color\s*[,}]/;
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 let failed = false;
 
@@ -25,6 +26,9 @@ for (const file of runtimeFiles) {
   const source = await readFile(file, 'utf8');
   if (forbiddenRuntimePattern.test(source)) {
     fail(`${file} contains runtime drawing tokens.`);
+  }
+  if (file.startsWith('client/cocos/assets/scripts') && forbiddenCocosRuntimePattern.test(source)) {
+    fail(`${file} contains runtime Cocos tint/opacity tokens; use separate PNG textures for visual states.`);
   }
   validateCssTextureBackgrounds(file, source);
 

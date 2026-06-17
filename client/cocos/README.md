@@ -21,6 +21,10 @@ Forbidden for art:
 - canvas drawing
 - SVG
 - custom runtime shape drawing
+- `UIOpacity` or runtime opacity changes for art states
+- runtime `Color` tinting or `.color` changes for art states
+
+Represent visual states with separate PNG textures instead. Current examples include `button.png` and `button-disabled.png`, `icon-star.png` and `icon-star-empty.png`, plus the locked and active table textures.
 
 ## Texture Assets
 

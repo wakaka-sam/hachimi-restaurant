@@ -53,7 +53,7 @@ Runtime art surfaces should use PNG texture assets from `client/assets/textures/
 
 Do not introduce runtime canvas/SVG drawing for game art or UI surfaces unless a future task explicitly changes the asset policy.
 
-For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` references. Dynamic text may use `Label`. Do not use `Graphics` or custom drawing APIs for art.
+For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` references. Dynamic text may use `Label`. Do not use `Graphics`, custom drawing APIs, `UIOpacity`, or runtime color tinting for art states; create separate PNG textures for disabled, locked, empty, active, or highlighted states.
 
 ## Local Run
 
