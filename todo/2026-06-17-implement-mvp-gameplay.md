@@ -214,6 +214,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Low-activity summaries no longer earn full completion credit just because no customers left.
   - The performance-factor weights now center a normal 10-customer, moderate-satisfaction, low-combo session near one upgrade cost.
   - API and product docs now spell out the completion-score target used by backend settlement.
+- Documented the implemented backend JSON response envelope:
+  - Success responses use `ok: true` plus endpoint-specific payload fields.
+  - Error responses use `ok: false` with `error.code` and `error.message`.
+  - `SESSION_NOT_READY` documents the timing fields clients can use for recovery UI.
 
 ## Remaining Work
 
@@ -226,7 +230,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 42 Node tests, 135 gameplay coverage checks, and static texture policy checks.
+- Current automated coverage: 42 Node tests, 136 gameplay coverage checks, and static texture policy checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -250,6 +254,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared/Web/Cocos task type labels and grouping.
   - Cocos task section header wiring for guide, daily, and growth tasks.
   - Shared task reward field and daily reward budget constraints.
+  - API response envelope documentation for success, error, and `SESSION_NOT_READY` responses.
   - Backend-date daily task reset and once-per-day claim protection.
   - Web core screens and service chain.
   - Web and Cocos initial customer wave wiring.

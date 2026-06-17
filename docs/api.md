@@ -84,6 +84,36 @@ Rules:
 
 All MVP endpoints are currently mounted under the `/api` prefix.
 
+## Response Envelope
+
+All implemented API responses use JSON envelopes.
+
+Successful responses include:
+
+```text
+ok: true
+```
+
+The main success payloads are:
+
+- `GET /api/player/profile`: returns `profile`.
+- `POST /api/session/start`: returns `resumed`, `session`, `expiredSettlements`, `gameplay` for newly created sessions, and `profile`.
+- `POST /api/session/finish`: returns `session`, `settlement`, and `profile`.
+- `POST /api/upgrade/part`: returns `upgradedPart`, `cost`, and `profile`.
+- `POST /api/upgrade/restaurant`: returns `profile`.
+- `POST /api/tasks/claim`: returns `claimedTask` and `profile`.
+
+Error responses include:
+
+```text
+ok: false
+error:
+  code
+  message
+```
+
+`SESSION_NOT_READY` also returns the current serialized `session` and timing fields so clients can show remaining wait time instead of treating the response as a fatal failure.
+
 ### `GET /api/player/profile`
 
 Returns the current player state.
@@ -282,8 +312,7 @@ SESSION_NOT_READY
 SESSION_ALREADY_FINISHED
 SESSION_EXPIRED
 INVALID_SESSION_SUMMARY
+TASK_NOT_FOUND
 TASK_NOT_COMPLETE
 TASK_ALREADY_CLAIMED
 ```
-
-Exact response envelopes are TBD when the Node.js backend is created.
