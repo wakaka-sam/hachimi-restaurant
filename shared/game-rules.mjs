@@ -293,17 +293,23 @@ export function getMaxPartStar(player) {
   return Math.max(...PARTS.map((part) => player.parts[part]));
 }
 
+export function getEffectivePartStars(player) {
+  normalizePlayer(player);
+  const carriedStars = (player.restaurantLevel - 1) * CONSTANTS.starsPerPart;
+  return Object.fromEntries(PARTS.map((part) => [part, carriedStars + player.parts[part]]));
+}
+
 export function getTuning(player) {
   normalizePlayer(player);
-  const levelBase = Math.max(0, player.restaurantLevel - 1);
+  const effectiveStars = getEffectivePartStars(player);
   return {
-    tableCapacity: Math.min(5, 2 + Math.floor(levelBase / 2) + (player.parts.table >= 3 ? 1 : 0)),
-    patienceSeconds: 12 + levelBase * 1 + player.parts.chair * 1.5,
-    spawnIntervalSeconds: Math.max(3.8, 7.2 - levelBase * 0.15 - player.parts.wall * 0.35),
-    moveSpeedMultiplier: 1 + levelBase * 0.04 + player.parts.floor * 0.05,
-    cashierWindowSeconds: 8 + levelBase * 0.4 + player.parts.cashier * 0.8,
-    prepDelaySeconds: Math.max(1.1, 2.2 - levelBase * 0.04 - player.parts.floor * 0.1),
-    eatingSeconds: Math.max(4.2, 6.4 - levelBase * 0.05 - player.parts.floor * 0.18)
+    tableCapacity: Math.min(5, 2 + Math.floor(effectiveStars.table / 3)),
+    patienceSeconds: 12 + effectiveStars.chair * 1.5,
+    spawnIntervalSeconds: Math.max(3.8, 7.2 - effectiveStars.wall * 0.35),
+    moveSpeedMultiplier: 1 + effectiveStars.floor * 0.05,
+    cashierWindowSeconds: 8 + effectiveStars.cashier * 0.8,
+    prepDelaySeconds: Math.max(1.1, 2.2 - effectiveStars.floor * 0.1),
+    eatingSeconds: Math.max(4.2, 6.4 - effectiveStars.floor * 0.18)
   };
 }
 

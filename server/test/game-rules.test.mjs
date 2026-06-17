@@ -4,6 +4,8 @@ import {
   CONSTANTS,
   createDefaultPlayer,
   getEconomy,
+  getEffectivePartStars,
+  getTuning,
   calculateReward,
   refreshStamina
 } from '../../shared/game-rules.mjs';
@@ -40,6 +42,34 @@ test('restaurant upgrade reset does not reduce incomePower', () => {
 
   assert.equal(getEconomy(player).incomePower, 25);
   assert.equal(getEconomy(player).expectedRevenue, revenueBefore);
+});
+
+test('restaurant upgrade reset preserves long-term handfeel tuning', () => {
+  const player = createDefaultPlayer('handfeel-reset', new Date('2026-06-17T00:00:00.000Z'));
+  for (const part of Object.keys(player.parts)) {
+    player.parts[part] = 5;
+  }
+
+  const effectiveBefore = getEffectivePartStars(player);
+  const tuningBefore = getTuning(player);
+
+  player.restaurantLevel = 2;
+  for (const part of Object.keys(player.parts)) {
+    player.parts[part] = 0;
+  }
+
+  assert.deepEqual(getEffectivePartStars(player), effectiveBefore);
+  assert.deepEqual(getTuning(player), tuningBefore);
+
+  player.parts.cashier = 1;
+  player.parts.chair = 1;
+  player.parts.floor = 1;
+  player.parts.wall = 1;
+  const upgradedTuning = getTuning(player);
+  assert.ok(upgradedTuning.cashierWindowSeconds > tuningBefore.cashierWindowSeconds);
+  assert.ok(upgradedTuning.patienceSeconds > tuningBefore.patienceSeconds);
+  assert.ok(upgradedTuning.moveSpeedMultiplier > tuningBefore.moveSpeedMultiplier);
+  assert.ok(upgradedTuning.spawnIntervalSeconds < tuningBefore.spawnIntervalSeconds);
 });
 
 test('performance reward is clamped between 75 and 130 percent', () => {

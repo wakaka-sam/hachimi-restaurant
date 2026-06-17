@@ -30,8 +30,8 @@ const MIME_TYPES = {
   '.md': 'text/markdown; charset=utf-8'
 };
 
-export function createApp({ store, rootDir = process.cwd() }) {
-  const clientRoot = resolve(rootDir, 'client/web');
+export function createApp({ store, rootDir = process.cwd(), clientRoot: configuredClientRoot = null }) {
+  const clientRoot = configuredClientRoot ? resolve(configuredClientRoot) : resolve(rootDir, 'client/web');
   const textureRoot = resolve(rootDir, 'client/assets/textures');
   const sharedRoot = resolve(rootDir, 'shared');
 

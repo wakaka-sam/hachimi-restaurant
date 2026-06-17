@@ -10,9 +10,10 @@ Agents should read this file before making changes.
 
 - Project: Hachimi Restaurant.
 - Product type: cross-platform casual game.
-- Client: Cocos Creator / Cocos Engine under `client/`.
+- Production client: Cocos Creator / Cocos Engine under `client/cocos/`.
+- Web, WeChat Mini Game, and Douyin Mini Game must be built from the same Cocos client codebase.
 - Server: Node.js backend under `server/`.
-- Short-term release target: Web.
+- Short-term release target: Cocos Web build.
 - Long-term release targets: WeChat Mini Game and Douyin Mini Game.
 - Backend production environment: gz server.
 - Backend production API domain: `animalapi.wakaka007.cn`.
@@ -24,7 +25,7 @@ Agents should read this file before making changes.
 hachimi-restaurant/
   AGENTS.md
   README.md
-  client/          # Cocos client project
+  client/          # Client workspace; production code lives in client/cocos/
   server/          # Node.js backend service
   todo/            # Planned and in-progress task records
   done/            # Completed task records
@@ -34,7 +35,8 @@ hachimi-restaurant/
 
 Directory responsibilities:
 
-- `client/`: Cocos project source. Do not treat generated build or editor cache directories as source.
+- `client/cocos/`: production Cocos project source. Do not treat generated build or editor cache directories as source.
+- `client/web/`: temporary backend/debug harness only until Cocos Web build output is available. Do not add product-only gameplay here unless the same behavior exists in Cocos.
 - `server/`: Node.js backend application source, tests, configuration templates, and backend package metadata.
 - `todo/`: one Markdown file per planned or in-progress task.
 - `done/`: completed task records moved or copied from `todo/`, with implementation and verification notes added.
@@ -96,7 +98,9 @@ Task records should explain why a change exists, not just what files changed.
 
 ## Client Guidelines
 
-- `client/` is the Cocos client project root.
+- `client/cocos/` is the production Cocos client project root.
+- Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase. Do not create separate production clients for browser DOM, WeChat, or Douyin.
+- `client/web/` may be used as a short-lived local verification harness for backend/API/gameplay rules, but it is not the shipping Web client.
 - Preserve Cocos project structure and editor metadata.
 - Do not manually edit generated Cocos directories such as `client/library/`, `client/temp/`, `client/local/`, or `client/build/` unless the task explicitly concerns generated output.
 - Build Web, WeChat Mini Game, and Douyin Mini Game targets through Cocos tooling once the project is created.

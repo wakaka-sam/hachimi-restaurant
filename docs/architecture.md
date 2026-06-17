@@ -5,10 +5,17 @@
 The repository currently contains:
 
 - A Node.js gameplay backend.
-- A texture-based Web prototype for the MVP loop.
 - A Cocos Creator 3.x source skeleton under `client/cocos/`.
+- A texture-based DOM Web debug harness under `client/web/` for temporary backend/gameplay verification only.
 
-Cocos Creator is not installed in the current execution environment, so the Cocos project has not been editor-opened or build-verified locally. The Cocos scripts are source-ready components that mirror the Web prototype and are intended to be wired into a portrait scene in the Cocos editor.
+Cocos Creator is not installed in the current execution environment, so the Cocos project has not been editor-opened or build-verified locally. The Cocos scripts are source-ready components and are intended to be wired into a portrait scene in the Cocos editor.
+
+The production client architecture is one Cocos codebase:
+
+- Web release builds are Cocos Web build artifacts.
+- WeChat Mini Game builds are Cocos WeChat platform build artifacts.
+- Douyin Mini Game builds are Cocos Douyin platform build artifacts.
+- `client/web/` is not a separate product client and should not receive product-only gameplay that is absent from Cocos.
 
 ## Module Layout
 
@@ -16,8 +23,8 @@ Cocos Creator is not installed in the current execution environment, so the Coco
 shared/game-rules.mjs       # Economy, stamina, task, session, and tuning formulas
 server/src/                 # Node.js HTTP backend and static file host
 server/test/                # Node test suite for rules and API flow
-client/web/                 # Texture-based Web playable prototype
-client/cocos/               # Cocos Creator project skeleton and TypeScript components
+client/cocos/               # Production Cocos Creator project skeleton and TypeScript components
+client/web/                 # Temporary texture-based debug harness, not the production Web client
 client/assets/textures/     # PNG textures used by runtime art/UI surfaces
 scripts/generate-textures.mjs # Offline PNG texture generator
 scripts/sync-cocos-textures.mjs # Copies PNG textures into the Cocos assets tree
@@ -57,8 +64,10 @@ npm test
 npm start
 ```
 
-The local Web prototype is served by the backend at:
+The temporary local Web debug harness is served by the backend at:
 
 ```text
 http://localhost:4173
 ```
+
+For production Web deployment, point `WEB_STATIC_ROOT` at the Cocos Web build output instead of `client/web/`.

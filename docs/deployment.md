@@ -4,9 +4,21 @@
 
 - Backend production environment: gz server.
 - Backend production API domain: `animalapi.wakaka007.cn`.
+- Production Web static files should come from the Cocos Web build output.
+- The local `client/web/` directory is a temporary debug harness and should not be deployed as the production Web game.
+
+## Web Static Root
+
+The Node.js server can serve static game files from `WEB_STATIC_ROOT`.
+
+Expected production shape:
+
+```bash
+WEB_STATIC_ROOT=/path/to/cocos-web-build
+```
+
+For local backend/debug work, leaving `WEB_STATIC_ROOT` unset serves `client/web/`.
 
 ## Notes
-
-TBD.
 
 Use this file for deployment, environment variables, health checks, and rollback notes. Do not store secrets here.

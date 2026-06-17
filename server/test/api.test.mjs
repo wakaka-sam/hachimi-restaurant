@@ -100,6 +100,7 @@ test('API supports full part cycle and restaurant upgrade without income regress
   assert.equal(lastProfile.allPartsMaxed, true);
   assert.equal(lastProfile.economy.incomePower, 25);
   const expectedRevenueBefore = lastProfile.economy.expectedRevenue;
+  const tuningBefore = lastProfile.tuning;
 
   const restaurantUpgrade = await request(baseUrl, '/api/upgrade/restaurant', {
     method: 'POST',
@@ -117,6 +118,7 @@ test('API supports full part cycle and restaurant upgrade without income regress
   });
   assert.equal(restaurantUpgrade.body.profile.economy.incomePower, 25);
   assert.equal(restaurantUpgrade.body.profile.economy.expectedRevenue, expectedRevenueBefore);
+  assert.deepEqual(restaurantUpgrade.body.profile.tuning, tuningBefore);
 });
 
 test('API supports guide task claim and follow-up task claim', async (t) => {

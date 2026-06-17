@@ -12,7 +12,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 
 - Shared gameplay formulas and constants.
 - Node.js backend API for profile, stamina, business sessions, upgrades, restaurant upgrades, and task rewards.
-- Texture-based Web playable prototype for the MVP loop.
+- Cocos client implementation for the MVP loop, with `client/web/` retained only as a temporary backend/debug harness.
 - Generated PNG textures for all game art and UI surfaces.
 - Tests for the economy and backend API.
 
@@ -20,7 +20,8 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 
 - Backend implements the documented MVP API endpoints.
 - Shared rules implement the `incomePower`, `expectedRevenue`, `upgradeCost`, stamina, and performance formulas.
-- Client can play a 90-second business session, finish it, upgrade parts, upgrade restaurant, and claim task rewards.
+- Cocos client can play a 90-second business session, finish it, upgrade parts, upgrade restaurant, and claim task rewards.
+- Web, WeChat Mini Game, and Douyin Mini Game must share the same Cocos client codebase; Web is a Cocos build output.
 - Runtime art surfaces use PNG texture assets rather than canvas/SVG drawing.
 - Verification commands run successfully.
 
@@ -30,19 +31,20 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - `docs/api.md`
 - `shared/game-rules.mjs`
 - `server/src/`
-- `client/web/`
+- `client/cocos/`
+- `client/web/` debug harness
 - `client/assets/textures/`
 
 ## Risks And Notes
 
-- Cocos Creator is not installed in this environment. This implementation starts with a texture-based Web prototype and shared gameplay code, while keeping `client/` structured for a later Cocos Creator scene migration.
+- Cocos Creator is not installed in this environment. This implementation keeps production client work under the Cocos source skeleton and uses `client/web/` only as a temporary texture-based debug harness for shared gameplay and backend verification.
 - This is still an active implementation task until the Cocos client is complete and the full objective has been verified end to end.
 
 ## Current Progress
 
 - Implemented shared gameplay rules in `shared/game-rules.mjs`.
 - Implemented the Node.js backend MVP API in `server/src/`.
-- Implemented a texture-based Web playable prototype in `client/web/`.
+- Implemented a texture-based Web debug harness in `client/web/` for backend/gameplay verification while Cocos Creator is unavailable.
 - Generated PNG texture assets under `client/assets/textures/`.
 - Added a Cocos Creator 3.x source skeleton under `client/cocos/`.
 - Added Cocos TypeScript components for API access, local business simulation, table slots, part upgrades, task rows, texture catalog wiring, and the main scene controller.
@@ -59,14 +61,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Active session resume without double stamina charge.
   - Insufficient stamina rejection.
   - Expired session minimum settlement.
-  - Static Web prototype and PNG texture serving.
+  - Static Web debug harness and PNG texture serving.
   - Runtime client policy forbidding canvas/SVG art drawing.
 - Added `npm run verify:textures` to enforce the texture asset policy.
 - Added `npm run sync:cocos-textures` and `npm run verify:cocos`.
 - Added `npm run verify:gameplay` to check required endpoints, screens, Cocos components, and texture assets.
 - Added `npm run typecheck:cocos` using TypeScript and `@cocos/creator-types`.
 - Added `client/cocos/scene-wiring.json` to define the expected Cocos scene nodes, components, texture assignments, labels, and buttons.
-- Implemented first-run guide highlights in the Web prototype for:
+- Implemented first-run guide highlights in the Web debug harness for:
   - Start business.
   - Seat customer.
   - Serve food.
@@ -74,11 +76,14 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Upgrade a part.
   - Claim guide task reward.
 - Added matching guide label/message support to the Cocos controller and scene wiring contract.
+- Recorded that the production Web client must be a Cocos Web build output, sharing the same codebase as WeChat Mini Game and Douyin Mini Game.
+- Added `WEB_STATIC_ROOT` support so production deployment can serve Cocos Web build output instead of the debug harness.
+- Updated handfeel tuning so an overall restaurant upgrade preserves long-term gameplay feel after part stars reset.
 - Added three restaurant background stage textures so overall restaurant upgrades visibly improve the dining room:
   - Level 1 uses the starter restaurant.
   - Level 2 uses the garden restaurant.
   - Level 3+ uses the deluxe restaurant.
-- Wired restaurant stage textures into the Web prototype, Cocos texture catalog, and Cocos scene wiring contract.
+- Wired restaurant stage textures into the Web debug harness, Cocos texture catalog, and Cocos scene wiring contract.
 
 ## Remaining Work
 
@@ -86,14 +91,16 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 - Wire the scene nodes to `HachimiRestaurantGame`, `TextureCatalog`, `TableSlotView`, `PartUpgradeView`, and `TaskItemView`.
 - Assign synced PNG files as `SpriteFrame` texture references in the editor.
 - Verify the Cocos build targets for Web first, then WeChat Mini Game and Douyin Mini Game.
+- Replace the backend-served debug harness with Cocos Web build output for production Web deployment.
 
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 14 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 16 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
+  - Shared restaurant-upgrade handfeel retention.
   - Web core screens and service chain.
   - Web first-run guide highlights.
   - Web and Cocos restaurant visual stage wiring.
