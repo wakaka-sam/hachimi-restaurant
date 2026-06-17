@@ -359,6 +359,29 @@ test('API settles an expired session with minimum guaranteed reward', async (t) 
   assert.equal(finish.body.profile.player.coins, 75);
 });
 
+test('API auto-settles expired active sessions when profile is loaded', async (t) => {
+  const { app, store, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: {}
+  });
+  assert.equal(start.status, 200);
+
+  const session = store.getSession(start.body.session.sessionId);
+  session.expiresAt = '2000-01-01T00:00:00.000Z';
+
+  const profile = await request(baseUrl, '/api/player/profile');
+
+  assert.equal(profile.status, 200);
+  assert.equal(profile.body.profile.player.coins, 75);
+  assert.equal(profile.body.profile.player.stats.totalSessions, 1);
+  assert.equal(profile.body.profile.activeSession, null);
+  assert.equal(store.getSession(session.sessionId).status, 'expired');
+  assert.equal(store.getSession(session.sessionId).rewardCoins, 75);
+});
+
 test('API rejects trusted client coin rewards and invalid session summaries', async (t) => {
   const { app, baseUrl } = await startTestServer();
   t.after(() => app.close());

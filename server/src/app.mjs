@@ -122,6 +122,7 @@ async function handleApi(request, response, store, url) {
   if (request.method === 'GET' && url.pathname === '/api/player/profile') {
     const player = store.getPlayer(playerId, now);
     refreshStamina(player, now);
+    await settleExpiredSessions(store, player, now);
     await store.save();
     sendJson(response, 200, { ok: true, profile: serializeProfile(player, store, now) });
     return;
@@ -227,6 +228,7 @@ function getSessionElapsedRealSeconds(session, now = new Date()) {
 async function startSession(response, store, playerId, body, now) {
   const player = store.getPlayer(playerId, now);
   refreshStamina(player, now);
+  const expiredSettlements = await settleExpiredSessions(store, player, now);
 
   const existing = store.getActiveSession(playerId, now);
   if (existing) {
@@ -234,6 +236,7 @@ async function startSession(response, store, playerId, body, now) {
       ok: true,
       resumed: true,
       session: serializeBusinessSession(existing, now),
+      expiredSettlements,
       profile: serializeProfile(player, store, now)
     });
     return;
@@ -272,6 +275,7 @@ async function startSession(response, store, playerId, body, now) {
     ok: true,
     resumed: false,
     session: serializeBusinessSession(session, now),
+    expiredSettlements,
     gameplay: {
       durationSeconds: CONSTANTS.sessionDurationSeconds,
       staminaCost: CONSTANTS.sessionStaminaCost,
@@ -298,16 +302,7 @@ async function finishSession(response, store, playerId, body, now) {
   const expired = new Date(session.expiresAt).getTime() < now.getTime();
   let summary;
   if (expired) {
-    summary = {
-      customersServed: 0,
-      customersLost: 1,
-      averageSatisfaction: 0,
-      maxCombo: 0,
-      durationSeconds: CONSTANTS.sessionDurationSeconds,
-      speedMode: session.speedMode,
-      clientVersion: body.clientVersion || 'expired'
-    };
-    session.status = 'expired';
+    summary = createExpiredSummary(session, body);
   } else {
     const validation = validateSessionSummary({ ...(body.summary || body), speedMode: session.speedMode });
     if (!validation.ok) {
@@ -331,24 +326,9 @@ async function finishSession(response, store, playerId, body, now) {
       return;
     }
     summary = validation.summary;
-    session.status = 'finished';
   }
 
-  const settlement = calculateReward(player, summary);
-  player.coins += settlement.rewardCoins;
-  player.stats.totalSessions += 1;
-  player.stats.totalCustomersServed += summary.customersServed;
-  player.stats.totalCustomersLost += summary.customersLost;
-  player.stats.totalCoinsEarned += settlement.rewardCoins;
-  player.daily.sessions += 1;
-  player.daily.customersServed += summary.customersServed;
-  player.daily.coinsEarned += settlement.rewardCoins;
-  player.updatedAt = toIso(now);
-
-  session.summary = normalizeSessionSummary(summary);
-  session.rewardCoins = settlement.rewardCoins;
-  session.settlement = settlement;
-  session.finishedAt = toIso(now);
+  const settlement = settleSession(player, session, summary, now, expired ? 'expired' : 'finished');
 
   await store.save();
 
@@ -358,6 +338,53 @@ async function finishSession(response, store, playerId, body, now) {
     settlement,
     profile: serializeProfile(player, store, now)
   });
+}
+
+async function settleExpiredSessions(store, player, now) {
+  refreshDaily(player, now);
+  const sessions = store.getExpiredActiveSessions(player.playerId, now);
+  if (sessions.length === 0) {
+    return [];
+  }
+  const settlements = sessions.map((session) => ({
+    sessionId: session.sessionId,
+    settlement: settleSession(player, session, createExpiredSummary(session), now, 'expired')
+  }));
+  await store.save();
+  return settlements;
+}
+
+function createExpiredSummary(session, body = {}) {
+  return {
+    customersServed: 0,
+    customersLost: 1,
+    averageSatisfaction: 0,
+    maxCombo: 0,
+    durationSeconds: CONSTANTS.sessionDurationSeconds,
+    speedMode: session.speedMode,
+    clientVersion: body.clientVersion || 'expired'
+  };
+}
+
+function settleSession(player, session, summary, now, status) {
+  const settlement = calculateReward(player, summary);
+  const normalizedSummary = normalizeSessionSummary(summary);
+  player.coins += settlement.rewardCoins;
+  player.stats.totalSessions += 1;
+  player.stats.totalCustomersServed += normalizedSummary.customersServed;
+  player.stats.totalCustomersLost += normalizedSummary.customersLost;
+  player.stats.totalCoinsEarned += settlement.rewardCoins;
+  player.daily.sessions += 1;
+  player.daily.customersServed += normalizedSummary.customersServed;
+  player.daily.coinsEarned += settlement.rewardCoins;
+  player.updatedAt = toIso(now);
+
+  session.status = status;
+  session.summary = normalizedSummary;
+  session.rewardCoins = settlement.rewardCoins;
+  session.settlement = settlement;
+  session.finishedAt = toIso(now);
+  return settlement;
 }
 
 async function upgradePart(response, store, playerId, body, now) {

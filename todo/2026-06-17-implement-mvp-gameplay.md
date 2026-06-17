@@ -107,6 +107,9 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - MVP customers now carry `customerType: normal` in Cocos and the Web debug harness.
   - Session summaries preserve `customerTypes.normal` for backend records.
   - Shared rules expose the current supported customer type list.
+- Closed expired-session settlement:
+  - Profile and session start now auto-settle expired active sessions at the minimum guaranteed reward.
+  - Expired sessions no longer disappear from the active-session view without awarding their documented minimum settlement.
 
 ## Remaining Work
 
@@ -119,7 +122,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
 ## Latest Verification
 
 - `npm run verify` passes.
-- Current automated coverage: 20 Node tests plus static texture and gameplay coverage checks.
+- Current automated coverage: 21 Node tests plus static texture and gameplay coverage checks.
 - Static gameplay coverage verifies:
   - Backend MVP endpoints.
   - Shared economy, stamina, and performance formulas.
@@ -127,6 +130,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
   - Backend early-settlement rejection.
+  - Backend auto-settlement for expired active sessions.
   - Backend exposure of all guide, daily, and growth tasks.
   - Web core screens and service chain.
   - Web and Cocos manual early-settlement blocking.

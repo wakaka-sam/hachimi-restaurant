@@ -57,6 +57,17 @@ export class GameStore {
     )) || null;
   }
 
+  getExpiredActiveSessions(playerId, now = new Date()) {
+    const nowMs = new Date(now).getTime();
+    return Object.values(this.state.sessions)
+      .filter((session) => (
+        session.playerId === playerId
+        && session.status === 'active'
+        && new Date(session.expiresAt).getTime() < nowMs
+      ))
+      .sort((left, right) => new Date(left.startedAt).getTime() - new Date(right.startedAt).getTime());
+  }
+
   saveSession(session) {
     this.state.sessions[session.sessionId] = session;
     return session;

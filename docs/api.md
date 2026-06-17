@@ -100,6 +100,8 @@ task status
 active session, if any
 ```
 
+If the player has active sessions past their recovery window, the backend settles them before returning the profile. MVP expired settlement uses the minimum guaranteed reward.
+
 ### `POST /api/session/start`
 
 Starts a business session.
@@ -107,10 +109,11 @@ Starts a business session.
 Backend behavior:
 
 1. Refresh stamina by backend time.
-2. Verify `stamina >= 10`.
-3. Deduct 10 stamina.
-4. Create an active 90-second business session.
-5. Return session ID and current gameplay parameters.
+2. Settle any expired active sessions with the minimum guaranteed reward.
+3. Verify `stamina >= 10`.
+4. Deduct 10 stamina.
+5. Create an active 90-second business session.
+6. Return session ID and current gameplay parameters.
 
 ### `POST /api/session/finish`
 
