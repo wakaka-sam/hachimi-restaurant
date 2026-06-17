@@ -165,6 +165,10 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - `TexturedButtonView` applies `button.png` and `button-disabled.png` to button background sprites based on interactable state.
   - `HachimiRestaurantGame` refreshes textured buttons after screen, business, upgrade, and task state changes.
   - Scene wiring now requires enough `TexturedButtonView` instances for fixed controls, part upgrade buttons, and all MVP task claim buttons.
+- Added Cocos mobile safe-area contract:
+  - `MobileSafeAreaView` applies Cocos `SafeArea` and `Widget` layout to screen interaction roots.
+  - Scene wiring now requires one safe-area root for each of the five MVP screens.
+  - Platform docs now state that backgrounds may fill the canvas, but interactive controls must stay inside safe-area roots.
 - Wired floor movement tuning into client simulations:
   - Cocos and Web debug simulations now apply `moveSpeedMultiplier` to prep and eating durations.
   - Floor upgrades therefore make movement/turnover feel faster in the interactive business loop, not only in backend tuning output.
@@ -216,6 +220,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Web and Cocos waiting queue cap wiring.
   - Web and Cocos max-session customer spawning cap.
   - Production Web static root guard that prevents the debug harness from being used in production.
+  - Cocos mobile safe-area component and scene wiring contract.
   - Web and Cocos floor movement/turnover tuning.
   - Web and Cocos table-state countdown labels.
   - Cocos texture-backed button wiring.

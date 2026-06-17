@@ -13,6 +13,7 @@ Allowed runtime visual components:
 - `Sprite` for texture art.
 - `Label` for dynamic text and numbers.
 - `Button` for touch input over textured sprites.
+- `Widget` and `SafeArea` for mobile layout and notched-device adaptation.
 
 Forbidden for art:
 
@@ -61,6 +62,9 @@ Create a portrait scene in Cocos Creator and attach:
 - `PartUpgradeView` to each upgrade card node.
 - `TaskItemView` to each task row node. The current MVP task list has 13 backend tasks, so the scene needs at least 13 task row instances unless a later virtualized list component replaces the fixed rows.
 - `TexturedButtonView` to every button that should use `button.png` and `button-disabled.png` as its visual background.
+- `MobileSafeAreaView` to the top-level interaction container of each screen: main, business, upgrade, tasks, and result.
+
+`MobileSafeAreaView` adds or refreshes the Cocos `SafeArea` and `Widget` components at runtime. It keeps touch controls inside the safe area for notches and bottom gesture regions while allowing background sprites to continue filling the full portrait canvas.
 
 The scene should provide 5 table slot nodes. `TableSlotView` renders slots above the current `tableCapacity` with the locked table texture and disables touch input until the player's table capacity grows.
 

@@ -97,7 +97,9 @@ addCheck('cocos texture catalog sprite frames', 'client/cocos/assets/scripts/com
 addCheck('cocos part status component', 'client/cocos/assets/scripts/components/PartStatusView.ts', ['@ccclass', 'PartStatusView', 'PART_LABELS', 'starSprites', 'starIcon']);
 addCheck('cocos task type label component', 'client/cocos/assets/scripts/components/TaskItemView.ts', ['TASK_TYPE_LABELS', 'typeLabel']);
 addCheck('cocos textured button component', 'client/cocos/assets/scripts/components/TexturedButtonView.ts', ['@ccclass', 'TexturedButtonView', 'buttonDisabled', 'backgroundSprite']);
+addCheck('cocos mobile safe area component', 'client/cocos/assets/scripts/components/MobileSafeAreaView.ts', ['@ccclass', 'MobileSafeAreaView', 'SafeArea', 'Widget', 'ON_WINDOW_RESIZE', 'minTouchInset', 'safeArea.updateArea()', 'Math.max(widget.top']);
 addCheck('cocos scene wiring manifest referenced components', 'client/cocos/scene-wiring.json', ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView', 'TexturedButtonView']);
+addCheck('cocos scene wiring safe area contract', 'client/cocos/scene-wiring.json', ['MobileSafeAreaView', 'mainSafeArea', 'businessSafeArea', 'SafeArea', 'Widget', 'minTouchInset']);
 addCheck('cocos scene wiring manifest navigation buttons', 'client/cocos/scene-wiring.json', ['mainNavButton', 'upgradeNavButton', 'taskNavButton', 'resultMainButton', 'resultUpgradeButton']);
 addCheck('cocos scene wiring task type labels', 'client/cocos/scene-wiring.json', ['componentProperties', 'TaskItemView', 'typeLabel']);
 addCheck('documented Cocos single-client rule', 'AGENTS.md', ['Web, WeChat Mini Game, and Douyin Mini Game clients must share this Cocos codebase', 'client/web/']);
@@ -106,6 +108,7 @@ addCheck('platforms documented implementation source of truth', 'docs/platforms.
 addCheck('deployment documents production Web root guard', 'docs/deployment.md', ['NODE_ENV=production', 'server refuses to start unless `WEB_STATIC_ROOT` is set', 'must never point to `client/web`']);
 addCheck('web debug harness forbids production root', 'client/web/README.md', ['must never be used as `WEB_STATIC_ROOT` in production', 'Cocos Web build output']);
 addCheck('platforms documented api host resolution', 'docs/platforms.md', ['API Host Resolution', 'same-origin', 'https://animalapi.wakaka007.cn']);
+addCheck('platforms documented mobile safe area', 'docs/platforms.md', ['Mobile Layout', 'MobileSafeAreaView', 'notches and bottom gesture regions']);
 addCheck('product documented locked table slots', 'docs/product.md', ['场景预留 5 个桌位', '未解锁桌位显示锁定贴图']);
 addCheck('product documented initial customer wave', 'docs/product.md', ['开场先进入 2 位初始顾客']);
 addCheck('product documented waiting queue cap', 'docs/product.md', ['等待队列最多显示 4 位顾客']);
@@ -173,7 +176,16 @@ for (const texture of requiredTextures) {
   }
 }
 
-const requiredComponents = ['HachimiRestaurantGame', 'TextureCatalog', 'TableSlotView', 'PartStatusView', 'PartUpgradeView', 'TaskItemView'];
+const requiredComponents = [
+  'HachimiRestaurantGame',
+  'TextureCatalog',
+  'TableSlotView',
+  'PartStatusView',
+  'PartUpgradeView',
+  'TaskItemView',
+  'TexturedButtonView',
+  'MobileSafeAreaView'
+];
 for (const component of requiredComponents) {
   if (!sceneWiring.requiredComponents?.includes(component)) {
     fail(`Cocos scene wiring manifest missing component ${component}`);
@@ -196,6 +208,20 @@ if ((sceneWiring.minimumInstances?.PartStatusView || 0) < 5) {
 
 if ((sceneWiring.minimumInstances?.TexturedButtonView || 0) < 28) {
   fail('Cocos scene wiring manifest needs at least 28 TexturedButtonView instances');
+}
+
+if ((sceneWiring.minimumInstances?.MobileSafeAreaView || 0) < 5) {
+  fail('Cocos scene wiring manifest needs at least 5 MobileSafeAreaView instances');
+}
+
+if ((sceneWiring.safeArea?.requiredNodes || []).length < 5) {
+  fail('Cocos scene wiring manifest needs safe-area interaction roots for all five screens');
+}
+
+for (const component of ['SafeArea', 'Widget']) {
+  if (!sceneWiring.safeArea?.cocosComponents?.includes(component)) {
+    fail(`Cocos scene wiring safe-area contract missing ${component}`);
+  }
 }
 
 for (const label of ['guideLabel', 'satisfactionLabel', 'feedbackLabel']) {

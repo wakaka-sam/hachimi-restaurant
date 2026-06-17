@@ -31,6 +31,12 @@ The Cocos API client uses one endpoint resolution rule across targets:
 - If it is empty in a Cocos Web build, use same-origin `/api` routes. This supports serving the Cocos Web build from the Node backend with `WEB_STATIC_ROOT`.
 - If it is empty in non-browser Cocos runtimes such as WeChat Mini Game or Douyin Mini Game, use `https://animalapi.wakaka007.cn`.
 
+## Mobile Layout
+
+The shared Cocos scene is portrait-first at 720 x 1280 design resolution. Screen interaction roots must use `MobileSafeAreaView`, which applies Cocos `SafeArea` and `Widget` layout so controls stay clear of notches and bottom gesture regions on Web preview, WeChat Mini Game, and Douyin Mini Game targets.
+
+Background sprites may fill the full canvas, but buttons, task rows, labels, table controls, and navigation must live inside the safe-area interaction root for each screen.
+
 ## Notes
 
 Use this file for platform constraints, compatibility notes, SDK/tooling versions, and mobile UI considerations.

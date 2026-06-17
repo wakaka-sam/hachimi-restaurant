@@ -118,6 +118,7 @@ Task records should explain why a change exists, not just what files changed.
 - Do not design only for desktop Web dimensions.
 - When changing UI, verify with a mobile Web viewport at minimum and record the checked dimensions or target platforms in the task record.
 - Prefer Cocos layout tools such as Widget, layout components, Canvas scaling, and project-level design resolution over hard-coded absolute positioning.
+- In Cocos scenes, attach `MobileSafeAreaView` to each top-level screen interaction container so touch controls respect `SafeArea` and `Widget` layout.
 - Keep buttons, drag targets, and menus large enough for finger input.
 
 ## Server Guidelines
