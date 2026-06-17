@@ -34,6 +34,7 @@ addCheck('backend active session remaining time', 'server/src/app.mjs', ['serial
 addCheck('backend profile stamina recovery status', 'server/src/app.mjs', ['getStaminaRecovery', 'staminaRecovery']);
 addCheck('backend blocks early settlement', 'server/src/app.mjs', ['SESSION_NOT_READY', 'getMinimumSettlementRealSeconds', 'minimumRealSeconds']);
 addCheck('backend auto-settles expired active sessions', 'server/src/app.mjs', ['settleExpiredSessions', 'getExpiredActiveSessions', 'createExpiredSummary']);
+addCheck('backend rejects mismatched customer type totals', 'server/test/api.test.mjs', ['mismatched customer type totals', 'customer_type_count_mismatch']);
 addCheck('server production Cocos Web root guard', 'server/src/config.mjs', ['NODE_ENV', 'production', 'WEB_STATIC_ROOT must point to Cocos Web build output']);
 addCheck('server production root guard test', 'server/test/static-client.test.mjs', ['production server config requires a Cocos Web static root', 'WEB_STATIC_ROOT must point to Cocos Web build output']);
 addCheck('shared 8 percent economy growth', 'shared/game-rules.mjs', ['incomeGrowth: 1.08', 'expectedRevenue', 'upgradeCost']);
@@ -41,6 +42,7 @@ addCheck('shared stamina constants', 'shared/game-rules.mjs', ['staminaMax: 60',
 addCheck('shared stamina recovery status', 'shared/game-rules.mjs', ['getStaminaRecovery', 'secondsUntilNext', 'secondsUntilFull', 'nextRecoveryAt']);
 addCheck('shared business density tuning', 'shared/game-rules.mjs', ['initialCustomerCount: 2', 'maxWaitingCustomers: 4', 'prepDelaySeconds', 'eatingSeconds', 'spawnIntervalSeconds', 'moveSpeedMultiplier']);
 addCheck('shared max session customer cap tests', 'server/test/game-rules.test.mjs', ['session summary validation enforces the 18 customer cap', 'too_many_customers']);
+addCheck('shared customer type total validation tests', 'server/test/game-rules.test.mjs', ['customer type totals to match customers', 'customer_type_count_mismatch']);
 addCheck('shared performance clamp', 'shared/game-rules.mjs', ['performanceFactor', '0.75', '1.3']);
 addCheck('shared speed-neutral reward tests', 'server/test/game-rules.test.mjs', ['speed mode does not change reward', "speedMode: '1x'", "speedMode: '2x'", 'performanceFactor']);
 addCheck('shared non-regressing handfeel tuning', 'shared/game-rules.mjs', ['getEffectivePartStars', 'carriedStars', 'getTuning', 'maxTableSlots']);
@@ -135,6 +137,7 @@ addCheck('product documented task type separation', 'docs/product.md', ['明确�
 addCheck('product documented daily task reset', 'docs/product.md', ['每日任务进度按后端日期刷新', '每天最多领取一次']);
 addCheck('product documented business feedback scope', 'docs/product.md', ['服务成功', '顾客离开', '连击', '收银成功']);
 addCheck('api documented task reward budget', 'docs/api.md', ['Daily task reward budget', '1 and 2 normal business revenues', '10 and 20 stamina', 'outside the MVP coin/stamina set']);
+addCheck('api documented customer type totals', 'docs/api.md', ['customer type totals', 'customersServed + customersLost', 'normal']);
 addCheck('product documented upgrade screen details', 'docs/product.md', ['当前星级', '升级成本', '下一星效果', '金币不足时差多少金币', '满星状态']);
 addCheck('texture policy forbids runtime visual effects', 'scripts/verify-texture-policy.mjs', ['linear-gradient', 'filter\\s*:', 'grayscale', 'opacity\\s*:', 'validateCssTextureBackgrounds']);
 

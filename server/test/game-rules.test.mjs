@@ -119,6 +119,39 @@ test('session summary validation enforces the 18 customer cap', () => {
   assert.deepEqual(overflow.errors, ['too_many_customers']);
 });
 
+test('session summary validation requires customer type totals to match customers', () => {
+  const validImplicit = validateSessionSummary({
+    customersServed: 7,
+    customersLost: 2,
+    averageSatisfaction: 0.7,
+    maxCombo: 4,
+    durationSeconds: CONSTANTS.sessionDurationSeconds
+  });
+  assert.equal(validImplicit.ok, true);
+  assert.deepEqual(validImplicit.summary.customerTypes, { normal: 9 });
+
+  const validExplicit = validateSessionSummary({
+    customersServed: 7,
+    customersLost: 2,
+    averageSatisfaction: 0.7,
+    maxCombo: 4,
+    durationSeconds: CONSTANTS.sessionDurationSeconds,
+    customerTypes: { normal: 9 }
+  });
+  assert.equal(validExplicit.ok, true);
+
+  const mismatch = validateSessionSummary({
+    customersServed: 7,
+    customersLost: 2,
+    averageSatisfaction: 0.7,
+    maxCombo: 4,
+    durationSeconds: CONSTANTS.sessionDurationSeconds,
+    customerTypes: { normal: 8 }
+  });
+  assert.equal(mismatch.ok, false);
+  assert.deepEqual(mismatch.errors, ['customer_type_count_mismatch']);
+});
+
 test('performance reward is clamped between 75 and 130 percent', () => {
   const player = createDefaultPlayer('reward-test', new Date('2026-06-17T00:00:00.000Z'));
 

@@ -139,6 +139,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - MVP customers now carry `customerType: normal` in Cocos and the Web debug harness.
   - Session summaries preserve `customerTypes.normal` for backend records.
   - Shared rules expose the current supported customer type list.
+  - Backend validation rejects summaries whose supported customer type totals do not match served plus lost customers.
 - Closed expired-session settlement:
   - Profile and session start now auto-settle expired active sessions at the minimum guaranteed reward.
   - Expired sessions no longer disappear from the active-session view without awarding their documented minimum settlement.
@@ -220,6 +221,7 @@ Implement the gameplay systems described in `docs/product.md` and `docs/api.md`.
   - Shared营业密度 tuning.
   - Shared max-session customer cap validation.
   - Shared normal customer type reservation.
+  - Backend validation that customer type totals match total served plus lost customers.
   - Shared restaurant-upgrade handfeel retention.
   - Backend active session remaining-time recovery.
   - Backend early-settlement rejection.

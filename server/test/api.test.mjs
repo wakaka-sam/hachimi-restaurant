@@ -489,3 +489,33 @@ test('API rejects trusted client coin rewards and invalid session summaries', as
   assert.equal(finish.status, 400);
   assert.equal(finish.body.error.code, 'INVALID_SESSION_SUMMARY');
 });
+
+test('API rejects session summaries with mismatched customer type totals', async (t) => {
+  const { app, baseUrl } = await startTestServer();
+  t.after(() => app.close());
+
+  const start = await request(baseUrl, '/api/session/start', {
+    method: 'POST',
+    body: {}
+  });
+  assert.equal(start.status, 200);
+
+  const finish = await request(baseUrl, '/api/session/finish', {
+    method: 'POST',
+    body: {
+      sessionId: start.body.session.sessionId,
+      summary: {
+        customersServed: 7,
+        customersLost: 2,
+        averageSatisfaction: 0.7,
+        maxCombo: 4,
+        durationSeconds: 90,
+        customerTypes: { normal: 8 }
+      }
+    }
+  });
+
+  assert.equal(finish.status, 400);
+  assert.equal(finish.body.error.code, 'INVALID_SESSION_SUMMARY');
+  assert.match(finish.body.error.message, /customer_type_count_mismatch/);
+});

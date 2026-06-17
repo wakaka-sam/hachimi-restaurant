@@ -155,7 +155,7 @@ Backend behavior:
 
 1. Verify the session belongs to the player.
 2. Verify the session is active and not already settled.
-3. Validate summary bounds, including a reasonable customer count cap.
+3. Validate summary bounds, including a reasonable customer count cap and customer type totals.
 4. Reject settlement before enough real time has elapsed for a valid 90-second game-time session. The current minimum is 45 real seconds because 2x speed is always available.
 5. Recompute `expectedRevenue`.
 6. Compute `performanceFactor`.
@@ -166,6 +166,8 @@ Backend behavior:
 The backend must not trust a client-submitted final coin value.
 
 MVP customer count cap: submitted `customersServed + customersLost` must not exceed 18. The Cocos client should also stop natural spawning at the same cap so valid local play remains settleable.
+
+If `customerTypes` is submitted, the sum of all supported customer type counts must equal `customersServed + customersLost`. If it is omitted, the backend treats all customers as `normal` for MVP.
 
 Performance formula:
 

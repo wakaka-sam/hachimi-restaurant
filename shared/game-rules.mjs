@@ -417,10 +417,15 @@ export function normalizeCustomerTypes(customerTypes = {}, fallbackTotal = 0) {
 export function validateSessionSummary(summary = {}) {
   const normalized = normalizeSessionSummary(summary);
   const totalCustomers = normalized.customersServed + normalized.customersLost;
+  const customerTypeTotal = Object.values(normalized.customerTypes)
+    .reduce((sum, count) => sum + count, 0);
   const errors = [];
 
   if (totalCustomers > CONSTANTS.maxCustomersPerSession) {
     errors.push('too_many_customers');
+  }
+  if (customerTypeTotal !== totalCustomers) {
+    errors.push('customer_type_count_mismatch');
   }
   if (normalized.maxCombo > normalized.customersServed) {
     errors.push('combo_exceeds_served');
