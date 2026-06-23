@@ -64,7 +64,7 @@ Make the static Cocos Web build playable and visibly texture-backed without a co
 
 ## Key Commits
 
-- Pending.
+- 89115a8df8b53220b1cc7f023c762a7f1c06feeb Fix static Cocos Web playability.
 
 ## Follow-ups
 
