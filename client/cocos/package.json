@@ -4,6 +4,7 @@
   "private": true,
   "description": "Cocos Creator client skeleton for Hachimi Restaurant.",
   "creator": {
-    "version": "3.8.x"
-  }
+    "version": "3.8.7"
+  },
+  "uuid": "e8f47571-67a5-49eb-8b7e-62fd30bf8619"
 }

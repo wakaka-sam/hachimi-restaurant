@@ -1,8 +1,8 @@
 # Cocos Client
 
-This directory is the formal Cocos Creator client project skeleton for 小动物餐厅.
+This directory is the formal Cocos Creator client project for 小动物餐厅.
 
-Cocos Creator is not installed in the current environment, so this project is source-ready but not locally build-verified with the Cocos editor yet. The scripts are written as Cocos Creator 3.x TypeScript components and are designed to be attached to a mobile-first scene.
+The project has been opened and Web Mobile build-verified with Cocos Creator 3.8.7. The current `assets/scenes/main.scene` is a minimal portrait 720 x 1280 initial scene used to keep the Cocos build pipeline working. The full MVP gameplay scene still needs editor layout and serialized bindings according to `scene-wiring.json`.
 
 ## Asset Policy
 
@@ -51,6 +51,18 @@ npm run verify:cocos-components
 npm run verify:cocos-controller
 npm run sync:cocos-textures
 npm run verify:cocos
+```
+
+Build the current Cocos Web Mobile target with:
+
+```bash
+/Applications/Cocos/Creator/3.8.7/CocosCreator.app/Contents/MacOS/CocosCreator --project /Volumes/bigger/testspace/hachimi-restaurant/client/cocos --build "platform=web-mobile;debug=false;startScene=43983c2f-5ff3-43d0-8b25-45a498b98abd"
+```
+
+The generated output is written to:
+
+```text
+client/cocos/build/web-mobile/
 ```
 
 ## API Endpoint

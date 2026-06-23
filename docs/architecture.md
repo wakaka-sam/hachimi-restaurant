@@ -5,10 +5,10 @@
 The repository currently contains:
 
 - A Node.js gameplay backend.
-- A Cocos Creator 3.x source skeleton under `client/cocos/`.
+- A Cocos Creator 3.8.x project under `client/cocos/`.
 - A texture-based DOM Web debug harness under `client/web/` for temporary backend/gameplay verification only.
 
-Cocos Creator is not installed in the current execution environment, so the Cocos project has not been editor-opened or build-verified locally. The Cocos scripts are source-ready components and are intended to be wired into a portrait scene in the Cocos editor.
+Cocos Creator 3.8.7 is installed at `/Applications/Cocos/Creator/3.8.7/CocosCreator.app` in the current local environment. The Cocos project has been opened by the editor and Web Mobile build-verified. The current initial scene is a minimal portrait scene that proves the build pipeline; the full MVP gameplay scene still needs editor layout and serialized bindings against `client/cocos/scene-wiring.json`.
 
 The production client architecture is one Cocos codebase:
 
@@ -23,7 +23,7 @@ The production client architecture is one Cocos codebase:
 shared/game-rules.mjs       # Economy, stamina, task, session, and tuning formulas
 server/src/                 # Node.js HTTP backend and static file host
 server/test/                # Node test suite for rules and API flow
-client/cocos/               # Production Cocos Creator project skeleton and TypeScript components
+client/cocos/               # Production Cocos Creator project and TypeScript components
 client/web/                 # Temporary texture-based debug harness, not the production Web client
 client/assets/textures/     # PNG textures used by runtime art/UI surfaces
 scripts/generate-textures.mjs # Offline PNG texture generator
@@ -33,7 +33,7 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `client/cocos/assets/scripts/core/GameRules.ts` mirrors the subset of shared constants and labels needed by the Cocos runtime. `npm run verify:rules` compares that mirror against `shared/game-rules.mjs`; update both files together when gameplay constants change.
 
-`npm run verify:cocos-project` validates the Cocos project metadata before the editor is available: Cocos Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, the per-screen `sceneBlueprint`, and generated-directory ignore rules.
+`npm run verify:cocos-project` validates the Cocos project metadata: Cocos Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, the per-screen `sceneBlueprint`, and generated-directory ignore rules.
 
 `npm run verify:cocos-api` executes the Cocos API client against a mocked `cc.sys` runtime. It verifies same-origin Web requests, `https://animalapi.wakaka007.cn` fallback for non-browser targets, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` recovery fields.
 
@@ -87,6 +87,12 @@ npm run typecheck:cocos
 npm run verify
 npm test
 npm start
+```
+
+Build the current Cocos Web Mobile target with:
+
+```bash
+/Applications/Cocos/Creator/3.8.7/CocosCreator.app/Contents/MacOS/CocosCreator --project /Volumes/bigger/testspace/hachimi-restaurant/client/cocos --build "platform=web-mobile;debug=false;startScene=43983c2f-5ff3-43d0-8b25-45a498b98abd"
 ```
 
 The temporary local Web debug harness is served by the backend at:
