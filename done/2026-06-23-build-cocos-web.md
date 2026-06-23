@@ -63,7 +63,7 @@ Install Cocos Creator 3.8.x locally and produce a Cocos Web build from the share
 ## Key Commits
 
 - `81d3617` - Record Cocos build verification status.
-- `7615ee7` - Add Cocos buildable project metadata.
+- `5825f35` - Add Cocos buildable project metadata.
 
 ## Follow-ups
 
