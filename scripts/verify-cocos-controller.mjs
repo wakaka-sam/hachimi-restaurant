@@ -22,7 +22,8 @@ const scriptFiles = [
   'components/PartUpgradeView.ts',
   'components/TaskItemView.ts',
   'components/TexturedButtonView.ts',
-  'components/TexturedPanelView.ts'
+  'components/TexturedPanelView.ts',
+  'components/MobileSafeAreaView.ts'
 ];
 
 try {
@@ -74,16 +75,38 @@ class Node {
   constructor() {
     this.active = true;
     this.events = [];
+    this.components = new Map();
+    this.layer = 0;
+    this.scale = null;
   }
 
   on(event, callback, target) {
     this.events.push({ event, callback, target });
+  }
+
+  addComponent(ComponentClass) {
+    const component = new ComponentClass();
+    component.node = this;
+    this.components.set(ComponentClass, component);
+    return component;
+  }
+
+  getComponent(ComponentClass) {
+    return this.components.get(ComponentClass) || null;
+  }
+
+  setPosition(x, y, z) {
+    this.position = { x, y, z };
   }
 }
 
 class Component {
   constructor() {
     this.node = new Node();
+  }
+
+  getComponent(ComponentClass) {
+    return this.node.getComponent(ComponentClass);
   }
 }
 
@@ -111,6 +134,55 @@ class Button extends Component {
 Button.EventType = { CLICK: 'click' };
 Button.Transition = { NONE: 0, COLOR: 1, SPRITE: 2, SCALE: 3 };
 
+class UITransform extends Component {
+  constructor() {
+    super();
+    this.contentSize = { width: 720, height: 1280 };
+  }
+
+  setContentSize(width, height) {
+    this.contentSize = { width, height };
+  }
+}
+
+class Widget extends Component {
+  constructor() {
+    super();
+    this.AlignMode = Widget.AlignMode;
+  }
+
+  updateAlignment() {}
+}
+Widget.AlignMode = { ON_WINDOW_RESIZE: 2 };
+
+class SafeArea extends Component {
+  updateArea() {}
+}
+
+class Vec2 {
+  constructor(x = 0, y = 0) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Vec3 {
+  constructor(x = 0, y = 0, z = 0) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+}
+
+class EventMouse {}
+class EventTouch {}
+
+const Input = { EventType: { MOUSE_UP: 'mouse-up', TOUCH_END: 'touch-end' } };
+const input = {
+  on() {},
+  off() {}
+};
+
 function ccclass() {
   return (target) => target;
 }
@@ -128,6 +200,15 @@ exports.Component = Component;
 exports.Label = Label;
 exports.Sprite = Sprite;
 exports.Button = Button;
+exports.UITransform = UITransform;
+exports.Widget = Widget;
+exports.SafeArea = SafeArea;
+exports.Vec2 = Vec2;
+exports.Vec3 = Vec3;
+exports.EventMouse = EventMouse;
+exports.EventTouch = EventTouch;
+exports.Input = Input;
+exports.input = input;
 exports.sys = {
   isBrowser: true,
   localStorage: {

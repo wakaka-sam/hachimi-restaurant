@@ -55,7 +55,15 @@ export class PartUpgradeView extends Component {
       const active = index < CONSTANTS.starsPerPart;
       sprite.node.active = active;
       if (active) {
-        sprite.spriteFrame = textures.getStarFrame(index < star);
+        let frame = null;
+        try {
+          frame = textures.getStarFrame(index < star);
+        } catch {
+          frame = null;
+        }
+        if (frame) {
+          sprite.spriteFrame = frame;
+        }
       }
     });
     if (this.upgradeButton) {

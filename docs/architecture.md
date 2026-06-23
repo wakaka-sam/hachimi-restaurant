@@ -8,7 +8,7 @@ The repository currently contains:
 - A Cocos Creator 3.8.x project under `client/cocos/`.
 - A texture-based DOM Web debug harness under `client/web/` for temporary backend/gameplay verification only.
 
-Cocos Creator 3.8.7 is installed at `/Applications/Cocos/Creator/3.8.7/CocosCreator.app` in the current local environment. The Cocos project has been opened by the editor and Web Mobile build-verified. The current initial scene is a minimal portrait scene that proves the build pipeline; the full MVP gameplay scene still needs editor layout and serialized bindings against `client/cocos/scene-wiring.json`.
+Cocos Creator 3.8.7 is installed at `/Applications/Cocos/Creator/3.8.7/CocosCreator.app` in the current local environment. The Cocos project has been opened by the editor and Web Mobile build-verified. The current initial scene attaches `HachimiRestaurantGame` to the Canvas; when serialized editor bindings are absent, the controller creates an interim runtime Cocos UI so the Web build is playable. A full texture-backed editor-authored scene should still replace this bootstrap and follow `client/cocos/scene-wiring.json`.
 
 The production client architecture is one Cocos codebase:
 
@@ -95,10 +95,10 @@ Build the current Cocos Web Mobile target with:
 /Applications/Cocos/Creator/3.8.7/CocosCreator.app/Contents/MacOS/CocosCreator --project /Volumes/bigger/testspace/hachimi-restaurant/client/cocos --build "platform=web-mobile;debug=false;startScene=43983c2f-5ff3-43d0-8b25-45a498b98abd"
 ```
 
-The temporary local Web debug harness is served by the backend at:
+For local Cocos Web verification, serve the build through the backend so same-origin `/api` routes are available:
 
-```text
-http://localhost:4173
+```bash
+WEB_STATIC_ROOT=client/cocos/build/web-mobile PORT=4173 npm start
 ```
 
 For production Web deployment, point `WEB_STATIC_ROOT` at the Cocos Web build output instead of `client/web/`.

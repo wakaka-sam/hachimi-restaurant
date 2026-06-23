@@ -1,4 +1,19 @@
-import { _decorator, Button, Component, Label, Node, Sprite, sys } from 'cc';
+import {
+  _decorator,
+  Button,
+  Component,
+  EventMouse,
+  EventTouch,
+  input,
+  Input,
+  Label,
+  Node,
+  Sprite,
+  sys,
+  UITransform,
+  Vec2,
+  Vec3
+} from 'cc';
 import { BusinessSimulation, BusinessSimulationSnapshot, LocalBusinessSummary } from './core/BusinessSimulation';
 import {
   CONSTANTS,
@@ -19,6 +34,7 @@ import { TaskItemView } from './components/TaskItemView';
 import { TexturedButtonView } from './components/TexturedButtonView';
 import { TexturedPanelView } from './components/TexturedPanelView';
 import { TextureCatalog } from './components/TextureCatalog';
+import { MobileSafeAreaView } from './components/MobileSafeAreaView';
 
 const { ccclass, property } = _decorator;
 
@@ -39,8 +55,19 @@ type GuideStep = {
   key: GuideFocusKey;
   message: string;
 };
+type RuntimeHitArea = {
+  screens: ScreenKey[];
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  action: () => void;
+};
 
 const LOCAL_SESSION_SNAPSHOT_KEY = 'hachimi-active-session-snapshot';
+const RUNTIME_DESIGN_WIDTH = 720;
+const RUNTIME_DESIGN_HEIGHT = 1280;
+const RUNTIME_NAV_SCREENS: ScreenKey[] = ['main', 'upgrade', 'tasks'];
 
 @ccclass('HachimiRestaurantGame')
 export class HachimiRestaurantGame extends Component {
@@ -188,8 +215,13 @@ export class HachimiRestaurantGame extends Component {
   private finishing = false;
   private activeSessionId = '';
   private nextSettlementRetryAtMs = 0;
+  private runtimeRoot: Node | null = null;
+  private runtimeNavBar: Node | null = null;
+  private runtimeHitAreas: RuntimeHitArea[] = [];
+  private runtimeInputBound = false;
 
   onLoad(): void {
+    this.ensureRuntimeScene();
     this.api = new ApiClient(this.apiBaseUrl);
     this.configureButtonTransitions();
     this.startButton?.node.on(Button.EventType.CLICK, this.startBusiness, this);
@@ -208,11 +240,347 @@ export class HachimiRestaurantGame extends Component {
     this.taskViews.forEach((view) => view.bind(this.claimTask.bind(this)));
   }
 
+  private ensureRuntimeScene(): void {
+    if (this.mainScreen || this.businessScreen || this.upgradeScreen || this.taskScreen || this.resultScreen) {
+      return;
+    }
+
+    this.textures = this.getComponent(TextureCatalog) || this.node.addComponent(TextureCatalog);
+
+    const root = this.createNode('RuntimeGameRoot', this.node, 0, 0, RUNTIME_DESIGN_WIDTH, RUNTIME_DESIGN_HEIGHT);
+    this.runtimeRoot = root;
+    this.applyRuntimeRootFit();
+    this.createLabel(root, 'TitleLabel', '八酱小动物餐厅', 0, 560, 640, 48, 36);
+
+    this.coinLabel = this.createLabel(root, 'CoinLabel', '金币 --', -235, 505, 190, 32, 22);
+    this.staminaLabel = this.createLabel(root, 'StaminaLabel', '体力 --', 0, 505, 260, 32, 22);
+    this.levelLabel = this.createLabel(root, 'LevelLabel', '餐厅 Lv.--', 235, 505, 190, 32, 22);
+    this.nextRevenueLabel = this.createLabel(root, 'NextRevenueLabel', '下次 --', 0, 465, 420, 32, 22);
+    this.messageLabel = this.createLabel(root, 'MessageLabel', '', 0, -560, 660, 48, 20);
+    this.guideLabel = this.createLabel(root, 'GuideLabel', '', 0, -500, 660, 44, 22);
+
+    this.runtimeNavBar = this.createNode('RuntimeNavBar', root, 0, -430, 660, 72);
+    const mainNav = this.createButton(this.runtimeNavBar, 'MainNavButton', '餐厅', -220, 0, 180, 64, 24);
+    const upgradeNav = this.createButton(this.runtimeNavBar, 'UpgradeNavButton', '升级', 0, 0, 180, 64, 24);
+    const taskNav = this.createButton(this.runtimeNavBar, 'TaskNavButton', '任务', 220, 0, 180, 64, 24);
+    this.mainNavButton = mainNav.button;
+    this.upgradeNavButton = upgradeNav.button;
+    this.taskNavButton = taskNav.button;
+
+    this.mainScreen = this.createScreen(root, 'MainScreen');
+    this.businessScreen = this.createScreen(root, 'BusinessScreen');
+    this.upgradeScreen = this.createScreen(root, 'UpgradeScreen');
+    this.taskScreen = this.createScreen(root, 'TaskScreen');
+    this.resultScreen = this.createScreen(root, 'ResultScreen');
+
+    this.buildRuntimeMainScreen();
+    this.buildRuntimeBusinessScreen();
+    this.buildRuntimeUpgradeScreen();
+    this.buildRuntimeTaskScreen();
+    this.buildRuntimeResultScreen();
+    this.configureRuntimeHitAreas();
+    this.bindRuntimeInput();
+  }
+
+  onDestroy(): void {
+    if (!this.runtimeInputBound) {
+      return;
+    }
+    input.off(Input.EventType.MOUSE_UP, this.handleRuntimeMouseUp, this);
+    input.off(Input.EventType.TOUCH_END, this.handleRuntimeTouchEnd, this);
+    this.runtimeInputBound = false;
+  }
+
+  private buildRuntimeMainScreen(): void {
+    if (!this.mainScreen) {
+      return;
+    }
+
+    this.createLabel(this.mainScreen, 'MainSubtitleLabel', '安排入座、上菜、收银，经营第一天。', 0, 325, 640, 40, 24);
+    const start = this.createButton(this.mainScreen, 'StartButton', '开始营业', 0, 230, 260, 74, 28);
+    this.startButton = start.button;
+    this.startButtonLabel = start.label;
+
+    this.partStatusViews = PARTS.map((part, index) => {
+      const row = this.createNode(`PartStatus_${part}`, this.mainScreen!, 0, 125 - index * 54, 600, 46);
+      const view = row.addComponent(PartStatusView);
+      view.titleLabel = this.createLabel(row, `PartStatusLabel_${part}`, PARTS[index], -190, 0, 180, 30, 22);
+      return view;
+    });
+  }
+
+  private buildRuntimeBusinessScreen(): void {
+    if (!this.businessScreen) {
+      return;
+    }
+
+    this.timerLabel = this.createLabel(this.businessScreen, 'TimerLabel', '剩余 --', 0, 345, 240, 36, 26);
+    this.speedLabel = this.createLabel(this.businessScreen, 'SpeedLabel', '1x', 250, 345, 100, 34, 22);
+    this.businessStatsLabel = this.createLabel(this.businessScreen, 'BusinessStatsLabel', '服务 0 / 离开 0 / 连击 0', 0, 300, 620, 34, 22);
+    this.satisfactionLabel = this.createLabel(this.businessScreen, 'SatisfactionLabel', '满意 --', 0, 262, 360, 32, 22);
+    this.feedbackLabel = this.createLabel(this.businessScreen, 'FeedbackLabel', '', 0, 222, 560, 32, 22);
+
+    this.waitingCustomerLabels = Array.from({ length: 4 }, (_, index) => (
+      this.createLabel(this.businessScreen!, `WaitingLabel_${index}`, '', -240 + index * 160, 175, 130, 28, 20)
+    ));
+
+    const positions = [
+      [-170, 65],
+      [170, 65],
+      [-170, -90],
+      [170, -90],
+      [0, -245]
+    ];
+    this.tableSlots = positions.map(([x, y], index) => {
+      const node = this.createNode(`TableSlot_${index}`, this.businessScreen!, x, y, 250, 112);
+      const view = node.addComponent(TableSlotView);
+      view.button = node.addComponent(Button);
+      view.label = this.createLabel(node, `TableSlotLabel_${index}`, '空桌', 0, 0, 230, 64, 22);
+      return view;
+    });
+
+    const speed = this.createButton(this.businessScreen, 'SpeedButton', '切速', -220, -385, 150, 62, 22);
+    const cashier = this.createButton(this.businessScreen, 'CashierButton', '收银机', 0, -385, 170, 62, 22);
+    const finish = this.createButton(this.businessScreen, 'FinishButton', '结束结算', 220, -385, 180, 62, 22);
+    this.speedButton = speed.button;
+    this.cashierButton = cashier.button;
+    this.finishButton = finish.button;
+  }
+
+  private buildRuntimeUpgradeScreen(): void {
+    if (!this.upgradeScreen) {
+      return;
+    }
+
+    this.createLabel(this.upgradeScreen, 'UpgradeTitleLabel', '升级餐厅部件', 0, 350, 640, 42, 30);
+    this.partViews = PARTS.map((part, index) => {
+      const row = this.createNode(`PartUpgrade_${part}`, this.upgradeScreen!, 0, 250 - index * 105, 650, 92);
+      const view = row.addComponent(PartUpgradeView);
+      view.titleLabel = this.createLabel(row, `PartUpgradeTitle_${part}`, part, -225, 20, 180, 28, 22);
+      view.costLabel = this.createLabel(row, `PartUpgradeCost_${part}`, '成本 --', -45, 20, 210, 28, 19);
+      view.effectLabel = this.createLabel(row, `PartUpgradeEffect_${part}`, '', -45, -18, 360, 28, 18);
+      const button = this.createButton(row, `PartUpgradeButton_${part}`, '升级', 250, 0, 115, 54, 20);
+      view.upgradeButton = button.button;
+      view.buttonLabel = button.label;
+      return view;
+    });
+
+    const restaurant = this.createButton(this.upgradeScreen, 'RestaurantUpgradeButton', '升级餐厅', 0, -360, 230, 64, 24);
+    this.restaurantUpgradeButton = restaurant.button;
+  }
+
+  private buildRuntimeTaskScreen(): void {
+    if (!this.taskScreen) {
+      return;
+    }
+
+    this.createLabel(this.taskScreen, 'TaskTitleLabel', '任务', 0, 365, 640, 42, 30);
+    this.guideTaskHeaderLabel = this.createLabel(this.taskScreen, 'GuideTaskHeaderLabel', '', -205, 322, 190, 28, 20);
+    this.dailyTaskHeaderLabel = this.createLabel(this.taskScreen, 'DailyTaskHeaderLabel', '', 0, 322, 190, 28, 20);
+    this.growthTaskHeaderLabel = this.createLabel(this.taskScreen, 'GrowthTaskHeaderLabel', '', 205, 322, 190, 28, 20);
+
+    this.taskViews = Array.from({ length: 13 }, (_, index) => {
+      const row = this.createNode(`TaskRow_${index}`, this.taskScreen!, 0, 270 - index * 52, 660, 48);
+      const view = row.addComponent(TaskItemView);
+      view.typeLabel = this.createLabel(row, `TaskType_${index}`, '', -285, 10, 80, 20, 16);
+      view.titleLabel = this.createLabel(row, `TaskTitle_${index}`, '', -135, 10, 230, 20, 17);
+      view.descriptionLabel = this.createLabel(row, `TaskDesc_${index}`, '', -80, -12, 330, 20, 15);
+      view.progressLabel = this.createLabel(row, `TaskProgress_${index}`, '', 120, 10, 80, 20, 16);
+      view.rewardLabel = this.createLabel(row, `TaskReward_${index}`, '', 145, -12, 130, 20, 15);
+      const button = this.createButton(row, `TaskClaim_${index}`, '领取', 285, 0, 82, 40, 16);
+      view.claimButton = button.button;
+      view.buttonLabel = button.label;
+      return view;
+    });
+  }
+
+  private buildRuntimeResultScreen(): void {
+    if (!this.resultScreen) {
+      return;
+    }
+
+    this.createLabel(this.resultScreen, 'ResultTitleLabel', '营业结算', 0, 240, 640, 48, 34);
+    this.resultLabel = this.createLabel(this.resultScreen, 'ResultLabel', '暂无结算', 0, 85, 560, 150, 28);
+    const main = this.createButton(this.resultScreen, 'ResultMainButton', '继续营业', -145, -130, 210, 68, 24);
+    const upgrade = this.createButton(this.resultScreen, 'ResultUpgradeButton', '去升级', 145, -130, 210, 68, 24);
+    this.resultMainButton = main.button;
+    this.resultUpgradeButton = upgrade.button;
+  }
+
+  private configureRuntimeHitAreas(): void {
+    const navAreas: RuntimeHitArea[] = [
+      { screens: RUNTIME_NAV_SCREENS, x: -220, y: -430, width: 180, height: 64, action: () => this.showMain() },
+      { screens: RUNTIME_NAV_SCREENS, x: 0, y: -430, width: 180, height: 64, action: () => this.showUpgrade() },
+      { screens: RUNTIME_NAV_SCREENS, x: 220, y: -430, width: 180, height: 64, action: () => this.showTasks() }
+    ];
+    const tableAreas: RuntimeHitArea[] = [
+      [-170, 65],
+      [170, 65],
+      [-170, -90],
+      [170, -90],
+      [0, -245]
+    ].map(([x, y], index) => ({
+      screens: ['business'],
+      x,
+      y,
+      width: 250,
+      height: 112,
+      action: () => this.handleTablePressed(index)
+    }));
+    const partAreas: RuntimeHitArea[] = PARTS.map((part, index) => ({
+      screens: ['upgrade'],
+      x: 250,
+      y: 250 - index * 105,
+      width: 115,
+      height: 54,
+      action: () => {
+        void this.upgradePart(part);
+      }
+    }));
+    const taskAreas: RuntimeHitArea[] = Array.from({ length: 13 }, (_, index) => ({
+      screens: ['tasks'],
+      x: 285,
+      y: 270 - index * 52,
+      width: 82,
+      height: 40,
+      action: () => {
+        const task = this.profile?.tasks[index];
+        if (task) {
+          void this.claimTask(task.id);
+        }
+      }
+    }));
+
+    this.runtimeHitAreas = [
+      ...navAreas,
+      { screens: ['main'], x: 0, y: 230, width: 260, height: 74, action: () => { void this.startBusiness(); } },
+      ...tableAreas,
+      { screens: ['business'], x: -220, y: -385, width: 150, height: 62, action: () => this.toggleSpeed() },
+      { screens: ['business'], x: 0, y: -385, width: 170, height: 62, action: () => this.collectFirstReadyPay() },
+      { screens: ['business'], x: 220, y: -385, width: 180, height: 62, action: () => { void this.finishBusiness(); } },
+      ...partAreas,
+      { screens: ['upgrade'], x: 0, y: -360, width: 230, height: 64, action: () => { void this.upgradeRestaurant(); } },
+      ...taskAreas,
+      { screens: ['result'], x: -145, y: -130, width: 210, height: 68, action: () => this.showMain() },
+      { screens: ['result'], x: 145, y: -130, width: 210, height: 68, action: () => this.showUpgrade() }
+    ];
+  }
+
+  private bindRuntimeInput(): void {
+    if (this.runtimeInputBound) {
+      return;
+    }
+    input.on(Input.EventType.MOUSE_UP, this.handleRuntimeMouseUp, this);
+    input.on(Input.EventType.TOUCH_END, this.handleRuntimeTouchEnd, this);
+    this.runtimeInputBound = true;
+  }
+
+  private handleRuntimeMouseUp(event: EventMouse): void {
+    this.handleRuntimeInput(event.getUILocation());
+  }
+
+  private handleRuntimeTouchEnd(event: EventTouch): void {
+    this.handleRuntimeInput(event.getUILocation());
+  }
+
+  private handleRuntimeInput(location: Vec2): void {
+    if (!this.runtimeRoot || this.runtimeHitAreas.length < 1) {
+      return;
+    }
+    const point = this.toRuntimeDesignPoint(location);
+    const hitArea = [...this.runtimeHitAreas]
+      .reverse()
+      .find((area) => (
+        area.screens.includes(this.activeScreen)
+        && Math.abs(point.x - area.x) <= area.width / 2
+        && Math.abs(point.y - area.y) <= area.height / 2
+      ));
+    if (hitArea) {
+      hitArea.action();
+    }
+  }
+
+  private toRuntimeDesignPoint(location: Vec2): Vec2 {
+    const size = this.node.getComponent(UITransform)?.contentSize;
+    const scale = this.runtimeRoot?.scale.x || 1;
+    const width = size?.width || RUNTIME_DESIGN_WIDTH;
+    const height = size?.height || RUNTIME_DESIGN_HEIGHT;
+    return new Vec2(
+      (location.x - width / 2) / scale,
+      (location.y - height / 2) / scale
+    );
+  }
+
+  private createScreen(parent: Node, name: string): Node {
+    const screen = this.createNode(name, parent, 0, 0, RUNTIME_DESIGN_WIDTH, RUNTIME_DESIGN_HEIGHT);
+    const safeArea = screen.addComponent(MobileSafeAreaView);
+    safeArea.minTouchInset = 16;
+    return screen;
+  }
+
+  private applyRuntimeRootFit(): void {
+    if (!this.runtimeRoot) {
+      return;
+    }
+    const size = this.node.getComponent(UITransform)?.contentSize;
+    if (!size || size.width <= 0 || size.height <= 0) {
+      return;
+    }
+    const runtimeScale = Math.min(size.width / RUNTIME_DESIGN_WIDTH, size.height / RUNTIME_DESIGN_HEIGHT);
+    this.runtimeRoot.scale = new Vec3(runtimeScale, runtimeScale, 1);
+  }
+
+  private createNode(name: string, parent: Node, x: number, y: number, width: number, height: number): Node {
+    const node = new Node(name);
+    node.layer = parent.layer;
+    node.parent = parent;
+    node.setPosition(x, y, 0);
+    node.addComponent(UITransform).setContentSize(width, height);
+    return node;
+  }
+
+  private createLabel(
+    parent: Node,
+    name: string,
+    text: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    fontSize: number
+  ): Label {
+    const node = this.createNode(name, parent, x, y, width, height);
+    const label = node.addComponent(Label);
+    label.string = text;
+    label.fontSize = fontSize;
+    label.lineHeight = fontSize + 6;
+    return label;
+  }
+
+  private createButton(
+    parent: Node,
+    name: string,
+    text: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    fontSize: number
+  ): { button: Button; label: Label } {
+    const node = this.createNode(name, parent, x, y, width, height);
+    const button = node.addComponent(Button);
+    button.transition = Button.Transition.NONE;
+    const label = this.createLabel(node, `${name}Label`, text, 0, 0, width, height, fontSize);
+    return { button, label };
+  }
+
   async start(): Promise<void> {
+    this.applyRuntimeRootFit();
     await this.loadProfile();
   }
 
   update(deltaTime: number): void {
+    this.applyRuntimeRootFit();
     if (this.activeScreen !== 'business' || !this.simulation || this.finishing) {
       return;
     }
@@ -404,6 +772,7 @@ export class HachimiRestaurantGame extends Component {
     if (this.upgradeScreen) this.upgradeScreen.active = screen === 'upgrade';
     if (this.taskScreen) this.taskScreen.active = screen === 'tasks';
     if (this.resultScreen) this.resultScreen.active = screen === 'result';
+    if (this.runtimeNavBar) this.runtimeNavBar.active = screen === 'main' || screen === 'upgrade' || screen === 'tasks';
   }
 
   private renderAll(): void {

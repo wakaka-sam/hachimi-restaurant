@@ -2,7 +2,7 @@
 
 This directory is the formal Cocos Creator client project for 小动物餐厅.
 
-The project has been opened and Web Mobile build-verified with Cocos Creator 3.8.7. The current `assets/scenes/main.scene` is a minimal portrait 720 x 1280 initial scene used to keep the Cocos build pipeline working. The full MVP gameplay scene still needs editor layout and serialized bindings according to `scene-wiring.json`.
+The project has been opened and Web Mobile build-verified with Cocos Creator 3.8.7. The current `assets/scenes/main.scene` attaches `HachimiRestaurantGame` to the Canvas. If the expected serialized scene bindings are absent, the controller builds an interim Cocos runtime UI so the Web build can be played end to end. The final production pass should still replace that bootstrap with an editor-authored, texture-backed scene wired according to `scene-wiring.json`.
 
 ## Asset Policy
 
@@ -63,6 +63,12 @@ The generated output is written to:
 
 ```text
 client/cocos/build/web-mobile/
+```
+
+For local browser playtesting, serve the build through the Node backend so the Cocos Web client can call same-origin `/api` routes:
+
+```bash
+WEB_STATIC_ROOT=client/cocos/build/web-mobile PORT=4173 npm start
 ```
 
 ## API Endpoint
