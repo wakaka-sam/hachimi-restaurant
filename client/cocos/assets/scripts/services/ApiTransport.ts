@@ -10,6 +10,22 @@ export interface JsonResponse<T> {
   payload: T;
 }
 
+export class NonJsonResponseError extends Error {
+  readonly url: string;
+  readonly status: number;
+  readonly contentType: string;
+  readonly bodyPreview: string;
+
+  constructor(url: string, status: number, contentType: string, body: string) {
+    super('API endpoint did not return JSON.');
+    this.name = 'NonJsonResponseError';
+    this.url = url;
+    this.status = status;
+    this.contentType = contentType;
+    this.bodyPreview = body.slice(0, 120);
+  }
+}
+
 export async function requestJson<T>(url: string, options: JsonRequestOptions): Promise<JsonResponse<T>> {
   const body = options.body === undefined ? undefined : JSON.stringify(options.body);
   if (typeof globalThis.fetch === 'function') {
@@ -18,13 +34,27 @@ export async function requestJson<T>(url: string, options: JsonRequestOptions): 
       headers: options.headers,
       body
     });
+    const responseText = await response.text();
     return {
       ok: response.ok,
       status: response.status,
-      payload: await response.json() as T
+      payload: parseJsonPayload<T>(
+        responseText,
+        url,
+        response.status,
+        response.headers.get('content-type') || ''
+      )
     };
   }
   return requestJsonWithXhr(url, options, body);
+}
+
+function parseJsonPayload<T>(text: string, url: string, status: number, contentType: string): T {
+  try {
+    return JSON.parse(text || '{}') as T;
+  } catch {
+    throw new NonJsonResponseError(url, status, contentType, text);
+  }
 }
 
 function requestJsonWithXhr<T>(
@@ -44,7 +74,12 @@ function requestJsonWithXhr<T>(
         resolve({
           ok: xhr.status >= 200 && xhr.status < 300,
           status: xhr.status,
-          payload: JSON.parse(xhr.responseText || '{}') as T
+          payload: parseJsonPayload<T>(
+            xhr.responseText || '{}',
+            url,
+            xhr.status,
+            xhr.getResponseHeader('content-type') || ''
+          )
         });
       } catch (error) {
         reject(error);

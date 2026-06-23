@@ -8,7 +8,7 @@ The repository currently contains:
 - A Cocos Creator 3.8.x project under `client/cocos/`.
 - A texture-based DOM Web debug harness under `client/web/` for temporary backend/gameplay verification only.
 
-Cocos Creator 3.8.7 is installed at `/Applications/Cocos/Creator/3.8.7/CocosCreator.app` in the current local environment. The Cocos project has been opened by the editor and Web Mobile build-verified. The current initial scene attaches `HachimiRestaurantGame` to the Canvas; when serialized editor bindings are absent, the controller creates an interim runtime Cocos UI so the Web build is playable. A full texture-backed editor-authored scene should still replace this bootstrap and follow `client/cocos/scene-wiring.json`.
+Cocos Creator 3.8.7 is installed at `/Applications/Cocos/Creator/3.8.7/CocosCreator.app` in the current local environment. The Cocos project has been opened by the editor and Web Mobile build-verified. The current initial scene attaches `HachimiRestaurantGame` to the Canvas; when serialized editor bindings are absent, the controller creates an interim texture-backed runtime Cocos UI so the Web build is playable. A full editor-authored scene should still replace this bootstrap and follow `client/cocos/scene-wiring.json`.
 
 The production client architecture is one Cocos codebase:
 
@@ -26,6 +26,7 @@ server/test/                # Node test suite for rules and API flow
 client/cocos/               # Production Cocos Creator project and TypeScript components
 client/web/                 # Temporary texture-based debug harness, not the production Web client
 client/assets/textures/     # PNG textures used by runtime art/UI surfaces
+client/cocos/assets/resources/textures/ # Cocos resources-bundle copy for runtime bootstrap texture loading
 scripts/generate-textures.mjs # Offline PNG texture generator
 scripts/sync-cocos-textures.mjs # Copies PNG textures into the Cocos assets tree
 client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
@@ -35,7 +36,7 @@ client/cocos/scene-wiring.json # Expected Cocos scene wiring contract
 
 `npm run verify:cocos-project` validates the Cocos project metadata: Cocos Creator 3.8.x, portrait 720 x 1280 design resolution, scene-wiring alignment, the per-screen `sceneBlueprint`, and generated-directory ignore rules.
 
-`npm run verify:cocos-api` executes the Cocos API client against a mocked `cc.sys` runtime. It verifies same-origin Web requests, `https://animalapi.wakaka007.cn` fallback for non-browser targets, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` recovery fields.
+`npm run verify:cocos-api` executes the Cocos API client against a mocked `cc.sys` runtime. It verifies same-origin Web requests, static-server local preview fallback, `https://animalapi.wakaka007.cn` fallback for non-browser targets, player id persistence, `fetch`, `XMLHttpRequest`, and `SESSION_NOT_READY` recovery fields.
 
 `npm run verify:cocos-simulation` transpiles the pure Cocos gameplay rule/simulation files and executes the business loop outside the editor. It verifies the click service chain, 2x game-time scaling, waiting queue cap, 18-customer session cap, and local snapshot restore.
 
@@ -59,7 +60,7 @@ The backend is authoritative for:
 
 The client submits a gameplay summary at the end of a business session. The backend recomputes the trusted reward.
 
-The Cocos client keeps API access behind `ApiClient`. Empty `apiBaseUrl` means same-origin on Cocos Web builds and `https://animalapi.wakaka007.cn` on non-browser Cocos runtimes; explicit inspector values override this for local preview or staging.
+The Cocos client keeps API access behind `ApiClient`. Empty `apiBaseUrl` means same-origin on Cocos Web builds and `https://animalapi.wakaka007.cn` on non-browser Cocos runtimes; explicit inspector values override this for local preview or staging. If a same-origin Cocos Web static preview returns non-JSON content for `/api/*`, `ApiClient` switches to a browser-storage local preview state. This fallback is only for static visual/input smoke tests and does not mask real backend JSON errors.
 
 ## Runtime Art Rule
 
@@ -67,7 +68,7 @@ Runtime art surfaces should use PNG texture assets from `client/assets/textures/
 
 Do not introduce runtime canvas/SVG drawing for game art or UI surfaces unless a future task explicitly changes the asset policy.
 
-For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` references. Dynamic text may use `Label`. Do not use `Graphics`, custom drawing APIs, `UIOpacity`, runtime color tinting, or Button color/sprite/scale transitions for art states; create separate PNG textures for disabled, locked, empty, active, or highlighted states. Interactive buttons must force `Button.Transition.NONE`; texture-backed buttons switch `button.png` / `button-disabled.png` directly.
+For Cocos, runtime art should be assigned through `Sprite` + `SpriteFrame` references. Dynamic text may use `Label`. The interim runtime bootstrap loads packaged PNGs from the Cocos `resources` bundle and converts them to `SpriteFrame` objects before rendering. Do not use `Graphics`, custom drawing APIs, `UIOpacity`, runtime color tinting, or Button color/sprite/scale transitions for art states; create separate PNG textures for disabled, locked, empty, active, or highlighted states. Interactive buttons must force `Button.Transition.NONE`; texture-backed buttons switch `button.png` / `button-disabled.png` directly.
 
 Guide highlights count as runtime art states. They should be implemented through `TexturedPanelView` surfaces and assigned `SpriteFrame` textures, not by runtime drawing or visual effects.
 
@@ -100,5 +101,13 @@ For local Cocos Web verification, serve the build through the backend so same-or
 ```bash
 WEB_STATIC_ROOT=client/cocos/build/web-mobile PORT=4173 npm start
 ```
+
+For a static Cocos Web smoke test without the Node backend:
+
+```bash
+python -m http.server -b 127.0.0.1 -d client/cocos/build/web-mobile 4180
+```
+
+The Web client will use local preview state when `/api/*` returns static non-JSON content.
 
 For production Web deployment, point `WEB_STATIC_ROOT` at the Cocos Web build output instead of `client/web/`.

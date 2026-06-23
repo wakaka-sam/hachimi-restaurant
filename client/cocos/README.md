@@ -2,7 +2,7 @@
 
 This directory is the formal Cocos Creator client project for 小动物餐厅.
 
-The project has been opened and Web Mobile build-verified with Cocos Creator 3.8.7. The current `assets/scenes/main.scene` attaches `HachimiRestaurantGame` to the Canvas. If the expected serialized scene bindings are absent, the controller builds an interim Cocos runtime UI so the Web build can be played end to end. The final production pass should still replace that bootstrap with an editor-authored, texture-backed scene wired according to `scene-wiring.json`.
+The project has been opened and Web Mobile build-verified with Cocos Creator 3.8.7. The current `assets/scenes/main.scene` attaches `HachimiRestaurantGame` to the Canvas. If the expected serialized scene bindings are absent, the controller builds an interim texture-backed Cocos runtime UI so the Web build can be played end to end. The final production pass should still replace that bootstrap with an editor-authored scene wired according to `scene-wiring.json`.
 
 ## Asset Policy
 
@@ -39,7 +39,10 @@ to:
 
 ```text
 client/cocos/assets/textures/
+client/cocos/assets/resources/textures/
 ```
+
+The `assets/resources/textures/` copy is intentionally packaged into the Cocos `resources` bundle. The interim runtime bootstrap loads those PNGs at startup and converts them into `SpriteFrame` assets for the background, buttons, tables, customers, cashier, and star icons.
 
 Run from repo root:
 
@@ -65,17 +68,26 @@ The generated output is written to:
 client/cocos/build/web-mobile/
 ```
 
-For local browser playtesting, serve the build through the Node backend so the Cocos Web client can call same-origin `/api` routes:
+For local browser playtesting against the backend, serve the build through the Node backend so the Cocos Web client can call same-origin `/api` routes:
 
 ```bash
 WEB_STATIC_ROOT=client/cocos/build/web-mobile PORT=4173 npm start
 ```
+
+For a plain static preview such as:
+
+```bash
+python -m http.server -b 127.0.0.1 -d client/cocos/build/web-mobile 4180
+```
+
+the Cocos client detects non-JSON `/api/*` responses and switches to a local browser-storage preview state. This keeps static builds playable for visual and input smoke tests, while real backend JSON errors are still surfaced normally.
 
 ## API Endpoint
 
 `HachimiRestaurantGame.apiBaseUrl` can be set in the Cocos inspector.
 
 - Leave it empty for a Cocos Web build served by the Node backend; API calls use the same origin.
+- If the same-origin API is a static server and returns non-JSON content, the Web build falls back to local preview state.
 - Set it to `http://127.0.0.1:4173` when previewing from the Cocos editor against a local backend.
 - WeChat Mini Game, Douyin Mini Game, and other non-browser Cocos runtimes default to `https://animalapi.wakaka007.cn` when the inspector value is empty.
 

@@ -12,6 +12,7 @@ const runtimeFiles = (await Promise.all(runtimeRoots.map((root) => listRuntimeFi
 
 const textureDir = 'client/assets/textures';
 const cocosTextureDir = 'client/cocos/assets/textures';
+const cocosResourceTextureDir = 'client/cocos/assets/resources/textures';
 const forbiddenRuntimePattern = /canvas|<svg|drawImage|getContext|createElement\(['"]canvas|Canvas|Graphics\b|linear-gradient|radial-gradient|conic-gradient|box-shadow|text-shadow|border-radius\s*:|animation\s*:|@keyframes|scale\s*\(|filter\s*:|\.grayscale\b|grayscale\s*=|opacity\s*:/i;
 const forbiddenCocosRuntimePattern = /\bUIOpacity\b|\.opacity\s*=|\.color\s*=|\bnew\s+Color\s*\(|[,{]\s*Color\s*[,}]|Button\.Transition\.(COLOR|SPRITE|SCALE)/;
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
@@ -93,34 +94,44 @@ for (const file of textureFiles) {
     validatePngDimensions(file, buffer);
   }
 
-  const cocosPath = join(cocosTextureDir, file);
-  try {
-    const cocosBuffer = await readFile(cocosPath);
-    if (!cocosBuffer.equals(buffer)) {
-      fail(`Cocos texture copy differs from source texture: ${file}`);
-    }
-  } catch {
-    fail(`Missing Cocos texture copy: ${file}`);
-  }
+  await validateTextureCopy(cocosTextureDir, file, buffer, 'Cocos texture copy');
+  await validateTextureCopy(cocosResourceTextureDir, file, buffer, 'Cocos resources texture copy');
 }
 
-try {
-  const cocosFiles = (await readdir(cocosTextureDir)).filter((file) => file.endsWith('.png')).sort();
-  const sourceSet = new Set(textureFiles);
-  for (const file of cocosFiles) {
-    if (!sourceSet.has(file)) {
-      fail(`Unexpected Cocos texture without source counterpart: ${file}`);
-    }
-  }
-} catch {
-  fail(`Cocos texture directory is missing: ${cocosTextureDir}`);
-}
+await validateNoUnexpectedTextureCopies(cocosTextureDir, textureFiles, 'Cocos texture');
+await validateNoUnexpectedTextureCopies(cocosResourceTextureDir, textureFiles, 'Cocos resources texture');
 
 if (failed) {
   process.exit(1);
 }
 
-console.log(`Texture policy verified: ${textureFiles.length} PNG textures with fixed dimensions, Cocos copies in sync, no runtime drawing tokens.`);
+console.log(`Texture policy verified: ${textureFiles.length} PNG textures with fixed dimensions, Cocos copies in sync, resources copies in sync, no runtime drawing tokens.`);
+
+async function validateTextureCopy(directory, file, expectedBuffer, label) {
+  const targetPath = join(directory, file);
+  try {
+    const targetBuffer = await readFile(targetPath);
+    if (!targetBuffer.equals(expectedBuffer)) {
+      fail(`${label} differs from source texture: ${file}`);
+    }
+  } catch {
+    fail(`Missing ${label}: ${file}`);
+  }
+}
+
+async function validateNoUnexpectedTextureCopies(directory, textureFiles, label) {
+  try {
+    const copiedFiles = (await readdir(directory)).filter((file) => file.endsWith('.png')).sort();
+    const sourceSet = new Set(textureFiles);
+    for (const file of copiedFiles) {
+      if (!sourceSet.has(file)) {
+        fail(`Unexpected ${label} without source counterpart: ${file}`);
+      }
+    }
+  } catch {
+    fail(`${label} directory is missing: ${directory}`);
+  }
+}
 
 async function listRuntimeFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

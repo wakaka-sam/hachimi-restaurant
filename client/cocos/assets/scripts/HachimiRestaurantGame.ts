@@ -4,12 +4,16 @@ import {
   Component,
   EventMouse,
   EventTouch,
+  ImageAsset,
   input,
   Input,
   Label,
   Node,
+  resources,
   Sprite,
+  SpriteFrame,
   sys,
+  Texture2D,
   UITransform,
   Vec2,
   Vec3
@@ -68,6 +72,34 @@ const LOCAL_SESSION_SNAPSHOT_KEY = 'hachimi-active-session-snapshot';
 const RUNTIME_DESIGN_WIDTH = 720;
 const RUNTIME_DESIGN_HEIGHT = 1280;
 const RUNTIME_NAV_SCREENS: ScreenKey[] = ['main', 'upgrade', 'tasks'];
+const RUNTIME_TEXTURES = {
+  restaurantBackgrounds: [
+    'textures/restaurant-bg-stage-1',
+    'textures/restaurant-bg-stage-2',
+    'textures/restaurant-bg-stage-3'
+  ],
+  panel: 'textures/panel',
+  card: 'textures/card',
+  guideFocus: 'textures/guide-focus',
+  button: 'textures/button',
+  buttonDisabled: 'textures/button-disabled',
+  tableEmpty: 'textures/table-empty',
+  tableLocked: 'textures/table-locked',
+  tableReady: 'textures/table-ready',
+  tableFood: 'textures/table-food',
+  tablePay: 'textures/table-pay',
+  cashier: 'textures/cashier',
+  animals: [
+    'textures/customer-cat',
+    'textures/customer-dog',
+    'textures/customer-rabbit',
+    'textures/customer-bear'
+  ],
+  coinIcon: 'textures/icon-coin',
+  staminaIcon: 'textures/icon-stamina',
+  starIcon: 'textures/icon-star',
+  starIconEmpty: 'textures/icon-star-empty'
+} as const;
 
 @ccclass('HachimiRestaurantGame')
 export class HachimiRestaurantGame extends Component {
@@ -219,6 +251,7 @@ export class HachimiRestaurantGame extends Component {
   private runtimeNavBar: Node | null = null;
   private runtimeHitAreas: RuntimeHitArea[] = [];
   private runtimeInputBound = false;
+  private runtimeTexturesLoaded = false;
 
   onLoad(): void {
     this.ensureRuntimeScene();
@@ -250,6 +283,8 @@ export class HachimiRestaurantGame extends Component {
     const root = this.createNode('RuntimeGameRoot', this.node, 0, 0, RUNTIME_DESIGN_WIDTH, RUNTIME_DESIGN_HEIGHT);
     this.runtimeRoot = root;
     this.applyRuntimeRootFit();
+    const background = this.createNode('RuntimeRestaurantBackground', root, 0, 0, RUNTIME_DESIGN_WIDTH, RUNTIME_DESIGN_HEIGHT);
+    this.restaurantBackgroundSprite = this.createSprite(background);
     this.createLabel(root, 'TitleLabel', '八酱小动物餐厅', 0, 560, 640, 48, 36);
 
     this.coinLabel = this.createLabel(root, 'CoinLabel', '金币 --', -235, 505, 190, 32, 22);
@@ -280,6 +315,7 @@ export class HachimiRestaurantGame extends Component {
     this.buildRuntimeResultScreen();
     this.configureRuntimeHitAreas();
     this.bindRuntimeInput();
+    this.setScreen('main');
   }
 
   onDestroy(): void {
@@ -305,6 +341,9 @@ export class HachimiRestaurantGame extends Component {
       const row = this.createNode(`PartStatus_${part}`, this.mainScreen!, 0, 125 - index * 54, 600, 46);
       const view = row.addComponent(PartStatusView);
       view.titleLabel = this.createLabel(row, `PartStatusLabel_${part}`, PARTS[index], -190, 0, 180, 30, 22);
+      view.starSprites = Array.from({ length: CONSTANTS.starsPerPart }, (_, starIndex) => (
+        this.createSprite(this.createNode(`PartStatusStar_${part}_${starIndex}`, row, -45 + starIndex * 38, 0, 30, 30))
+      ));
       return view;
     });
   }
@@ -323,6 +362,10 @@ export class HachimiRestaurantGame extends Component {
     this.waitingCustomerLabels = Array.from({ length: 4 }, (_, index) => (
       this.createLabel(this.businessScreen!, `WaitingLabel_${index}`, '', -240 + index * 160, 175, 130, 28, 20)
     ));
+    this.waitingCustomerSprites = Array.from({ length: 4 }, (_, index) => {
+      const node = this.createNode(`WaitingCustomer_${index}`, this.businessScreen!, -240 + index * 160, 208, 72, 72);
+      return this.createSprite(node);
+    });
 
     const positions = [
       [-170, 65],
@@ -334,6 +377,8 @@ export class HachimiRestaurantGame extends Component {
     this.tableSlots = positions.map(([x, y], index) => {
       const node = this.createNode(`TableSlot_${index}`, this.businessScreen!, x, y, 250, 112);
       const view = node.addComponent(TableSlotView);
+      view.tableSprite = this.createSprite(node);
+      view.customerSprite = this.createSprite(this.createNode(`TableCustomer_${index}`, node, 0, 18, 78, 78));
       view.button = node.addComponent(Button);
       view.label = this.createLabel(node, `TableSlotLabel_${index}`, '空桌', 0, 0, 230, 64, 22);
       return view;
@@ -345,6 +390,7 @@ export class HachimiRestaurantGame extends Component {
     this.speedButton = speed.button;
     this.cashierButton = cashier.button;
     this.finishButton = finish.button;
+    this.cashierSprite = this.createSprite(this.createNode('CashierSprite', this.businessScreen, 0, -315, 96, 78));
   }
 
   private buildRuntimeUpgradeScreen(): void {
@@ -359,6 +405,9 @@ export class HachimiRestaurantGame extends Component {
       view.titleLabel = this.createLabel(row, `PartUpgradeTitle_${part}`, part, -225, 20, 180, 28, 22);
       view.costLabel = this.createLabel(row, `PartUpgradeCost_${part}`, '成本 --', -45, 20, 210, 28, 19);
       view.effectLabel = this.createLabel(row, `PartUpgradeEffect_${part}`, '', -45, -18, 360, 28, 18);
+      view.starSprites = Array.from({ length: CONSTANTS.starsPerPart }, (_, starIndex) => (
+        this.createSprite(this.createNode(`PartUpgradeStar_${part}_${starIndex}`, row, 90 + starIndex * 26, 21, 22, 22))
+      ));
       const button = this.createButton(row, `PartUpgradeButton_${part}`, '升级', 250, 0, 115, 54, 20);
       view.upgradeButton = button.button;
       view.buttonLabel = button.label;
@@ -539,6 +588,12 @@ export class HachimiRestaurantGame extends Component {
     return node;
   }
 
+  private createSprite(node: Node): Sprite {
+    const sprite = node.addComponent(Sprite);
+    sprite.sizeMode = Sprite.SizeMode.CUSTOM;
+    return sprite;
+  }
+
   private createLabel(
     parent: Node,
     name: string,
@@ -568,14 +623,110 @@ export class HachimiRestaurantGame extends Component {
     fontSize: number
   ): { button: Button; label: Label } {
     const node = this.createNode(name, parent, x, y, width, height);
+    const backgroundSprite = this.createSprite(node);
     const button = node.addComponent(Button);
     button.transition = Button.Transition.NONE;
     const label = this.createLabel(node, `${name}Label`, text, 0, 0, width, height, fontSize);
+    const texturedButton = node.addComponent(TexturedButtonView);
+    texturedButton.button = button;
+    texturedButton.backgroundSprite = backgroundSprite;
+    texturedButton.label = label;
+    this.texturedButtons.push(texturedButton);
     return { button, label };
+  }
+
+  private async loadRuntimeTextures(): Promise<void> {
+    if (!this.textures || this.runtimeTexturesLoaded) {
+      return;
+    }
+
+    try {
+      const [
+        restaurantBackgrounds,
+        animals,
+        panel,
+        card,
+        guideFocus,
+        button,
+        buttonDisabled,
+        tableEmpty,
+        tableLocked,
+        tableReady,
+        tableFood,
+        tablePay,
+        cashier,
+        coinIcon,
+        staminaIcon,
+        starIcon,
+        starIconEmpty
+      ] = await Promise.all([
+        this.loadRuntimeSpriteFrames([...RUNTIME_TEXTURES.restaurantBackgrounds]),
+        this.loadRuntimeSpriteFrames([...RUNTIME_TEXTURES.animals]),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.panel),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.card),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.guideFocus),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.button),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.buttonDisabled),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.tableEmpty),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.tableLocked),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.tableReady),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.tableFood),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.tablePay),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.cashier),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.coinIcon),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.staminaIcon),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.starIcon),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.starIconEmpty)
+      ]);
+
+      this.textures.restaurantBackground = restaurantBackgrounds[0] || null;
+      this.textures.restaurantBackgrounds = restaurantBackgrounds;
+      this.textures.animals = animals;
+      this.textures.panel = panel;
+      this.textures.card = card;
+      this.textures.guideFocus = guideFocus;
+      this.textures.button = button;
+      this.textures.buttonDisabled = buttonDisabled;
+      this.textures.tableEmpty = tableEmpty;
+      this.textures.tableLocked = tableLocked;
+      this.textures.tableReady = tableReady;
+      this.textures.tableFood = tableFood;
+      this.textures.tablePay = tablePay;
+      this.textures.cashier = cashier;
+      this.textures.coinIcon = coinIcon;
+      this.textures.staminaIcon = staminaIcon;
+      this.textures.starIcon = starIcon;
+      this.textures.starIconEmpty = starIconEmpty;
+      this.runtimeTexturesLoaded = true;
+    } catch (error) {
+      this.setMessage(this.formatError(error));
+    }
+  }
+
+  private loadRuntimeSpriteFrames(paths: string[]): Promise<SpriteFrame[]> {
+    return Promise.all(paths.map((path) => this.loadRuntimeSpriteFrame(path)));
+  }
+
+  private loadRuntimeSpriteFrame(path: string): Promise<SpriteFrame> {
+    return new Promise((resolve, reject) => {
+      resources.load(path, ImageAsset, (error, imageAsset) => {
+        if (error || !imageAsset) {
+          reject(error || new Error(`Missing runtime texture: ${path}`));
+          return;
+        }
+        const texture = new Texture2D();
+        texture.image = imageAsset;
+        const spriteFrame = new SpriteFrame();
+        spriteFrame.name = path.split('/').pop() || path;
+        spriteFrame.texture = texture;
+        resolve(spriteFrame);
+      });
+    });
   }
 
   async start(): Promise<void> {
     this.applyRuntimeRootFit();
+    await this.loadRuntimeTextures();
     await this.loadProfile();
   }
 

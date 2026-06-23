@@ -121,6 +121,22 @@ class Sprite extends Component {
   constructor() {
     super();
     this.spriteFrame = null;
+    this.sizeMode = Sprite.SizeMode.TRIMMED;
+  }
+}
+Sprite.SizeMode = { CUSTOM: 0, TRIMMED: 1, RAW: 2 };
+
+class ImageAsset {}
+
+class Texture2D {
+  constructor() {
+    this.image = null;
+  }
+}
+
+class SpriteFrame {
+  constructor() {
+    this.texture = null;
   }
 }
 
@@ -182,6 +198,11 @@ const input = {
   on() {},
   off() {}
 };
+const resources = {
+  load(path, AssetType, callback) {
+    callback(null, new AssetType());
+  }
+};
 
 function ccclass() {
   return (target) => target;
@@ -199,6 +220,9 @@ exports.Node = Node;
 exports.Component = Component;
 exports.Label = Label;
 exports.Sprite = Sprite;
+exports.ImageAsset = ImageAsset;
+exports.Texture2D = Texture2D;
+exports.SpriteFrame = SpriteFrame;
 exports.Button = Button;
 exports.UITransform = UITransform;
 exports.Widget = Widget;
@@ -209,6 +233,7 @@ exports.EventMouse = EventMouse;
 exports.EventTouch = EventTouch;
 exports.Input = Input;
 exports.input = input;
+exports.resources = resources;
 exports.sys = {
   isBrowser: true,
   localStorage: {

@@ -28,17 +28,21 @@ exports.sys = {
       storage.clear();
     }
   }
-};
+  };
 `);
-  await transpileCocosScript('client/cocos/assets/scripts/services/ApiTransport.ts', 'ApiTransport.js');
-  await transpileCocosScript('client/cocos/assets/scripts/services/ApiClient.ts', 'ApiClient.js');
+  await mkdir(join(tempDir, 'core'), { recursive: true });
+  await mkdir(join(tempDir, 'services'), { recursive: true });
+  await transpileCocosScript('client/cocos/assets/scripts/core/GameRules.ts', 'core/GameRules.js');
+  await transpileCocosScript('client/cocos/assets/scripts/services/ApiTransport.ts', 'services/ApiTransport.js');
+  await transpileCocosScript('client/cocos/assets/scripts/services/ApiClient.ts', 'services/ApiClient.js');
 
   const require = createRequire(join(tempDir, 'verify.cjs'));
   const cc = require('cc');
-  const { ApiClient, ApiRequestError, PRODUCTION_API_BASE_URL } = require(join(tempDir, 'ApiClient.js'));
+  const { ApiClient, ApiRequestError, PRODUCTION_API_BASE_URL } = require(join(tempDir, 'services/ApiClient.js'));
 
   await verifyBaseUrlResolution(ApiClient, cc, PRODUCTION_API_BASE_URL);
   await verifyFetchTransport(ApiClient, cc);
+  await verifyStaticPreviewFallback(ApiClient, cc);
   await verifyRequestErrors(ApiClient, ApiRequestError, cc, PRODUCTION_API_BASE_URL);
   await verifyXhrFallback(ApiClient, cc);
 } finally {
@@ -47,7 +51,7 @@ exports.sys = {
   await rm(tempDir, { recursive: true, force: true });
 }
 
-console.log('Cocos API client verified: base URL resolution, player id persistence, fetch transport, XHR fallback, and request errors.');
+console.log('Cocos API client verified: base URL resolution, player id persistence, fetch transport, static fallback, XHR fallback, and request errors.');
 
 async function transpileCocosScript(sourcePath, outputName) {
   const source = await readFile(sourcePath, 'utf8');
@@ -82,8 +86,13 @@ async function verifyFetchTransport(ApiClient, cc) {
     return {
       ok: true,
       status: 200,
-      async json() {
-        return {
+      headers: {
+        get(key) {
+          return key.toLowerCase() === 'content-type' ? 'application/json' : '';
+        }
+      },
+      async text() {
+        return JSON.stringify({
           ok: true,
           profile: {
             player: { playerId: 'player-from-storage' },
@@ -94,7 +103,7 @@ async function verifyFetchTransport(ApiClient, cc) {
             allPartsMaxed: false,
             tasks: []
           }
-        };
+        });
       }
     };
   };
@@ -110,6 +119,40 @@ async function verifyFetchTransport(ApiClient, cc) {
   assert.equal(requests[0].options.headers['x-player-id'], 'player-from-storage');
   assert.equal(requests[0].options.headers['content-type'], 'application/json');
   assert.equal(requests[0].options.body, undefined);
+}
+
+async function verifyStaticPreviewFallback(ApiClient, cc) {
+  cc.sys.isBrowser = true;
+  cc.sys.localStorage.clear();
+  cc.sys.localStorage.setItem('hachimi-player-id', 'static-preview-player');
+
+  const requests = [];
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+    return {
+      ok: false,
+      status: 404,
+      headers: {
+        get(key) {
+          return key.toLowerCase() === 'content-type' ? 'text/html' : '';
+        }
+      },
+      async text() {
+        return '<!DOCTYPE html><title>Static preview</title>';
+      }
+    };
+  };
+
+  const client = new ApiClient('');
+  const profile = await client.getProfile();
+  const start = await client.startSession('2x');
+
+  assert.equal(profile.player.playerId, 'static-preview-player');
+  assert.equal(profile.tasks.length, 13);
+  assert.equal(start.session.speedMode, '2x');
+  assert.equal(start.profile.player.stamina, 50);
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].url, '/api/player/profile');
 }
 
 async function verifyRequestErrors(ApiClient, ApiRequestError, cc, PRODUCTION_API_BASE_URL) {
@@ -129,8 +172,13 @@ async function verifyRequestErrors(ApiClient, ApiRequestError, cc, PRODUCTION_AP
     return {
       ok: false,
       status: 400,
-      async json() {
-        return {
+      headers: {
+        get(key) {
+          return key.toLowerCase() === 'content-type' ? 'application/json' : '';
+        }
+      },
+      async text() {
+        return JSON.stringify({
           ok: false,
           error: {
             code: 'SESSION_NOT_READY',
@@ -140,7 +188,7 @@ async function verifyRequestErrors(ApiClient, ApiRequestError, cc, PRODUCTION_AP
             remainingRealSeconds: 14
           },
           session
-        };
+        });
       }
     };
   };
@@ -198,6 +246,10 @@ async function verifyXhrFallback(ApiClient, cc) {
 
     setRequestHeader(key, value) {
       this.headers[key] = value;
+    }
+
+    getResponseHeader(key) {
+      return key.toLowerCase() === 'content-type' ? 'application/json' : '';
     }
 
     send(body) {
