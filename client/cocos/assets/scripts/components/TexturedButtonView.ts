@@ -4,6 +4,7 @@ import { TextureCatalog } from './TextureCatalog';
 const { ccclass, property } = _decorator;
 
 type ButtonVisualState = 'normal' | 'active' | 'muted';
+type ButtonTextureName = 'none' | 'button' | 'buttonDisabled' | 'designStartButton';
 
 @ccclass('TexturedButtonView')
 export class TexturedButtonView extends Component {
@@ -19,15 +20,26 @@ export class TexturedButtonView extends Component {
   @property
   visualState: ButtonVisualState = 'normal';
 
+  @property
+  normalTexture: ButtonTextureName = 'button';
+
+  @property
+  activeTexture: ButtonTextureName = 'button';
+
+  @property
+  mutedTexture: ButtonTextureName = 'buttonDisabled';
+
+  @property
+  disabledTexture: ButtonTextureName = 'buttonDisabled';
+
   render(textures: TextureCatalog): void {
     if (this.button) {
       this.button.transition = Button.Transition.NONE;
     }
     if (this.backgroundSprite) {
       const interactable = this.button?.interactable ?? true;
-      this.backgroundSprite.spriteFrame = (interactable && this.visualState !== 'muted') || this.visualState === 'active'
-        ? textures.button
-        : textures.buttonDisabled;
+      const textureName = this.getTextureName(interactable);
+      this.backgroundSprite.spriteFrame = textureName === 'none' ? null : textures.requireTexture(textureName);
     }
   }
 
@@ -35,5 +47,15 @@ export class TexturedButtonView extends Component {
     if (this.label) {
       this.label.string = text;
     }
+  }
+
+  private getTextureName(interactable: boolean): ButtonTextureName {
+    if (this.visualState === 'active') {
+      return this.activeTexture;
+    }
+    if (this.visualState === 'muted') {
+      return this.mutedTexture;
+    }
+    return interactable ? this.normalTexture : this.disabledTexture;
   }
 }

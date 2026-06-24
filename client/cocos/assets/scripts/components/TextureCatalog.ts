@@ -26,6 +26,36 @@ export class TextureCatalog extends Component {
   buttonDisabled: SpriteFrame | null = null;
 
   @property(SpriteFrame)
+  designTitleSign: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designRestaurantScene: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designStartButton: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designNavRestaurant: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designNavUpgrade: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designNavTasks: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designUpgradeHeading: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designUpgradeBoard: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designTaskHeading: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
+  designTaskBoard: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
   tableEmpty: SpriteFrame | null = null;
 
   @property(SpriteFrame)

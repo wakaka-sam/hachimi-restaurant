@@ -52,10 +52,10 @@ export class TaskItemView extends Component {
       this.progressLabel.string = `${task.progress}/${task.target}`;
     }
     if (this.rewardLabel) {
-      this.rewardLabel.string = `金币 ${task.reward.coins || 0} / 体力 ${task.reward.stamina || 0}`;
+      this.rewardLabel.string = `${task.reward.coins || 0}\n${task.reward.stamina || 0}`;
     }
     if (this.buttonLabel) {
-      this.buttonLabel.string = task.claimed ? '已领取' : '领取';
+      this.buttonLabel.string = task.claimed ? '已领取' : task.completed ? '领取' : '前往';
     }
     if (this.claimButton) {
       this.claimButton.transition = Button.Transition.NONE;

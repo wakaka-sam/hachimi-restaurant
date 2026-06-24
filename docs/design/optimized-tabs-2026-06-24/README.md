@@ -22,4 +22,5 @@ These images are concept screenshots, not production UI captures. They preserve 
 
 - The 720 x 1280 versions match the Cocos project design resolution for easier comparison.
 - Chinese text in generated images should be treated as layout guidance only; final labels should come from Cocos UI nodes.
-- The current Cocos runtime code was not changed in this task.
+- Reusable UI pieces were extracted into `client/assets/textures/design-*.png` and synced into the Cocos texture/resource directories.
+- Runtime verification screenshots are saved under `runtime-preview/` for visual comparison after Cocos Web builds.

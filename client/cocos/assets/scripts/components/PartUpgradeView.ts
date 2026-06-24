@@ -46,10 +46,10 @@ export class PartUpgradeView extends Component {
       this.titleLabel.string = PART_LABELS[this.part];
     }
     if (this.costLabel) {
-      this.costLabel.string = maxed ? '已满星' : `成本 ${cost}${short > 0 ? `，还差 ${short}` : ''}`;
+      this.costLabel.string = maxed ? '已满星' : `成本 ${cost}${short > 0 ? ` 还差${short}` : ''}`;
     }
     if (this.effectLabel) {
-      this.effectLabel.string = profile.partEffects[this.part] || '经营手感提升';
+      this.effectLabel.string = maxed ? (profile.partEffects[this.part] || '已满星') : '效率 +8%';
     }
     this.starSprites.forEach((sprite, index) => {
       const active = index < CONSTANTS.starsPerPart;

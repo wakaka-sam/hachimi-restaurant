@@ -208,6 +208,7 @@ function createTextureCatalog(TextureCatalog, cc) {
   textures.guideFocus = frame('guide-focus');
   textures.button = frame('button');
   textures.buttonDisabled = frame('button-disabled');
+  textures.designStartButton = frame('design-start-button');
   textures.tableEmpty = frame('table-empty');
   textures.tableLocked = frame('table-locked');
   textures.tableReady = frame('table-ready');
@@ -389,8 +390,8 @@ function verifyPartUpgradeView(PartUpgradeView, cc, textures) {
   view.upgradeButton.transition = cc.Button.Transition.COLOR;
   view.render(createProfile(), textures);
   assert.equal(view.titleLabel.string, '收银机');
-  assert.equal(view.costLabel.string, '成本 100，还差 20');
-  assert.equal(view.effectLabel.string, '下一星：收银窗口更宽');
+  assert.equal(view.costLabel.string, '成本 100 还差20');
+  assert.equal(view.effectLabel.string, '效率 +8%');
   assert.equal(view.upgradeButton.interactable, false);
   assert.equal(view.upgradeButton.transition, cc.Button.Transition.NONE);
   assert.equal(view.buttonLabel.string, '升级');
@@ -457,8 +458,8 @@ function verifyTaskItemView(TaskItemView, cc) {
   assert.equal(view.titleLabel.string, '今日营业 3 次');
   assert.equal(view.typeLabel.string, '每日任务');
   assert.equal(view.progressLabel.string, '2/3');
-  assert.equal(view.rewardLabel.string, '金币 100 / 体力 10');
-  assert.equal(view.buttonLabel.string, '领取');
+  assert.equal(view.rewardLabel.string, '100\n10');
+  assert.equal(view.buttonLabel.string, '前往');
   assert.equal(view.claimButton.interactable, false);
   assert.equal(view.claimButton.transition, cc.Button.Transition.NONE);
 
@@ -474,6 +475,7 @@ function verifyTaskItemView(TaskItemView, cc) {
     reward: { coins: 100, stamina: 10 }
   });
   assert.equal(view.typeLabel.string, '每日任务');
+  assert.equal(view.buttonLabel.string, '领取');
   assert.equal(view.claimButton.interactable, true);
   view.claimButton.node.events[0].callback.call(view.claimButton.node.events[0].target);
   assert.equal(claimedTaskId, 'daily_sessions_3');
@@ -519,6 +521,16 @@ function verifyTexturedButtonView(TexturedButtonView, cc, textures) {
 
   view.setText('开始营业');
   assert.equal(view.label.string, '开始营业');
+
+  view.normalTexture = 'designStartButton';
+  view.visualState = 'normal';
+  view.button.interactable = true;
+  view.render(textures);
+  assert.equal(view.backgroundSprite.spriteFrame.name, 'design-start-button');
+
+  view.normalTexture = 'none';
+  view.render(textures);
+  assert.equal(view.backgroundSprite.spriteFrame, null);
 }
 
 function verifyTexturedPanelView(TexturedPanelView, cc, textures) {

@@ -4,6 +4,12 @@ Stable repeatable helper scripts may live here.
 
 Do not store one-off command history or secrets in this directory.
 
+Current asset helpers:
+
+- `extract-design-ui-textures.mjs`: crops reusable UI texture pieces from the optimized imagegen tab references.
+- `generate-textures.mjs`: generates the deterministic base PNG texture set.
+- `sync-cocos-textures.mjs`: copies canonical PNG textures into the Cocos asset trees.
+
 Current verification helpers:
 
 - `verify-cocos-api-client.mjs`: executes the Cocos API client with a mocked `cc.sys` runtime and checks host resolution, player id persistence, request transport, and recoverable API errors.

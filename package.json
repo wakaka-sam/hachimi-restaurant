@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "extract:design-ui": "node scripts/extract-design-ui-textures.mjs",
     "generate:textures": "node scripts/generate-textures.mjs",
     "sync:cocos-textures": "node scripts/sync-cocos-textures.mjs",
     "typecheck:cocos": "tsc -p client/cocos/tsconfig.json",

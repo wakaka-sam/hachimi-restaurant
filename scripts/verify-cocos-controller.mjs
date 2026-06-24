@@ -295,10 +295,21 @@ function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
   assert.equal(game.businessScreen.active, false);
   assert.equal(game.texturedPanels.length >= 37, true);
   assert.equal(game.texturedButtons.length >= 28, true);
-  assert.equal(game.mainDecorSprites.length, 3);
+  assert.equal(game.mainDecorSprites.length, 0);
+  assert.equal(game.navIconSprites.length, 3);
+  assert.equal(game.mainPartIconSprites.length, 5);
+  assert.equal(game.upgradePartIconSprites.length, 5);
+  assert.equal(game.taskProgressFillPanels.length, 13);
   assert.equal(game.coinIconSprite.spriteFrame.name, 'coin');
   assert.equal(game.staminaIconSprite.spriteFrame.name, 'stamina');
-  assert.equal(game.mainDecorSprites[0].spriteFrame.name, 'cat');
+  assert.equal(game.designTitleSignSprite.spriteFrame.name, 'design-title-sign');
+  assert.equal(game.designRestaurantSceneSprite.spriteFrame.name, 'design-restaurant-scene');
+  assert.equal(game.designNavSprite.spriteFrame.name, 'design-nav-restaurant');
+  assert.equal(game.mainPartIconSprites[0].spriteFrame.name, 'cashier');
+  assert.equal(game.upgradePartIconSprites[1].spriteFrame.name, 'table-food');
+  assert.equal(game.mainNavButtonView.normalTexture, 'none');
+  assert.equal(game.mainNavButtonView.activeTexture, 'none');
+  assert.equal(game.startButton.getComponent(cc.Sprite).spriteFrame.name, 'design-start-button');
   assert.equal(game.mainNavButtonView.visualState, 'active');
   assert.equal(game.mainNavButton.interactable, false);
   assert.equal(game.upgradeNavButton.interactable, true);
@@ -309,12 +320,14 @@ function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
   assert.equal(game.mainNavButtonView.visualState, 'muted');
   assert.equal(game.mainNavButton.interactable, true);
   assert.equal(game.upgradeNavButton.interactable, false);
+  assert.equal(game.designNavSprite.spriteFrame.name, 'design-nav-upgrade');
 
   game.showTasks();
   assert.equal(game.taskNavButtonView.visualState, 'active');
   assert.equal(game.upgradeNavButtonView.visualState, 'muted');
   assert.equal(game.upgradeNavButton.interactable, true);
   assert.equal(game.taskNavButton.interactable, false);
+  assert.equal(game.designNavSprite.spriteFrame.name, 'design-nav-tasks');
 }
 
 async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc) {
@@ -336,10 +349,10 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(api.calls[0].method, 'getProfile');
   assert.equal(game.mainScreen.active, true);
   assert.equal(game.businessScreen.active, false);
-  assert.equal(game.coinLabel.string, '金币 80');
-  assert.equal(game.staminaLabel.string, '体力 50/60 · +1 59s · 回满 5m');
-  assert.equal(game.levelLabel.string, '餐厅 Lv.1');
-  assert.equal(game.nextRevenueLabel.string, '下次收入 100');
+  assert.equal(game.coinLabel.string, '金币\n80');
+  assert.equal(game.staminaLabel.string, '体力\n50/60');
+  assert.equal(game.levelLabel.string, '餐厅\nLv.1');
+  assert.equal(game.nextRevenueLabel.string, '下次收入\n100');
   assert.equal(game.startButtonLabel.string, '开始营业');
   assert.equal(game.startButton.interactable, true);
   assert.match(game.guideLabel.string, /先开始营业/);
@@ -622,6 +635,19 @@ function createTextures() {
     guideFocus: frame('guide-focus'),
     button: frame('button'),
     buttonDisabled: frame('button-disabled'),
+    designTitleSign: frame('design-title-sign'),
+    designRestaurantScene: frame('design-restaurant-scene'),
+    designStartButton: frame('design-start-button'),
+    designNavRestaurant: frame('design-nav-restaurant'),
+    designNavUpgrade: frame('design-nav-upgrade'),
+    designNavTasks: frame('design-nav-tasks'),
+    designUpgradeHeading: frame('design-upgrade-heading'),
+    designUpgradeBoard: frame('design-upgrade-board'),
+    designTaskHeading: frame('design-task-heading'),
+    designTaskBoard: frame('design-task-board'),
+    tableEmpty: frame('table-empty'),
+    tableLocked: frame('table-locked'),
+    tableFood: frame('table-food'),
     getRestaurantBackground(level) {
       return frame(`restaurant-${Math.min(3, Math.max(1, level))}`);
     },
@@ -629,7 +655,7 @@ function createTextures() {
       return frame(filled ? 'star-filled' : 'star-empty');
     },
     requireTexture(name) {
-      return frame(name);
+      return this[name] || frame(name);
     }
   };
 }
