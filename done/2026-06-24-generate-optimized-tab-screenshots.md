@@ -51,7 +51,7 @@ No runtime code changed, so no Cocos build or gameplay test was required for thi
 
 ## Key Commits
 
-- TBD
+- `3e65b9958976b018b9ba7ee74727d2dddcbe0198` Add optimized tab screenshot references
 
 ## Follow-ups
 
