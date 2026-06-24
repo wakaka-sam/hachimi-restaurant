@@ -54,7 +54,7 @@ Apply a first runtime Cocos UI polish pass that moves the existing tabs toward t
 
 ## Key Commits
 
-- TBD
+- `9b37dd227d82a96a333f92a6b784c8f59d8ede40` Polish runtime Cocos tab UI
 
 ## Follow-ups
 
