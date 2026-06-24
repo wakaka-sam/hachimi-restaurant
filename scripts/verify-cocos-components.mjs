@@ -508,6 +508,15 @@ function verifyTexturedButtonView(TexturedButtonView, cc, textures) {
   assert.equal(view.backgroundSprite.spriteFrame.name, 'button-disabled');
   assert.equal(view.button.transition, cc.Button.Transition.NONE);
 
+  view.visualState = 'active';
+  view.render(textures);
+  assert.equal(view.backgroundSprite.spriteFrame.name, 'button');
+
+  view.visualState = 'muted';
+  view.button.interactable = true;
+  view.render(textures);
+  assert.equal(view.backgroundSprite.spriteFrame.name, 'button-disabled');
+
   view.setText('开始营业');
   assert.equal(view.label.string, '开始营业');
 }
@@ -526,6 +535,14 @@ function verifyTexturedPanelView(TexturedPanelView, cc, textures) {
   view.panelTexture = 'guideFocus';
   view.render(textures);
   assert.equal(view.backgroundSprite.spriteFrame.name, 'guide-focus');
+
+  view.panelTexture = 'button';
+  view.render(textures);
+  assert.equal(view.backgroundSprite.spriteFrame.name, 'button');
+
+  view.panelTexture = 'buttonDisabled';
+  view.render(textures);
+  assert.equal(view.backgroundSprite.spriteFrame.name, 'button-disabled');
 }
 
 function verifyMobileSafeAreaView(MobileSafeAreaView, cc) {

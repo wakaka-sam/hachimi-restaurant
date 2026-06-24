@@ -3,6 +3,8 @@ import { TextureCatalog } from './TextureCatalog';
 
 const { ccclass, property } = _decorator;
 
+type ButtonVisualState = 'normal' | 'active' | 'muted';
+
 @ccclass('TexturedButtonView')
 export class TexturedButtonView extends Component {
   @property(Button)
@@ -14,13 +16,18 @@ export class TexturedButtonView extends Component {
   @property(Label)
   label: Label | null = null;
 
+  @property
+  visualState: ButtonVisualState = 'normal';
+
   render(textures: TextureCatalog): void {
     if (this.button) {
       this.button.transition = Button.Transition.NONE;
     }
     if (this.backgroundSprite) {
       const interactable = this.button?.interactable ?? true;
-      this.backgroundSprite.spriteFrame = interactable ? textures.button : textures.buttonDisabled;
+      this.backgroundSprite.spriteFrame = (interactable && this.visualState !== 'muted') || this.visualState === 'active'
+        ? textures.button
+        : textures.buttonDisabled;
     }
   }
 

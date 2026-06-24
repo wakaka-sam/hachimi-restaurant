@@ -3,7 +3,7 @@ import { TextureCatalog } from './TextureCatalog';
 
 const { ccclass, property } = _decorator;
 
-type PanelTexture = 'panel' | 'card' | 'guideFocus';
+type PanelTexture = 'panel' | 'card' | 'guideFocus' | 'button' | 'buttonDisabled';
 
 @ccclass('TexturedPanelView')
 export class TexturedPanelView extends Component {
@@ -19,7 +19,11 @@ export class TexturedPanelView extends Component {
     }
     const textureName = this.panelTexture === 'guideFocus'
       ? 'guideFocus'
-      : this.panelTexture === 'card' ? 'card' : 'panel';
+      : this.panelTexture === 'card'
+        ? 'card'
+        : this.panelTexture === 'button'
+          ? 'button'
+          : this.panelTexture === 'buttonDisabled' ? 'buttonDisabled' : 'panel';
     this.backgroundSprite.spriteFrame = textures.requireTexture(textureName);
   }
 }

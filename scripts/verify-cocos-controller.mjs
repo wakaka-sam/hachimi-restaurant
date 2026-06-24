@@ -39,6 +39,7 @@ try {
   const { HachimiRestaurantGame } = require(join(tempDir, sourceRoot, 'HachimiRestaurantGame.js'));
   const { ApiRequestError } = require(join(tempDir, sourceRoot, 'services/ApiClient.js'));
 
+  verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc);
   await verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc);
   await verifyStoredCompletedSessionRecovery(HachimiRestaurantGame, cc);
 } finally {
@@ -72,12 +73,26 @@ async function writeCcStub() {
 const storage = new Map();
 
 class Node {
-  constructor() {
+  constructor(name = '') {
+    this.name = name;
     this.active = true;
     this.events = [];
     this.components = new Map();
     this.layer = 0;
     this.scale = null;
+    this.children = [];
+    this._parent = null;
+  }
+
+  set parent(value) {
+    this._parent = value;
+    if (value && Array.isArray(value.children) && !value.children.includes(this)) {
+      value.children.push(this);
+    }
+  }
+
+  get parent() {
+    return this._parent;
   }
 
   on(event, callback, target) {
@@ -270,6 +285,38 @@ async function transpileCocosScript(sourcePath) {
   await writeFile(outputPath, output.outputText);
 }
 
+function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
+  const game = new HachimiRestaurantGame();
+  game.onLoad();
+  Object.assign(game.textures, createTextures());
+  game.renderAll();
+
+  assert.equal(game.mainScreen.active, true);
+  assert.equal(game.businessScreen.active, false);
+  assert.equal(game.texturedPanels.length >= 37, true);
+  assert.equal(game.texturedButtons.length >= 28, true);
+  assert.equal(game.mainDecorSprites.length, 3);
+  assert.equal(game.coinIconSprite.spriteFrame.name, 'coin');
+  assert.equal(game.staminaIconSprite.spriteFrame.name, 'stamina');
+  assert.equal(game.mainDecorSprites[0].spriteFrame.name, 'cat');
+  assert.equal(game.mainNavButtonView.visualState, 'active');
+  assert.equal(game.mainNavButton.interactable, false);
+  assert.equal(game.upgradeNavButton.interactable, true);
+  assert.equal(game.upgradeNavButtonView.visualState, 'muted');
+
+  game.showUpgrade();
+  assert.equal(game.upgradeNavButtonView.visualState, 'active');
+  assert.equal(game.mainNavButtonView.visualState, 'muted');
+  assert.equal(game.mainNavButton.interactable, true);
+  assert.equal(game.upgradeNavButton.interactable, false);
+
+  game.showTasks();
+  assert.equal(game.taskNavButtonView.visualState, 'active');
+  assert.equal(game.upgradeNavButtonView.visualState, 'muted');
+  assert.equal(game.upgradeNavButton.interactable, true);
+  assert.equal(game.taskNavButton.interactable, false);
+}
+
 async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc) {
   observedGuideFocusKeys.clear();
   cc.sys.localStorage.clear();
@@ -289,10 +336,10 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(api.calls[0].method, 'getProfile');
   assert.equal(game.mainScreen.active, true);
   assert.equal(game.businessScreen.active, false);
-  assert.equal(game.coinLabel.string, '80');
-  assert.equal(game.staminaLabel.string, '50/60 · +1 59s · 回满 5m');
+  assert.equal(game.coinLabel.string, '金币 80');
+  assert.equal(game.staminaLabel.string, '体力 50/60 · +1 59s · 回满 5m');
   assert.equal(game.levelLabel.string, '餐厅 Lv.1');
-  assert.equal(game.nextRevenueLabel.string, '下次 100');
+  assert.equal(game.nextRevenueLabel.string, '下次收入 100');
   assert.equal(game.startButtonLabel.string, '开始营业');
   assert.equal(game.startButton.interactable, true);
   assert.match(game.guideLabel.string, /先开始营业/);
@@ -566,6 +613,13 @@ function createTextures() {
   return {
     animals: [frame('cat'), frame('dog'), frame('rabbit'), frame('bear')],
     cashier: frame('cashier'),
+    coinIcon: frame('coin'),
+    staminaIcon: frame('stamina'),
+    starIcon: frame('star-filled'),
+    starIconEmpty: frame('star-empty'),
+    panel: frame('panel'),
+    card: frame('card'),
+    guideFocus: frame('guide-focus'),
     button: frame('button'),
     buttonDisabled: frame('button-disabled'),
     getRestaurantBackground(level) {
