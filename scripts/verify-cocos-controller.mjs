@@ -304,13 +304,14 @@ function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
   assert.equal(game.staminaIconSprite.spriteFrame.name, 'stamina');
   assert.equal(game.designTitleSignSprite.spriteFrame.name, 'design-title-sign');
   assert.equal(game.designRestaurantSceneSprite.spriteFrame.name, 'design-restaurant-scene');
+  assert.equal(game.designUpgradeFullSprite.spriteFrame.name, 'design-upgrade-full');
   assert.equal(game.designNavSprite.spriteFrame.name, 'design-nav-restaurant');
   assert.equal(game.mainPartIconSprites[0].spriteFrame.name, 'cashier');
   assert.equal(game.upgradePartIconSprites[1].spriteFrame.name, 'table-food');
   assertChildBefore(game.upgradeScreen, 'UpgradeDesignBoard', 'PartUpgrade_cashier');
   assertChildBefore(game.taskScreen, 'TaskDesignBoard', 'TaskRow_0');
   assert.equal(findChild(game.mainScreen, 'PartStatusPanel').position.y, -320);
-  assert.equal(findChild(game.upgradeScreen, 'RestaurantUpgradeButton').position.y, -386);
+  assert.equal(findChild(game.upgradeScreen, 'RestaurantUpgradeButton').position.y, -435);
   assert.equal(findChild(game.taskScreen, 'TaskRow_12').position.y, -376);
   assert.equal(game.messageLabel.node.position.y, -472);
   assert.equal(game.mainNavButtonView.normalTexture, 'none');
@@ -322,6 +323,12 @@ function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
   assert.equal(game.upgradeNavButtonView.visualState, 'muted');
 
   game.showUpgrade();
+  assert.equal(game.runtimeNavBar.active, false);
+  assert.equal(game.designTitleSignSprite.node.active, false);
+  assert.equal(game.designUpgradeFullSprite.node.active, true);
+  assert.equal(game.designUpgradeBoardSprite.node.active, false);
+  assert.equal(game.partViews[0].node.active, false);
+  assert.equal(game.restaurantUpgradeButton.node.active, false);
   assert.equal(game.upgradeNavButtonView.visualState, 'active');
   assert.equal(game.mainNavButtonView.visualState, 'muted');
   assert.equal(game.mainNavButton.interactable, true);
@@ -329,6 +336,8 @@ function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
   assert.equal(game.designNavSprite.spriteFrame.name, 'design-nav-upgrade');
 
   game.showTasks();
+  assert.equal(game.runtimeNavBar.active, true);
+  assert.equal(game.designTitleSignSprite.node.active, true);
   assert.equal(game.taskNavButtonView.visualState, 'active');
   assert.equal(game.upgradeNavButtonView.visualState, 'muted');
   assert.equal(game.upgradeNavButton.interactable, true);
@@ -676,6 +685,7 @@ function createTextures() {
     designNavRestaurant: frame('design-nav-restaurant'),
     designNavUpgrade: frame('design-nav-upgrade'),
     designNavTasks: frame('design-nav-tasks'),
+    designUpgradeFull: frame('design-upgrade-full'),
     designUpgradeHeading: frame('design-upgrade-heading'),
     designUpgradeBoard: frame('design-upgrade-board'),
     designTaskHeading: frame('design-task-heading'),

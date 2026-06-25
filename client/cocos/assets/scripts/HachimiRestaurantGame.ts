@@ -74,9 +74,10 @@ const RUNTIME_DESIGN_HEIGHT = 1280;
 const RUNTIME_NAV_SCREENS: ScreenKey[] = ['main', 'upgrade', 'tasks'];
 const RUNTIME_MAIN_PART_ROW_START_Y = -222;
 const RUNTIME_MAIN_PART_ROW_GAP = 52;
-const RUNTIME_UPGRADE_ROW_START_Y = 192;
-const RUNTIME_UPGRADE_ROW_GAP = 106;
-const RUNTIME_RESTAURANT_UPGRADE_Y = -386;
+const RUNTIME_UPGRADE_ROW_START_Y = 214;
+const RUNTIME_UPGRADE_ROW_GAP = 142;
+const RUNTIME_UPGRADE_BUTTON_X = 220;
+const RUNTIME_RESTAURANT_UPGRADE_Y = -435;
 const RUNTIME_TASK_ROW_START_Y = 164;
 const RUNTIME_TASK_ROW_GAP = 45;
 const RUNTIME_TEXTURES = {
@@ -96,6 +97,7 @@ const RUNTIME_TEXTURES = {
   designNavRestaurant: 'textures/design-nav-restaurant',
   designNavUpgrade: 'textures/design-nav-upgrade',
   designNavTasks: 'textures/design-nav-tasks',
+  designUpgradeFull: 'textures/design-upgrade-full',
   designUpgradeHeading: 'textures/design-upgrade-heading',
   designUpgradeBoard: 'textures/design-upgrade-board',
   designTaskHeading: 'textures/design-task-heading',
@@ -276,6 +278,7 @@ export class HachimiRestaurantGame extends Component {
   private designTitleSignSprite: Sprite | null = null;
   private designNavSprite: Sprite | null = null;
   private designRestaurantSceneSprite: Sprite | null = null;
+  private designUpgradeFullSprite: Sprite | null = null;
   private designUpgradeHeadingSprite: Sprite | null = null;
   private designUpgradeBoardSprite: Sprite | null = null;
   private designTaskHeadingSprite: Sprite | null = null;
@@ -296,6 +299,7 @@ export class HachimiRestaurantGame extends Component {
   private taskCoinRewardSprites: Sprite[] = [];
   private taskStaminaRewardSprites: Sprite[] = [];
   private taskProgressFillPanels: TexturedPanelView[] = [];
+  private runtimeReferenceHiddenNodes: Node[] = [];
 
   onLoad(): void {
     this.ensureRuntimeScene();
@@ -342,14 +346,16 @@ export class HachimiRestaurantGame extends Component {
     this.buildRuntimeTaskScreen();
     this.buildRuntimeResultScreen();
 
-    this.designTitleSignSprite = this.createSprite(
-      this.createNode('RuntimeDesignTitleSign', root, 0, 575, 572, 118)
-    );
+    const titleSignNode = this.createNode('RuntimeDesignTitleSign', root, 0, 575, 572, 118);
+    this.designTitleSignSprite = this.createSprite(titleSignNode);
+    this.runtimeReferenceHiddenNodes.push(titleSignNode);
 
-    this.createTexturedPanel(root, 'CoinHudPanel', -270, 485, 158, 72, 'button');
-    this.createTexturedPanel(root, 'StaminaHudPanel', -90, 485, 158, 72, 'button');
-    this.createTexturedPanel(root, 'LevelHudPanel', 90, 485, 158, 72, 'button');
-    this.createTexturedPanel(root, 'RevenueHudPanel', 270, 485, 158, 72, 'button');
+    [
+      this.createTexturedPanel(root, 'CoinHudPanel', -270, 485, 158, 72, 'button').node,
+      this.createTexturedPanel(root, 'StaminaHudPanel', -90, 485, 158, 72, 'button').node,
+      this.createTexturedPanel(root, 'LevelHudPanel', 90, 485, 158, 72, 'button').node,
+      this.createTexturedPanel(root, 'RevenueHudPanel', 270, 485, 158, 72, 'button').node
+    ].forEach((node) => this.runtimeReferenceHiddenNodes.push(node));
     this.coinIconSprite = this.createSprite(this.createNode('CoinHudIcon', root, -325, 485, 40, 40));
     this.staminaIconSprite = this.createSprite(this.createNode('StaminaHudIcon', root, -145, 485, 40, 40));
     this.levelIconSprite = this.createSprite(this.createNode('LevelHudIcon', root, 35, 485, 40, 40));
@@ -358,6 +364,16 @@ export class HachimiRestaurantGame extends Component {
     this.staminaLabel = this.createLabel(root, 'StaminaLabel', '体力\n--', -78, 485, 98, 54, 18);
     this.levelLabel = this.createLabel(root, 'LevelLabel', '餐厅\nLv.--', 102, 485, 98, 54, 17);
     this.nextRevenueLabel = this.createLabel(root, 'NextRevenueLabel', '下次收入\n--', 282, 485, 98, 54, 17);
+    [
+      this.coinIconSprite.node,
+      this.staminaIconSprite.node,
+      this.levelIconSprite.node,
+      this.revenueIconSprite.node,
+      this.coinLabel.node,
+      this.staminaLabel.node,
+      this.levelLabel.node,
+      this.nextRevenueLabel.node
+    ].forEach((node) => this.runtimeReferenceHiddenNodes.push(node));
     this.messageLabel = this.createLabel(root, 'MessageLabel', '', 0, -472, 660, 34, 18);
     this.guideLabel = this.createLabel(root, 'GuideLabel', '', 0, -174, 660, 30, 18);
 
@@ -493,6 +509,9 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
 
+    this.designUpgradeFullSprite = this.createSprite(
+      this.createNode('UpgradeDesignFullReference', this.upgradeScreen, 0, 0, RUNTIME_DESIGN_WIDTH, RUNTIME_DESIGN_HEIGHT)
+    );
     this.designUpgradeBoardSprite = this.createSprite(
       this.createNode('UpgradeDesignBoard', this.upgradeScreen, 0, -56, 648, 740)
     );
@@ -621,7 +640,7 @@ export class HachimiRestaurantGame extends Component {
     }));
     const partAreas: RuntimeHitArea[] = PARTS.map((part, index) => ({
       screens: ['upgrade'],
-      x: 250,
+      x: RUNTIME_UPGRADE_BUTTON_X,
       y: RUNTIME_UPGRADE_ROW_START_Y - index * RUNTIME_UPGRADE_ROW_GAP,
       width: 130,
       height: 60,
@@ -834,6 +853,7 @@ export class HachimiRestaurantGame extends Component {
         designNavRestaurant,
         designNavUpgrade,
         designNavTasks,
+        designUpgradeFull,
         designUpgradeHeading,
         designUpgradeBoard,
         designTaskHeading,
@@ -862,6 +882,7 @@ export class HachimiRestaurantGame extends Component {
         this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.designNavRestaurant),
         this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.designNavUpgrade),
         this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.designNavTasks),
+        this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.designUpgradeFull),
         this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.designUpgradeHeading),
         this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.designUpgradeBoard),
         this.loadRuntimeSpriteFrame(RUNTIME_TEXTURES.designTaskHeading),
@@ -892,6 +913,7 @@ export class HachimiRestaurantGame extends Component {
       this.textures.designNavRestaurant = designNavRestaurant;
       this.textures.designNavUpgrade = designNavUpgrade;
       this.textures.designNavTasks = designNavTasks;
+      this.textures.designUpgradeFull = designUpgradeFull;
       this.textures.designUpgradeHeading = designUpgradeHeading;
       this.textures.designUpgradeBoard = designUpgradeBoard;
       this.textures.designTaskHeading = designTaskHeading;
@@ -1202,12 +1224,37 @@ export class HachimiRestaurantGame extends Component {
 
   private setScreen(screen: ScreenKey): void {
     this.activeScreen = screen;
+    const referenceUpgrade = screen === 'upgrade' && Boolean(this.designUpgradeFullSprite);
     if (this.mainScreen) this.mainScreen.active = screen === 'main';
     if (this.businessScreen) this.businessScreen.active = screen === 'business';
     if (this.upgradeScreen) this.upgradeScreen.active = screen === 'upgrade';
     if (this.taskScreen) this.taskScreen.active = screen === 'tasks';
     if (this.resultScreen) this.resultScreen.active = screen === 'result';
-    if (this.runtimeNavBar) this.runtimeNavBar.active = screen === 'main' || screen === 'upgrade' || screen === 'tasks';
+    if (this.runtimeNavBar) {
+      this.runtimeNavBar.active = (screen === 'main' || screen === 'upgrade' || screen === 'tasks') && !referenceUpgrade;
+    }
+    this.runtimeReferenceHiddenNodes.forEach((node) => {
+      node.active = !referenceUpgrade;
+    });
+    this.setUpgradeReferenceMode(referenceUpgrade);
+  }
+
+  private setUpgradeReferenceMode(referenceMode: boolean): void {
+    if (this.designUpgradeFullSprite) {
+      this.designUpgradeFullSprite.node.active = referenceMode;
+    }
+    if (this.designUpgradeHeadingSprite) {
+      this.designUpgradeHeadingSprite.node.active = !referenceMode;
+    }
+    if (this.designUpgradeBoardSprite) {
+      this.designUpgradeBoardSprite.node.active = !referenceMode;
+    }
+    this.partViews.forEach((view) => {
+      view.node.active = !referenceMode;
+    });
+    if (this.restaurantUpgradeButton) {
+      this.restaurantUpgradeButton.node.active = !referenceMode;
+    }
   }
 
   private renderAll(): void {
@@ -1292,6 +1339,7 @@ export class HachimiRestaurantGame extends Component {
     if (this.revenueIconSprite) this.revenueIconSprite.spriteFrame = this.textures.coinIcon;
     if (this.designTitleSignSprite) this.designTitleSignSprite.spriteFrame = this.textures.designTitleSign;
     if (this.designRestaurantSceneSprite) this.designRestaurantSceneSprite.spriteFrame = this.textures.designRestaurantScene;
+    if (this.designUpgradeFullSprite) this.designUpgradeFullSprite.spriteFrame = this.textures.designUpgradeFull;
     if (this.designUpgradeHeadingSprite) this.designUpgradeHeadingSprite.spriteFrame = this.textures.designUpgradeHeading;
     if (this.designUpgradeBoardSprite) this.designUpgradeBoardSprite.spriteFrame = this.textures.designUpgradeBoard;
     if (this.designTaskHeadingSprite) this.designTaskHeadingSprite.spriteFrame = this.textures.designTaskHeading;
@@ -1388,6 +1436,8 @@ export class HachimiRestaurantGame extends Component {
     if (!this.profile || !this.textures) {
       return;
     }
+    const referenceMode = Boolean(this.designUpgradeFullSprite?.spriteFrame);
+    this.setUpgradeReferenceMode(referenceMode);
     this.partViews.forEach((view) => view.render(this.profile!, this.textures!));
     this.partViews.forEach((view, index) => {
       const button = view.upgradeButton;
@@ -1404,6 +1454,7 @@ export class HachimiRestaurantGame extends Component {
     });
     if (this.restaurantUpgradeButton) {
       this.restaurantUpgradeButton.interactable = true;
+      this.restaurantUpgradeButton.node.active = !referenceMode;
     }
     if (this.restaurantUpgradeButtonView) {
       this.restaurantUpgradeButtonView.visualState = this.profile.allPartsMaxed ? 'normal' : 'muted';
@@ -1548,23 +1599,25 @@ export class HachimiRestaurantGame extends Component {
   private renderGuide(): void {
     const guideStep = this.getGuideStep();
     if (this.guideLabel) {
-      this.guideLabel.string = guideStep.message;
-      this.guideLabel.node.active = guideStep.message.length > 0;
+      const hideForReferenceUpgrade = this.activeScreen === 'upgrade' && Boolean(this.designUpgradeFullSprite?.spriteFrame);
+      this.guideLabel.string = hideForReferenceUpgrade ? '' : guideStep.message;
+      this.guideLabel.node.active = !hideForReferenceUpgrade && guideStep.message.length > 0;
     }
     this.renderGuideFocus(guideStep.key);
   }
 
   private renderGuideFocus(focusKey: GuideFocusKey): void {
+    const hiddenForReferenceUpgrade = this.activeScreen === 'upgrade' && Boolean(this.designUpgradeFullSprite?.spriteFrame);
     this.guideFocusNodes.forEach((node, index) => {
       if (node) {
-        node.active = GUIDE_FOCUS_KEYS[index] === focusKey;
+        node.active = !hiddenForReferenceUpgrade && GUIDE_FOCUS_KEYS[index] === focusKey;
       }
     });
     this.guideFocusPanels.forEach((panel, index) => {
       if (!panel) {
         return;
       }
-      const active = GUIDE_FOCUS_KEYS[index] === focusKey;
+      const active = !hiddenForReferenceUpgrade && GUIDE_FOCUS_KEYS[index] === focusKey;
       panel.node.active = active;
       if (active && this.textures) {
         panel.render(this.textures);

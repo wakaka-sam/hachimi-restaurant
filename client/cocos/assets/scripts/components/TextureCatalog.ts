@@ -50,6 +50,9 @@ export class TextureCatalog extends Component {
   designUpgradeBoard: SpriteFrame | null = null;
 
   @property(SpriteFrame)
+  designUpgradeFull: SpriteFrame | null = null;
+
+  @property(SpriteFrame)
   designTaskHeading: SpriteFrame | null = null;
 
   @property(SpriteFrame)

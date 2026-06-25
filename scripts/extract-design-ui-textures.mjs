@@ -42,6 +42,14 @@ const crops = [
   },
   {
     source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-full.png',
+    x: 0,
+    y: 0,
+    width: 720,
+    height: 1280
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
     output: 'design-upgrade-heading.png',
     x: 150,
     y: 210,
@@ -55,6 +63,62 @@ const crops = [
     y: 300,
     width: 648,
     height: 800
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-icon-cashier.png',
+    x: 68,
+    y: 366,
+    width: 140,
+    height: 116
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-icon-table.png',
+    x: 68,
+    y: 508,
+    width: 140,
+    height: 116
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-icon-chair.png',
+    x: 68,
+    y: 650,
+    width: 140,
+    height: 116
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-icon-floor.png',
+    x: 68,
+    y: 794,
+    width: 140,
+    height: 116
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-icon-wall.png',
+    x: 68,
+    y: 936,
+    width: 140,
+    height: 116
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-button-green.png',
+    x: 516,
+    y: 392,
+    width: 124,
+    height: 82
+  },
+  {
+    source: 'upgrade-tab-720x1280.png',
+    output: 'design-upgrade-button-locked.png',
+    x: 205,
+    y: 1033,
+    width: 310,
+    height: 84
   },
   {
     source: 'upgrade-tab-720x1280.png',
