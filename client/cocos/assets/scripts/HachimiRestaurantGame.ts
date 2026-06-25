@@ -72,6 +72,13 @@ const LOCAL_SESSION_SNAPSHOT_KEY = 'hachimi-active-session-snapshot';
 const RUNTIME_DESIGN_WIDTH = 720;
 const RUNTIME_DESIGN_HEIGHT = 1280;
 const RUNTIME_NAV_SCREENS: ScreenKey[] = ['main', 'upgrade', 'tasks'];
+const RUNTIME_MAIN_PART_ROW_START_Y = -222;
+const RUNTIME_MAIN_PART_ROW_GAP = 52;
+const RUNTIME_UPGRADE_ROW_START_Y = 192;
+const RUNTIME_UPGRADE_ROW_GAP = 106;
+const RUNTIME_RESTAURANT_UPGRADE_Y = -386;
+const RUNTIME_TASK_ROW_START_Y = 164;
+const RUNTIME_TASK_ROW_GAP = 45;
 const RUNTIME_TEXTURES = {
   restaurantBackgrounds: [
     'textures/restaurant-bg-stage-1',
@@ -281,8 +288,10 @@ export class HachimiRestaurantGame extends Component {
   private navIconSprites: Sprite[] = [];
   private mainPartIconSprites: Sprite[] = [];
   private upgradePartIconSprites: Sprite[] = [];
+  private partUpgradeButtonViews: TexturedButtonView[] = [];
   private mainPartQuickUpgradeButtons: Button[] = [];
   private mainPartQuickUpgradeButtonViews: TexturedButtonView[] = [];
+  private restaurantUpgradeButtonView: TexturedButtonView | null = null;
   private taskIconSprites: Sprite[] = [];
   private taskCoinRewardSprites: Sprite[] = [];
   private taskStaminaRewardSprites: Sprite[] = [];
@@ -301,11 +310,11 @@ export class HachimiRestaurantGame extends Component {
     this.speedButton?.node.on(Button.EventType.CLICK, this.toggleSpeed, this);
     this.cashierButton?.node.on(Button.EventType.CLICK, this.collectFirstReadyPay, this);
     this.finishButton?.node.on(Button.EventType.CLICK, this.finishBusiness, this);
-    this.restaurantUpgradeButton?.node.on(Button.EventType.CLICK, this.upgradeRestaurant, this);
+    this.restaurantUpgradeButton?.node.on(Button.EventType.CLICK, this.handleRestaurantUpgradePressed, this);
     this.tableSlots.forEach((slot, index) => slot.bind(index, this.handleTablePressed.bind(this)));
     this.partStatusViews.forEach((view, index) => view.bind(PARTS[index]));
-    this.partViews.forEach((view, index) => view.bind(PARTS[index], this.upgradePart.bind(this)));
-    this.taskViews.forEach((view) => view.bind(this.claimTask.bind(this)));
+    this.partViews.forEach((view, index) => view.bind(PARTS[index], this.handlePartUpgradePressed.bind(this)));
+    this.taskViews.forEach((view) => view.bind(this.handleTaskButtonPressed.bind(this)));
   }
 
   private ensureRuntimeScene(): void {
@@ -349,7 +358,7 @@ export class HachimiRestaurantGame extends Component {
     this.staminaLabel = this.createLabel(root, 'StaminaLabel', '体力\n--', -78, 485, 98, 54, 18);
     this.levelLabel = this.createLabel(root, 'LevelLabel', '餐厅\nLv.--', 102, 485, 98, 54, 17);
     this.nextRevenueLabel = this.createLabel(root, 'NextRevenueLabel', '下次收入\n--', 282, 485, 98, 54, 17);
-    this.messageLabel = this.createLabel(root, 'MessageLabel', '', 0, -505, 660, 34, 18);
+    this.messageLabel = this.createLabel(root, 'MessageLabel', '', 0, -472, 660, 34, 18);
     this.guideLabel = this.createLabel(root, 'GuideLabel', '', 0, -174, 660, 30, 18);
 
     this.runtimeNavBar = this.createNode('RuntimeNavBar', root, 0, -565, 700, 126);
@@ -410,9 +419,16 @@ export class HachimiRestaurantGame extends Component {
     start.view.normalTexture = 'designStartButton';
     start.view.activeTexture = 'designStartButton';
 
-    this.createTexturedPanel(this.mainScreen, 'PartStatusPanel', 0, -342, 650, 318, 'panel');
+    this.createTexturedPanel(this.mainScreen, 'PartStatusPanel', 0, -320, 650, 300, 'panel');
     this.partStatusViews = PARTS.map((part, index) => {
-      const row = this.createNode(`PartStatus_${part}`, this.mainScreen!, 0, -238 - index * 52, 610, 46);
+      const row = this.createNode(
+        `PartStatus_${part}`,
+        this.mainScreen!,
+        0,
+        RUNTIME_MAIN_PART_ROW_START_Y - index * RUNTIME_MAIN_PART_ROW_GAP,
+        610,
+        46
+      );
       this.createTexturedPanel(row, `PartStatusCard_${part}`, 0, 0, 610, 46, 'button');
       const view = row.addComponent(PartStatusView);
       this.mainPartIconSprites.push(this.createSprite(this.createNode(`PartStatusIcon_${part}`, row, -264, 0, 42, 42)));
@@ -477,8 +493,22 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
 
+    this.designUpgradeBoardSprite = this.createSprite(
+      this.createNode('UpgradeDesignBoard', this.upgradeScreen, 0, -56, 648, 740)
+    );
+    this.designUpgradeHeadingSprite = this.createSprite(
+      this.createNode('UpgradeDesignHeading', this.upgradeScreen, 0, 336, 420, 90)
+    );
+
     this.partViews = PARTS.map((part, index) => {
-      const row = this.createNode(`PartUpgrade_${part}`, this.upgradeScreen!, 0, 180 - index * 114, 650, 98);
+      const row = this.createNode(
+        `PartUpgrade_${part}`,
+        this.upgradeScreen!,
+        0,
+        RUNTIME_UPGRADE_ROW_START_Y - index * RUNTIME_UPGRADE_ROW_GAP,
+        650,
+        96
+      );
       this.createTexturedPanel(row, `PartUpgradeCard_${part}`, 0, 0, 650, 98, 'button');
       const view = row.addComponent(PartUpgradeView);
       this.upgradePartIconSprites.push(this.createSprite(this.createNode(`PartUpgradeIcon_${part}`, row, -260, 0, 74, 74)));
@@ -491,17 +521,22 @@ export class HachimiRestaurantGame extends Component {
       const button = this.createButton(row, `PartUpgradeButton_${part}`, '升级', 255, 0, 130, 60, 24);
       view.upgradeButton = button.button;
       view.buttonLabel = button.label;
+      this.partUpgradeButtonViews.push(button.view);
       return view;
     });
 
-    const restaurant = this.createButton(this.upgradeScreen, 'RestaurantUpgradeButton', '升级餐厅', 0, -455, 320, 70, 28);
+    const restaurant = this.createButton(
+      this.upgradeScreen,
+      'RestaurantUpgradeButton',
+      '升级餐厅',
+      0,
+      RUNTIME_RESTAURANT_UPGRADE_Y,
+      320,
+      66,
+      28
+    );
     this.restaurantUpgradeButton = restaurant.button;
-    this.designUpgradeBoardSprite = this.createSprite(
-      this.createNode('UpgradeDesignBoard', this.upgradeScreen, 0, -80, 648, 800)
-    );
-    this.designUpgradeHeadingSprite = this.createSprite(
-      this.createNode('UpgradeDesignHeading', this.upgradeScreen, 0, 328, 420, 90)
-    );
+    this.restaurantUpgradeButtonView = restaurant.view;
   }
 
   private buildRuntimeTaskScreen(): void {
@@ -509,38 +544,46 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
 
-    this.createTexturedPanel(this.taskScreen, 'GuideTaskHeaderPanel', -205, 232, 188, 48, 'button');
-    this.createTexturedPanel(this.taskScreen, 'DailyTaskHeaderPanel', 0, 232, 188, 48, 'button');
-    this.createTexturedPanel(this.taskScreen, 'GrowthTaskHeaderPanel', 205, 232, 188, 48, 'button');
-    this.guideTaskHeaderLabel = this.createLabel(this.taskScreen, 'GuideTaskHeaderLabel', '', -205, 232, 184, 32, 20);
-    this.dailyTaskHeaderLabel = this.createLabel(this.taskScreen, 'DailyTaskHeaderLabel', '', 0, 232, 184, 32, 20);
-    this.growthTaskHeaderLabel = this.createLabel(this.taskScreen, 'GrowthTaskHeaderLabel', '', 205, 232, 184, 32, 20);
+    this.designTaskBoardSprite = this.createSprite(
+      this.createNode('TaskDesignBoard', this.taskScreen, 0, -74, 672, 720)
+    );
+    this.designTaskHeadingSprite = this.createSprite(
+      this.createNode('TaskDesignHeading', this.taskScreen, 0, 330, 432, 100)
+    );
+
+    this.createTexturedPanel(this.taskScreen, 'GuideTaskHeaderPanel', -205, 244, 188, 48, 'button');
+    this.createTexturedPanel(this.taskScreen, 'DailyTaskHeaderPanel', 0, 244, 188, 48, 'button');
+    this.createTexturedPanel(this.taskScreen, 'GrowthTaskHeaderPanel', 205, 244, 188, 48, 'button');
+    this.guideTaskHeaderLabel = this.createLabel(this.taskScreen, 'GuideTaskHeaderLabel', '', -205, 244, 184, 32, 20);
+    this.dailyTaskHeaderLabel = this.createLabel(this.taskScreen, 'DailyTaskHeaderLabel', '', 0, 244, 184, 32, 20);
+    this.growthTaskHeaderLabel = this.createLabel(this.taskScreen, 'GrowthTaskHeaderLabel', '', 205, 244, 184, 32, 20);
 
     this.taskViews = Array.from({ length: 13 }, (_, index) => {
-      const row = this.createNode(`TaskRow_${index}`, this.taskScreen!, 0, 170 - index * 49, 660, 46);
-      this.createTexturedPanel(row, `TaskRowCard_${index}`, 0, 0, 660, 46, 'button');
+      const row = this.createNode(
+        `TaskRow_${index}`,
+        this.taskScreen!,
+        0,
+        RUNTIME_TASK_ROW_START_Y - index * RUNTIME_TASK_ROW_GAP,
+        660,
+        42
+      );
+      this.createTexturedPanel(row, `TaskRowCard_${index}`, 0, 0, 660, 42, 'button');
       const view = row.addComponent(TaskItemView);
-      this.taskIconSprites.push(this.createSprite(this.createNode(`TaskIcon_${index}`, row, -292, 0, 38, 38)));
-      view.typeLabel = this.createLabel(row, `TaskType_${index}`, '', -228, 12, 90, 20, 15);
-      view.titleLabel = this.createLabel(row, `TaskTitle_${index}`, '', -118, 12, 230, 20, 17);
-      view.descriptionLabel = this.createLabel(row, `TaskDesc_${index}`, '', -125, -12, 245, 20, 14);
-      this.createTexturedPanel(row, `TaskProgressBack_${index}`, 55, -12, 108, 18, 'buttonDisabled');
-      this.taskProgressFillPanels.push(this.createTexturedPanel(row, `TaskProgressFill_${index}`, 10, -12, 18, 18, 'button'));
-      view.progressLabel = this.createLabel(row, `TaskProgress_${index}`, '', 68, 12, 70, 18, 14);
-      this.taskCoinRewardSprites.push(this.createSprite(this.createNode(`TaskCoinIcon_${index}`, row, 118, 9, 24, 24)));
-      this.taskStaminaRewardSprites.push(this.createSprite(this.createNode(`TaskStaminaIcon_${index}`, row, 118, -15, 24, 24)));
-      view.rewardLabel = this.createLabel(row, `TaskReward_${index}`, '', 165, -3, 92, 36, 14);
-      const button = this.createButton(row, `TaskClaim_${index}`, '领取', 285, 0, 84, 40, 16);
+      this.taskIconSprites.push(this.createSprite(this.createNode(`TaskIcon_${index}`, row, -292, 0, 34, 34)));
+      view.typeLabel = this.createLabel(row, `TaskType_${index}`, '', -228, 11, 90, 18, 14);
+      view.titleLabel = this.createLabel(row, `TaskTitle_${index}`, '', -118, 11, 230, 18, 16);
+      view.descriptionLabel = this.createLabel(row, `TaskDesc_${index}`, '', -125, -11, 245, 18, 13);
+      this.createTexturedPanel(row, `TaskProgressBack_${index}`, 55, -11, 108, 16, 'buttonDisabled');
+      this.taskProgressFillPanels.push(this.createTexturedPanel(row, `TaskProgressFill_${index}`, 10, -11, 18, 16, 'button'));
+      view.progressLabel = this.createLabel(row, `TaskProgress_${index}`, '', 68, 11, 70, 18, 13);
+      this.taskCoinRewardSprites.push(this.createSprite(this.createNode(`TaskCoinIcon_${index}`, row, 118, 9, 22, 22)));
+      this.taskStaminaRewardSprites.push(this.createSprite(this.createNode(`TaskStaminaIcon_${index}`, row, 118, -14, 22, 22)));
+      view.rewardLabel = this.createLabel(row, `TaskReward_${index}`, '', 165, -3, 92, 34, 13);
+      const button = this.createButton(row, `TaskClaim_${index}`, '领取', 285, 0, 84, 36, 16);
       view.claimButton = button.button;
       view.buttonLabel = button.label;
       return view;
     });
-    this.designTaskBoardSprite = this.createSprite(
-      this.createNode('TaskDesignBoard', this.taskScreen, 0, -112, 672, 800)
-    );
-    this.designTaskHeadingSprite = this.createSprite(
-      this.createNode('TaskDesignHeading', this.taskScreen, 0, 320, 432, 100)
-    );
   }
 
   private buildRuntimeResultScreen(): void {
@@ -579,33 +622,33 @@ export class HachimiRestaurantGame extends Component {
     const partAreas: RuntimeHitArea[] = PARTS.map((part, index) => ({
       screens: ['upgrade'],
       x: 250,
-      y: 180 - index * 114,
+      y: RUNTIME_UPGRADE_ROW_START_Y - index * RUNTIME_UPGRADE_ROW_GAP,
       width: 130,
       height: 60,
       action: () => {
-        void this.upgradePart(part);
+        this.handlePartUpgradePressed(part);
       }
     }));
     const mainPartAreas: RuntimeHitArea[] = PARTS.map((part, index) => ({
       screens: ['main'],
       x: 262,
-      y: -238 - index * 52,
+      y: RUNTIME_MAIN_PART_ROW_START_Y - index * RUNTIME_MAIN_PART_ROW_GAP,
       width: 76,
       height: 40,
       action: () => {
-        void this.upgradePart(part);
+        this.handlePartUpgradePressed(part);
       }
     }));
     const taskAreas: RuntimeHitArea[] = Array.from({ length: 13 }, (_, index) => ({
       screens: ['tasks'],
       x: 285,
-      y: 170 - index * 49,
+      y: RUNTIME_TASK_ROW_START_Y - index * RUNTIME_TASK_ROW_GAP,
       width: 84,
-      height: 40,
+      height: 36,
       action: () => {
         const task = this.profile?.tasks[index];
         if (task) {
-          void this.claimTask(task.id);
+          this.handleTaskButtonPressed(task.id);
         }
       }
     }));
@@ -619,7 +662,14 @@ export class HachimiRestaurantGame extends Component {
       { screens: ['business'], x: 0, y: -385, width: 170, height: 62, action: () => this.collectFirstReadyPay() },
       { screens: ['business'], x: 220, y: -385, width: 180, height: 62, action: () => { void this.finishBusiness(); } },
       ...partAreas,
-      { screens: ['upgrade'], x: 0, y: -455, width: 320, height: 70, action: () => { void this.upgradeRestaurant(); } },
+      {
+        screens: ['upgrade'],
+        x: 0,
+        y: RUNTIME_RESTAURANT_UPGRADE_Y,
+        width: 320,
+        height: 66,
+        action: () => this.handleRestaurantUpgradePressed()
+      },
       ...taskAreas,
       { screens: ['result'], x: -145, y: -130, width: 210, height: 68, action: () => this.showMain() },
       { screens: ['result'], x: 145, y: -130, width: 210, height: 68, action: () => this.showUpgrade() }
@@ -1075,6 +1125,81 @@ export class HachimiRestaurantGame extends Component {
     this.renderGuide();
   }
 
+  private handlePartUpgradePressed(part: PartKey): void {
+    if (!this.profile) {
+      return;
+    }
+    const star = this.profile.player.parts[part];
+    if (star >= CONSTANTS.starsPerPart) {
+      this.setMessage(`${this.profile.partLabels[part] || part} 已满星`);
+      this.renderTexturedButtons();
+      return;
+    }
+    const cost = this.profile.economy.upgradeCost;
+    const short = cost - this.profile.player.coins;
+    if (short > 0) {
+      this.setMessage(`金币不足，还差 ${short}`);
+      this.renderTexturedButtons();
+      return;
+    }
+    void this.upgradePart(part);
+  }
+
+  private handleRestaurantUpgradePressed(): void {
+    if (!this.profile) {
+      return;
+    }
+    if (!this.profile.allPartsMaxed) {
+      this.setMessage('五个部件满星后才能升级餐厅');
+      this.renderTexturedButtons();
+      return;
+    }
+    void this.upgradeRestaurant();
+  }
+
+  private handleTaskButtonPressed(taskId: string): void {
+    const task = this.profile?.tasks.find((item) => item.id === taskId);
+    if (!task) {
+      return;
+    }
+    if (task.claimed) {
+      this.setMessage('该任务奖励已领取');
+      this.renderTexturedButtons();
+      return;
+    }
+    if (task.completed) {
+      void this.claimTask(task.id);
+      return;
+    }
+    this.setMessage(`前往完成：${task.title}`);
+    const targetScreen = this.getTaskTargetScreen(task.id);
+    if (targetScreen === 'upgrade') {
+      this.showUpgrade();
+      return;
+    }
+    if (targetScreen === 'main') {
+      this.showMain();
+      return;
+    }
+    this.renderAll();
+  }
+
+  private getTaskTargetScreen(taskId: string): ScreenKey {
+    if (
+      taskId.includes('part_upgrade')
+      || taskId.includes('restaurant_upgrade')
+      || taskId.includes('restaurant_level')
+      || taskId.includes('part_star')
+      || taskId.includes('parts_star')
+    ) {
+      return 'upgrade';
+    }
+    if (taskId.includes('task_claim')) {
+      return 'tasks';
+    }
+    return 'main';
+  }
+
   private setScreen(screen: ScreenKey): void {
     this.activeScreen = screen;
     if (this.mainScreen) this.mainScreen.active = screen === 'main';
@@ -1203,11 +1328,12 @@ export class HachimiRestaurantGame extends Component {
     this.mainPartQuickUpgradeButtons.forEach((button, index) => {
       const part = PARTS[index];
       const star = this.profile!.player.parts[part];
-      button.interactable = star < CONSTANTS.starsPerPart
+      const canUpgrade = star < CONSTANTS.starsPerPart
         && this.profile!.player.coins >= this.profile!.economy.upgradeCost;
+      button.interactable = true;
       const view = this.mainPartQuickUpgradeButtonViews[index];
       if (view) {
-        view.visualState = button.interactable ? 'normal' : 'muted';
+        view.visualState = canUpgrade ? 'normal' : 'muted';
       }
     });
   }
@@ -1263,8 +1389,24 @@ export class HachimiRestaurantGame extends Component {
       return;
     }
     this.partViews.forEach((view) => view.render(this.profile!, this.textures!));
+    this.partViews.forEach((view, index) => {
+      const button = view.upgradeButton;
+      const visual = this.partUpgradeButtonViews[index];
+      const part = PARTS[index];
+      const canUpgrade = this.profile!.player.parts[part] < CONSTANTS.starsPerPart
+        && this.profile!.player.coins >= this.profile!.economy.upgradeCost;
+      if (button) {
+        button.interactable = true;
+      }
+      if (visual) {
+        visual.visualState = canUpgrade ? 'normal' : 'muted';
+      }
+    });
     if (this.restaurantUpgradeButton) {
-      this.restaurantUpgradeButton.interactable = this.profile.allPartsMaxed;
+      this.restaurantUpgradeButton.interactable = true;
+    }
+    if (this.restaurantUpgradeButtonView) {
+      this.restaurantUpgradeButtonView.visualState = this.profile.allPartsMaxed ? 'normal' : 'muted';
     }
   }
 

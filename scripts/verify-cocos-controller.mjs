@@ -307,6 +307,12 @@ function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
   assert.equal(game.designNavSprite.spriteFrame.name, 'design-nav-restaurant');
   assert.equal(game.mainPartIconSprites[0].spriteFrame.name, 'cashier');
   assert.equal(game.upgradePartIconSprites[1].spriteFrame.name, 'table-food');
+  assertChildBefore(game.upgradeScreen, 'UpgradeDesignBoard', 'PartUpgrade_cashier');
+  assertChildBefore(game.taskScreen, 'TaskDesignBoard', 'TaskRow_0');
+  assert.equal(findChild(game.mainScreen, 'PartStatusPanel').position.y, -320);
+  assert.equal(findChild(game.upgradeScreen, 'RestaurantUpgradeButton').position.y, -386);
+  assert.equal(findChild(game.taskScreen, 'TaskRow_12').position.y, -376);
+  assert.equal(game.messageLabel.node.position.y, -472);
   assert.equal(game.mainNavButtonView.normalTexture, 'none');
   assert.equal(game.mainNavButtonView.activeTexture, 'none');
   assert.equal(game.startButton.getComponent(cc.Sprite).spriteFrame.name, 'design-start-button');
@@ -328,6 +334,23 @@ function verifyRuntimeBootstrapStructure(HachimiRestaurantGame, cc) {
   assert.equal(game.upgradeNavButton.interactable, true);
   assert.equal(game.taskNavButton.interactable, false);
   assert.equal(game.designNavSprite.spriteFrame.name, 'design-nav-tasks');
+}
+
+function findChild(parent, name) {
+  const child = parent.children.find((item) => item.name === name);
+  assert.ok(child, `${name} should exist under ${parent.name || 'node'}`);
+  return child;
+}
+
+function assertChildBefore(parent, earlierName, laterName) {
+  const earlierIndex = parent.children.findIndex((child) => child.name === earlierName);
+  const laterIndex = parent.children.findIndex((child) => child.name === laterName);
+  assert.notEqual(earlierIndex, -1, `${earlierName} should exist`);
+  assert.notEqual(laterIndex, -1, `${laterName} should exist`);
+  assert.ok(
+    earlierIndex < laterIndex,
+    `${earlierName} must be created before ${laterName} so it renders behind interactive rows`
+  );
 }
 
 async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc) {
@@ -416,7 +439,8 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
 
   game.showUpgrade();
   assertGuideFocus(game, 'upgradePart');
-  await game.upgradePart('cashier');
+  game.handlePartUpgradePressed('cashier');
+  await flushAsyncActions();
   assert.equal(api.calls.at(-1).method, 'upgradePart');
   assert.equal(game.messageLabel.string, '部件已升级');
   assertGuideFocus(game, 'taskNav');
@@ -424,7 +448,13 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
 
   game.showTasks();
   assertGuideFocus(game, 'claimTask');
-  await game.claimTask('guide_first_session');
+  game.handleTaskButtonPressed('daily_sessions_3');
+  assert.equal(game.mainScreen.active, true);
+  assert.match(game.messageLabel.string, /前往完成：今日营业 3 次/);
+
+  game.showTasks();
+  game.handleTaskButtonPressed('guide_first_session');
+  await flushAsyncActions();
   assert.equal(api.calls.at(-1).method, 'claimTask');
   assert.equal(game.messageLabel.string, '任务奖励已领取');
   assertGuideFocus(game, 'none');
@@ -435,6 +465,11 @@ async function verifyMainBusinessFlow(HachimiRestaurantGame, ApiRequestError, cc
   assert.equal(game.messageLabel.string, '餐厅已整体升级');
 
   await verifySessionNotReady(HachimiRestaurantGame, ApiRequestError, cc);
+}
+
+async function flushAsyncActions() {
+  await Promise.resolve();
+  await Promise.resolve();
 }
 
 function setControllerButtonTransitions(game, transition) {

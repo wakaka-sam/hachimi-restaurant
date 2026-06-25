@@ -27,10 +27,10 @@ export class TaskItemView extends Component {
   claimButton: Button | null = null;
 
   private taskId = '';
-  private onClaim: ((taskId: string) => void) | null = null;
+  private onAction: ((taskId: string) => void) | null = null;
 
-  bind(onClaim: (taskId: string) => void): void {
-    this.onClaim = onClaim;
+  bind(onAction: (taskId: string) => void): void {
+    this.onAction = onAction;
     if (this.claimButton) {
       this.claimButton.transition = Button.Transition.NONE;
     }
@@ -59,13 +59,13 @@ export class TaskItemView extends Component {
     }
     if (this.claimButton) {
       this.claimButton.transition = Button.Transition.NONE;
-      this.claimButton.interactable = task.completed && !task.claimed;
+      this.claimButton.interactable = !task.claimed;
     }
   }
 
   private handleClick(): void {
     if (this.taskId) {
-      this.onClaim?.(this.taskId);
+      this.onAction?.(this.taskId);
     }
   }
 }

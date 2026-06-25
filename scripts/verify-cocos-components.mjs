@@ -460,8 +460,10 @@ function verifyTaskItemView(TaskItemView, cc) {
   assert.equal(view.progressLabel.string, '2/3');
   assert.equal(view.rewardLabel.string, '100\n10');
   assert.equal(view.buttonLabel.string, '前往');
-  assert.equal(view.claimButton.interactable, false);
+  assert.equal(view.claimButton.interactable, true);
   assert.equal(view.claimButton.transition, cc.Button.Transition.NONE);
+  view.claimButton.node.events[0].callback.call(view.claimButton.node.events[0].target);
+  assert.equal(claimedTaskId, 'daily_sessions_3');
 
   view.render({
     id: 'daily_sessions_3',
